@@ -256,7 +256,7 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
       <div class="grp">
         <div class="row mrow"><span class="tile lg" id="machineTile"></span><span class="lab"><b id="machineName"></b><small>Daily Inspection Sheet</small></span></div>
         <label class="row"><span class="lab"><b>เครื่องที่</b></span><span class="val">
-          <select id="machineNo" class="inp"><option value="NO.1">NO. 1</option><option value="NO.2">NO. 2</option><option value="NO.3">NO. 3</option></select></span></label>
+          <span class="unit" style="min-width:0">NO.</span><input id="machineNo" type="text" class="inp" style="width:5.5em" placeholder="เช่น 1" autocomplete="off" list="noList" aria-label="เครื่องที่ (NO.)"></span></label>
         <label class="row"><span class="lab"><b>วันที่</b></span><span class="val"><input id="inspectDate" type="date" class="inp"></span></label>
         <label class="row"><span class="lab"><b>สถานะเครื่อง</b></span><span class="val"><span class="st-dot" id="stDot"></span>
           <select id="machineStatus" class="inp"><option value="Running">Running</option><option value="M/C Stop">M/C Stop</option><option value="Unload">Unload</option></select></span></label>
@@ -273,6 +273,7 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
   </div>
 </footer>
 
+<datalist id="noList"></datalist>
 <section class="month" id="monthView" hidden aria-labelledby="mTitle">
   <div class="mnav">
     <button class="tbtn" id="mClose" type="button"><svg class="i" style="width:1.3rem;height:1.3rem;stroke-width:2.4"><use href="#i-back"/></svg>กลับ</button>
@@ -287,7 +288,7 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
     </div>
     <div class="grp" style="margin-top:12px">
       <label class="row"><span class="lab"><b>เครื่องที่</b></span><span class="val">
-        <select id="mNo" class="inp"><option value="NO.1">NO. 1</option><option value="NO.2">NO. 2</option><option value="NO.3">NO. 3</option></select></span></label>
+        <span class="unit" style="min-width:0">NO.</span><input id="mNo" type="text" class="inp" style="width:5.5em" placeholder="เช่น 1" autocomplete="off" list="noList" aria-label="เครื่องที่ (NO.)"></span></label>
       <label class="row"><span class="lab"><b>เดือน/ปี</b></span><span class="val"><input id="mMonth" type="month" class="inp" style="width:auto;text-align:left;color:var(--tint)"></span></label>
     </div>
   </div>
@@ -373,6 +374,14 @@ const FORMS = {
 
 const STORAGE_KEY = 'daily_inspection_records_v1';
 const MACHINE_COLOR = { ACP: '#5856D6', AD: '#30B0C7', CT: '#32ADE6' };
+/* machine number is typed freely: "1", "no.1", "NO. 1" are all stored/compared as "1" */
+const normNo = s => String(s ?? '').trim().replace(/^no\.?\s*/i, '').toUpperCase();
+function rememberNo() { try { localStorage.setItem('di_no_' + currentType, normNo($('machineNo').value)); } catch {} }
+function recallNo() { try { $('machineNo').value = localStorage.getItem('di_no_' + currentType) || ''; } catch { $('machineNo').value = ''; } }
+function fillNoList() {
+  const nos = [...new Set(store.get().map(r => normNo(r.machineNo)).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'th', { numeric: true }));
+  $('noList').innerHTML = nos.map(n => `<option value="${esc(n)}">`).join('');
+}
 const $ = id => document.getElementById(id);
 const icon = (n, cls = '') => `<svg class="i ${cls}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -504,7 +513,7 @@ document.addEventListener('click', e => {
 });
 function switchType(t) {
   currentType = t; try { localStorage.setItem('di_type', t); } catch {}
-  formValues = { inspector: formValues.inspector }; tried = false; initOpenState(t); renderForm(); haptic(5);
+  formValues = { inspector: formValues.inspector }; tried = false; recallNo(); initOpenState(t); renderForm(); haptic(5);
 }
 document.addEventListener('input', e => {
   const n = e.target.dataset.num;
@@ -524,6 +533,11 @@ function setStatusDot() { const v = $('machineStatus').value; $('stDot').style.b
 /* save */
 $('saveBtn').addEventListener('click', () => {
   if (!$('inspectDate').value) { showToast('เลือกวันที่ก่อนบันทึก', true); $('inspectDate').focus(); return; }
+  if (!normNo($('machineNo').value)) {
+    const row = $('machineNo').closest('.row'); row.classList.add('miss');
+    window.scrollTo({ top: 0, behavior: 'smooth' }); $('machineNo').focus({ preventScroll: true });
+    haptic([30, 60, 30]); showToast('พิมพ์เลขเครื่องก่อนบันทึก', true); return;
+  }
   tried = true;
   if (!(formValues.inspector || '').trim()) {
     const meta = FORMS[currentType].sections.find(s => s.type === 'meta'); openAccordions[meta.id] = true; renderForm();
@@ -543,21 +557,22 @@ $('saveBtn').addEventListener('click', () => {
 const thDate = s => { const [y, m, d] = (s || '').split('-'); return y ? `${+d}/${+m}/${y}` : '-'; };
 /* one record per day: same machine type + machine no + date replaces the old one */
 function doSave() {
-  const date = $('inspectDate').value, no = $('machineNo').value;
-  const idx = store.get().findIndex(r => r.type === currentType && r.machineNo === no && r.date === date);
+  const date = $('inspectDate').value, no = normNo($('machineNo').value);
+  const idx = store.get().findIndex(r => r.type === currentType && normNo(r.machineNo) === no && r.date === date);
   if (idx >= 0) {
-    askConfirm('มีบันทึกของวันนี้แล้ว', `${FORMS[currentType].name} ${no} วันที่ ${thDate(date)} บันทึกไว้แล้ว ต้องการแทนที่ด้วยข้อมูลชุดนี้ไหม`, 'แทนที่', () => commitSave(true));
+    askConfirm('มีบันทึกของวันนี้แล้ว', `${FORMS[currentType].name} NO. ${no} วันที่ ${thDate(date)} บันทึกไว้แล้ว ต้องการแทนที่ด้วยข้อมูลชุดนี้ไหม`, 'แทนที่', () => commitSave(true));
     return;
   }
   commitSave(false);
 }
 function commitSave(replace) {
-  const date = $('inspectDate').value, no = $('machineNo').value;
+  const date = $('inspectDate').value, no = normNo($('machineNo').value);
   let records = store.get();
-  if (replace) records = records.filter(r => !(r.type === currentType && r.machineNo === no && r.date === date));
+  if (replace) records = records.filter(r => !(r.type === currentType && normNo(r.machineNo) === no && r.date === date));
   records.unshift({ id: Date.now(), savedAt: new Date().toLocaleString('th-TH'), type: currentType, machineName: FORMS[currentType].name,
     machineNo: no, date, status: $('machineStatus').value, data: { ...formValues } });
   if (!store.set(records)) { showToast('บันทึกไม่สำเร็จ เบราว์เซอร์นี้เก็บข้อมูลไม่ได้', true); return; }
+  rememberNo(); fillNoList();
   try { localStorage.setItem('di_inspector', formValues.inspector.trim()); } catch {}
   formValues = { inspector: formValues.inspector }; tried = false; initOpenState(currentType); renderForm();
   updateHistoryCount(); window.scrollTo({ top: 0, behavior: 'smooth' }); haptic([10, 40, 10]);
@@ -572,7 +587,7 @@ $('openHistoryBtn').addEventListener('click', () => {
   $('historyList').innerHTML = `<button class="mbtn" type="button" id="toMonth">${icon('sheet', 'duo')}ดูใบตรวจรายเดือน / พิมพ์</button>` +
     (recs.length ? `<div class="grp">${recs.map(r => {
     const n = issueCount(r), d = r.date ? r.date.split('-').reverse().join('/') : '-';
-    return `<div class="hitem"><span class="t"><b>${esc(r.machineName)} · ${esc(r.machineNo)}</b>
+    return `<div class="hitem"><span class="t"><b>${esc(r.machineName)} · NO. ${esc(normNo(r.machineNo))}</b>
       <small>${d} · ${esc(r.data.inspector || '-')} · ${esc(r.status)}${r.data.remark ? ' · ' + esc(r.data.remark) : ''}</small></span>
       <span class="badge ${n ? 'warn' : 'done'}">${n ? icon('warn') + 'ผิดปกติ ' + n : icon('check') + 'ปกติ'}</span></div>`;
   }).join('')}</div>` : `<div class="nodata">${icon('doc')}ยังไม่มีประวัติการบันทึก</div>`);
@@ -635,7 +650,7 @@ function renderPaper() {
   const sh = SHEET[mState.type], seen = new Set();
   document.querySelectorAll('#mTypeSeg button').forEach(b => b.setAttribute('aria-selected', b.dataset.mtype === mState.type));
   const recs = store.get()
-    .filter(r => r.type === mState.type && r.machineNo === mState.no && (r.date || '').startsWith(mState.month))
+    .filter(r => r.type === mState.type && normNo(r.machineNo) === normNo(mState.no) && (r.date || '').startsWith(mState.month))
     .filter(r => (seen.has(r.date) ? false : seen.add(r.date)))   // newest record per day (list is newest-first)
     .sort((a, b) => a.date.localeCompare(b.date));
   const [yy, mm] = (mState.month || '').split('-');
@@ -651,7 +666,7 @@ function renderPaper() {
   $('paper').innerHTML = `
     <table class="top"><colgroup><col style="width:14%"><col><col style="width:13%"></colgroup><tr>
       <td>Month/Year<br>: <span class="u">${mm ? `${mm}/${yy}` : ''}</span></td>
-      <td class="ttl">Daily Inspection Sheet : ${sh.title} NO.<span class="u">${esc(mState.no.replace('NO.', ''))}</span></td>
+      <td class="ttl">Daily Inspection Sheet : ${sh.title} NO.<span class="u">${esc(normNo(mState.no))}</span></td>
       <td class="code">CE97F1005Q<small>by NITIPHAT</small></td></tr></table>
     <table><colgroup><col style="width:4.2%">${sh.cols.map(() => '<col>').join('')}<col style="width:4%"><col style="width:4%"><col style="width:5.5%"><col style="width:8%"></colgroup>
       <thead><tr><th rowspan="2">Date</th>${sh.cols.map(c => `<th${c[1] ? '' : ' rowspan="2"'}>${c[0]}</th>`).join('')}
@@ -661,7 +676,7 @@ function renderPaper() {
   $('mHint').innerHTML = `${icon('sheet', 'duo')}<span>บันทึกแล้ว <b>${recs.length}</b> วันในเดือนนี้ · เลื่อนซ้าย–ขวาเพื่อดูทั้งใบ · ค่าผิดปกติแสดงเป็นสีแดง</span>`;
 }
 function openMonth() {
-  mState.type = currentType; mState.no = $('machineNo').value; mState.month = ($('inspectDate').value || localToday()).slice(0, 7);
+  mState.type = currentType; mState.no = normNo($('machineNo').value); mState.month = ($('inspectDate').value || localToday()).slice(0, 7);
   $('mNo').value = mState.no; $('mMonth').value = mState.month;
   renderPaper(); lastFocus = document.activeElement;
   $('monthView').hidden = false; $('monthView').scrollTop = 0; document.body.style.overflow = 'hidden'; $('mClose').focus();
@@ -670,7 +685,8 @@ function closeMonth() { $('monthView').hidden = true; if (!document.querySelecto
 $('openMonthBtn').addEventListener('click', openMonth);
 $('mClose').addEventListener('click', closeMonth);
 $('mPrint').addEventListener('click', () => window.print());
-$('mNo').addEventListener('change', e => { mState.no = e.target.value; renderPaper(); });
+$('mNo').addEventListener('input', e => { mState.no = normNo(e.target.value); renderPaper(); });
+$('machineNo').addEventListener('input', () => { $('machineNo').closest('.row').classList.remove('miss'); rememberNo(); });
 $('mMonth').addEventListener('change', e => { mState.month = e.target.value; renderPaper(); });
 $('mTypeSeg').addEventListener('click', e => { const b = e.target.closest('[data-mtype]'); if (b) { mState.type = b.dataset.mtype; renderPaper(); haptic(5); } });
 document.addEventListener('click', e => { if (e.target.closest('#toMonth')) { closeDim('historyModal'); openMonth(); } });
@@ -693,7 +709,7 @@ function showToast(msg, err = false) {
 new IntersectionObserver(([en]) => $('nav').classList.toggle('scrolled', !en.isIntersecting), { rootMargin: '-44px 0px 0px 0px' }).observe($('largeTitle'));
 
 formValues.inspector = draftInspector;
-setStatusDot(); initOpenState(currentType); renderForm(); updateHistoryCount();
+setStatusDot(); recallNo(); fillNoList(); initOpenState(currentType); renderForm(); updateHistoryCount();
 </script>
 </body>
 </html>
