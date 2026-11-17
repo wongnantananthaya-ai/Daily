@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Daily Inspection — CE97F1005Q</title>
+<style>
+:root{
+  color-scheme:light dark;
+  --bg:#F2F2F7;--card:#FFFFFF;--field:#F7F7FA;--fill:rgba(118,118,128,.12);--fill2:rgba(118,118,128,.08);
+  --label:#000;--label2:rgba(60,60,67,.62);--label3:rgba(60,60,67,.3);--sep:rgba(60,60,67,.29);
+  --field-b:rgba(60,60,67,.3);--tint:#007AFF;
+  --green:#34C759;--green-t:#248A3D;--red:#FF3B30;--red-t:#D70015;--orange:#FF9500;--orange-t:#C93400;
+  --seg-on:#FFFFFF;--mat:rgba(249,249,249,.8);--dim:rgba(0,0,0,.4);
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 1px rgba(0,0,0,.03);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#000;--card:#1C1C1E;--field:#2C2C2E;--fill:rgba(118,118,128,.24);--fill2:rgba(118,118,128,.16);
+  --label:#FFF;--label2:rgba(235,235,245,.62);--label3:rgba(235,235,245,.3);--sep:rgba(84,84,88,.65);
+  --field-b:rgba(235,235,245,.26);--tint:#0A84FF;
+  --green:#30D158;--green-t:#30D158;--red:#FF453A;--red-t:#FF6961;--orange:#FF9F0A;--orange-t:#FF9F0A;
+  --seg-on:#636366;--mat:rgba(22,22,23,.8);--dim:rgba(0,0,0,.55);
+}}
+@media (prefers-contrast:more){:root{--label2:rgba(60,60,67,.88);--sep:rgba(60,60,67,.55);--field-b:rgba(60,60,67,.6);--tint:#0040DD}}
+@media (prefers-reduced-transparency:reduce){:root{--mat:var(--card)}}
+
+html{font-size:17px;-webkit-text-size-adjust:100%}
+@supports (font:-apple-system-body){html{font:-apple-system-body}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--label);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue","Sukhumvit Set","Noto Sans Thai","Leelawadee UI",sans-serif;font-size:1rem;line-height:1.3;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+svg.i{width:1.1em;height:1.1em;flex:none;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.18em}
+.shell{max-width:600px;margin:0 auto;min-height:100vh;min-height:100dvh;padding-bottom:calc(env(safe-area-inset-bottom) + 96px)}
+
+/* nav bar + large title */
+.nav{position:sticky;top:0;z-index:30;padding:env(safe-area-inset-top) 16px 0;background:var(--bg);transition:background .2s}
+.nav.scrolled{background:var(--mat);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);box-shadow:0 .5px 0 var(--sep)}
+.nav-row{display:flex;align-items:center;justify-content:space-between;min-height:44px}
+.nav-title{font-weight:600;opacity:0;transition:opacity .2s}
+.nav.scrolled .nav-title{opacity:1}
+.tbtn{position:relative;border:0;background:none;color:var(--tint);min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;font-size:1rem}
+.tbtn:active{opacity:.4}
+.count{position:absolute;top:6px;right:2px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font-size:.65rem;font-weight:700;display:grid;place-items:center}
+.count[data-n="0"]{display:none}
+.seg{display:flex;background:var(--fill);border-radius:9px;padding:2px;gap:2px;margin:8px 0 10px}
+.seg button{position:relative;flex:1;border:0;background:transparent;min-height:32px;border-radius:7px;font-size:.82rem;font-weight:500;cursor:pointer;transition:background .2s}
+.seg button::after{content:"";position:absolute;inset:-6px 0}
+.seg button[aria-selected=true]{background:var(--seg-on);box-shadow:var(--shadow);font-weight:600}
+.head{padding:0 16px}
+.large{margin:4px 0 2px;font-size:2rem;font-weight:700;line-height:1.15}
+.sub{margin:0 0 20px;color:var(--label2);font-size:.88rem;display:flex;align-items:center;gap:6px}
+.code{font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:6px;background:var(--fill2)}
+
+/* inset grouped */
+main{padding:0 16px}
+.sec{margin:0 0 22px}
+.sec-h{display:flex;align-items:center;gap:8px;margin:0 4px 8px}
+.sec-h h2{flex:1;margin:0;font-size:.76rem;font-weight:400;text-transform:uppercase;letter-spacing:.02em;color:var(--label2)}
+.grp{background:var(--card);border-radius:12px;overflow:hidden}
+.row{position:relative;display:flex;flex-wrap:wrap;align-items:center;column-gap:12px;row-gap:8px;min-height:44px;padding:10px 16px}
+.row+.row::before,.grp>*+.row::before{content:"";position:absolute;top:0;left:16px;right:0;border-top:.5px solid var(--sep)}
+.lab{flex:1 1 6rem;min-width:0}
+.lab b{display:block;font-weight:400}
+.lab small{display:block;margin-top:2px;font-size:.76rem;color:var(--label2)}
+.lab small.spec{display:inline-block;margin-top:5px;padding:2px 8px;border-radius:6px;background:var(--fill2)}
+.msg{display:none;align-items:center;gap:4px;margin-top:4px;font-size:.76rem;font-weight:500}
+.row.valid .msg{display:flex;color:var(--green-t)}
+.row.invalid .msg{display:flex;color:var(--red-t)}
+.val{display:flex;align-items:center;gap:6px;margin-left:auto}
+.inp{width:5.6em;min-height:44px;margin:-4px 0;padding:0 12px;border:1.5px solid var(--field-b);border-radius:10px;background:var(--field);text-align:right;font-weight:500;outline:none;transition:border-color .15s,box-shadow .15s}
+.inp::placeholder{color:var(--label3);font-weight:400}
+.inp:focus{border-color:var(--tint);background:var(--card);box-shadow:0 0 0 4px color-mix(in srgb,var(--tint) 22%,transparent)}
+.inp.wide{width:9.5em}
+.inp[type=date]{width:auto;text-align:left;color:var(--tint)}
+select.inp{width:auto;text-align:left;appearance:none;-webkit-appearance:none;padding-right:30px;background-image:linear-gradient(45deg,transparent 50%,var(--label2) 50%),linear-gradient(-45deg,transparent 50%,var(--label2) 50%);background-position:calc(100% - 15px) 50%,calc(100% - 10px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+.row.valid .inp{border-color:color-mix(in srgb,var(--green) 70%,transparent)}
+.row.invalid .inp{border-color:var(--red);color:var(--red-t);font-weight:600}
+.row.miss .lab b{color:var(--red-t)}
+.row.miss .inp{border-color:var(--red)}
+.unit{min-width:2.8em;font-size:.88rem;color:var(--label2)}
+textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-height:5.5em;padding:10px 12px;text-align:left;resize:vertical}
+
+/* collapsible section */
+.acc{background:var(--card);border-radius:12px;overflow:hidden}
+.acc-h{display:flex;align-items:center;gap:10px;width:100%;min-height:56px;padding:10px 16px;border:0;background:none;text-align:left;cursor:pointer}
+.acc-h:active{background:var(--fill2)}
+.tile{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:none;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent)}
+.tile svg.i{width:19px;height:19px;stroke-width:1.8;--duo:color-mix(in srgb,var(--c) 24%,transparent)}
+.tile.lg{width:46px;height:46px}
+.tile.lg svg.i{width:26px;height:26px}
+.mrow b{font-weight:600}
+.duo{--duo:color-mix(in srgb,currentColor 22%,transparent)}
+.acc-h .t{flex:1;min-width:0;font-weight:600}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--fill2);color:var(--label2);white-space:nowrap}
+.badge.done{background:color-mix(in srgb,var(--green) 15%,transparent);color:var(--green-t)}
+.badge.warn{background:color-mix(in srgb,var(--red) 14%,transparent);color:var(--red-t)}
+.chev{color:var(--label3);transition:transform .25s cubic-bezier(.32,.72,0,1)}
+.acc.open .chev{transform:rotate(90deg)}
+.acc-b{display:none;border-top:.5px solid var(--sep)}
+.acc.open .acc-b{display:block}
+.quick{display:flex;align-items:center;justify-content:center;gap:6px;width:calc(100% - 32px);margin:12px 16px 4px;min-height:44px;border:0;border-radius:10px;background:color-mix(in srgb,var(--green) 14%,transparent);color:var(--green-t);font-weight:600;font-size:.94rem;cursor:pointer}
+.quick:active{opacity:.6}
+
+/* ok / ng segmented */
+.okng{display:flex;flex:none;background:var(--fill);border-radius:9px;padding:2px;gap:2px}
+.okng button{position:relative;border:0;background:transparent;min-height:34px;padding:0 13px;border-radius:7px;font-size:.88rem;font-weight:500;display:inline-flex;align-items:center;gap:4px;cursor:pointer;transition:background .2s}
+.okng button::after{content:"";position:absolute;inset:-5px 0}
+.okng button .ck{display:none}
+.okng button[aria-checked=true] .ck{display:inline}
+.okng button[data-v="ปกติ"][aria-checked=true]{background:var(--green);color:#fff}
+.okng button[data-v="ผิดปกติ"][aria-checked=true]{background:var(--red);color:#fff}
+
+/* status banner */
+.banner{display:flex;gap:10px;align-items:flex-start;margin:0 0 22px;padding:12px 14px;border-radius:12px;background:color-mix(in srgb,var(--orange) 14%,transparent);color:var(--orange-t);font-size:.88rem;line-height:1.45}
+.banner svg.i{margin-top:2px}
+.st-dot{width:9px;height:9px;border-radius:50%;flex:none}
+
+/* bottom bar */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--mat);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-top:.5px solid var(--sep);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.bar-in{max-width:568px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.progress{flex:1;min-width:0}
+.progress b{display:block;font-size:.88rem;font-weight:600}
+.progress small{display:block;font-size:.76rem;color:var(--label2);margin-top:1px}
+.pbar{height:4px;border-radius:2px;background:var(--fill);margin-top:6px;overflow:hidden}
+.pbar i{display:block;height:100%;width:0;border-radius:2px;background:var(--tint);transition:width .4s cubic-bezier(.32,.72,0,1)}
+.pbar.warn i{background:var(--red)}.pbar.done i{background:var(--green)}
+.save{border:0;border-radius:999px;background:var(--tint);color:#fff;min-height:50px;padding:0 24px 0 20px;font-weight:600;display:inline-flex;align-items:center;gap:6px;cursor:pointer;box-shadow:0 4px 14px color-mix(in srgb,var(--tint) 35%,transparent);transition:transform .15s}
+.save:active{transform:scale(.97)}
+
+/* toast */
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 12px);z-index:70;display:flex;align-items:center;gap:8px;padding:12px 20px;border-radius:999px;background:var(--mat);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);box-shadow:0 8px 30px rgba(0,0,0,.15);font-size:.88rem;font-weight:600;white-space:nowrap;transform:translate(-50%,-150%);opacity:0;visibility:hidden;transition:transform .45s cubic-bezier(.32,.72,0,1),opacity .3s,visibility .45s}
+.toast.show{transform:translate(-50%,0);opacity:1;visibility:visible}
+.toast.ok svg.i{color:var(--green)}.toast.err svg.i{color:var(--red)}
+
+/* sheet + alert */
+.dim{position:fixed;inset:0;z-index:60;background:var(--dim);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.dim.open{opacity:1;pointer-events:auto}
+.sheet{width:100%;max-width:600px;max-height:88vh;max-height:88dvh;background:var(--bg);border-radius:14px 14px 0 0;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .4s cubic-bezier(.32,.72,0,1)}
+.dim.open .sheet{transform:none}
+.grab{width:36px;height:5px;border-radius:3px;background:var(--label3);margin:6px auto 0}
+.sheet-h{display:flex;align-items:center;gap:4px;padding:2px 8px 2px 16px;min-height:52px}
+.sheet-h h3{flex:1;margin:0;font-size:1rem;font-weight:600}
+.sheet-b{overflow:auto;padding:4px 16px calc(env(safe-area-inset-bottom) + 24px)}
+.hitem{display:flex;align-items:center;gap:12px;padding:12px 16px;position:relative}
+.hitem+.hitem::before{content:"";position:absolute;top:0;left:16px;right:0;border-top:.5px solid var(--sep)}
+.hitem .t{flex:1;min-width:0}
+.hitem .t b{display:block;font-weight:600}
+.hitem .t small{display:block;margin-top:2px;font-size:.82rem;color:var(--label2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nodata{padding:44px 16px;text-align:center;color:var(--label2)}
+.nodata svg.i{display:block;width:2.4rem;height:2.4rem;margin:0 auto 10px;color:var(--label3)}
+.alert-dim{align-items:center}
+.alert{width:270px;border-radius:14px;overflow:hidden;text-align:center;background:var(--mat);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);transform:scale(1.1);transition:transform .25s cubic-bezier(.32,.72,0,1)}
+.dim.open .alert{transform:none}
+.alert .m{padding:20px 16px}
+.alert .m b{display:block;font-weight:600;margin-bottom:4px}
+.alert .m span{font-size:.8rem}
+.alert .a{display:flex;border-top:.5px solid var(--sep)}
+.alert .a button{flex:1;border:0;background:none;min-height:44px;color:var(--tint);cursor:pointer}
+.alert .a button+button{border-left:.5px solid var(--sep);font-weight:600}
+
+/* monthly sheet (matches the paper form) */
+.month{position:fixed;inset:0;z-index:55;background:var(--bg);overflow:auto;-webkit-overflow-scrolling:touch}
+.month[hidden]{display:none}
+.mnav{position:sticky;top:0;left:0;z-index:2;display:flex;align-items:center;gap:4px;min-height:44px;padding:env(safe-area-inset-top) 8px 0;background:var(--mat);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:.5px solid var(--sep)}
+.mnav .t{flex:1;text-align:center;font-weight:600}
+.mnav .tbtn{padding:0 8px}
+.mctl{max-width:600px;margin:0 auto;padding:12px 16px 0}
+.mhint{max-width:600px;margin:0 auto;padding:10px 20px 12px;font-size:.76rem;color:var(--label2);display:flex;gap:6px;align-items:center}
+.paper-wrap{overflow-x:auto;padding:0 16px calc(env(safe-area-inset-bottom) + 24px)}
+.paper{min-width:1180px;margin:0 auto;background:#fff;color:#000;padding:14px;border-radius:6px;box-shadow:0 2px 14px rgba(0,0,0,.14);font-family:"Sarabun","TH Sarabun New","Leelawadee UI","Noto Sans Thai",sans-serif;font-size:10.5px;color-scheme:light}
+.paper table{border-collapse:collapse;width:100%;table-layout:fixed}
+.paper th,.paper td{border:1px solid #000;text-align:center;vertical-align:middle;padding:2px 3px;font-weight:400;line-height:1.35;overflow-wrap:anywhere}
+.paper .top{margin-bottom:-1px}
+.paper .top td{height:46px}
+.paper .top .ttl{font-size:20px;font-weight:600;text-align:left;padding-left:8px}
+.paper .top .code{font-size:15px;font-weight:600}
+.paper .top small{display:block;font-size:8px;font-weight:400;color:#555}
+.paper .u{display:inline-block;min-width:110px;border-bottom:1.5px solid #000;text-align:center}
+.paper thead th{font-size:9.5px}
+.paper tbody td{height:30px;font-size:11px}
+.paper td.bad{color:#D70015;font-weight:700}
+.paper td.note{font-size:9.5px;text-align:left}
+.mbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;border:0;border-radius:12px;background:var(--card);color:var(--tint);font-weight:600;margin:0 0 16px;cursor:pointer}
+.mbtn:active{opacity:.6}
+@media print{
+  @page{size:A4 landscape;margin:7mm}
+  html,body{background:#fff!important;overflow:visible!important}
+  .shell,.bar,.toast,.dim{display:none!important}
+  .month{position:static;overflow:visible;background:#fff}
+  .mnav,.mctl,.mhint{display:none!important}
+  .paper-wrap{overflow:visible;padding:0}
+  .paper{min-width:0;width:100%;padding:0;box-shadow:none;border-radius:0}
+  .paper tbody td{height:8.6mm}
+  .paper tr{break-inside:avoid}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+:focus-visible{outline:3px solid color-mix(in srgb,var(--tint) 55%,transparent);outline-offset:2px;border-radius:8px}
+.inp:focus-visible{outline:none}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- Soft duotone set: shapes with style="fill:var(--duo,none)" take a pale fill when --duo is set on the <svg> -->
+  <symbol id="i-acp" viewBox="0 0 24 24"><rect style="fill:var(--duo,none)" x="3" y="10" width="18" height="8.5" rx="4.25"/><circle style="fill:var(--duo,none)" cx="9" cy="6" r="3"/><path d="M9 6l1.4-1.4M9 9v1M16 10V7h3.5M7 18.5v2.5M17 18.5v2.5"/></symbol>
+  <symbol id="i-ad" viewBox="0 0 24 24"><path style="fill:var(--duo,none)" d="M12 2.5s5 5.2 5 9a5 5 0 0 1-10 0c0-3.8 5-9 5-9z"/><path d="M3.5 20.5h7M13.5 20.5h7M10 11.5a2 2 0 0 0 2 2"/></symbol>
+  <symbol id="i-ct" viewBox="0 0 24 24"><path style="fill:var(--duo,none)" d="M6.5 21c1.6-4.5 1.6-9.5.5-13.5h10c-1.1 4-1.1 9 .5 13.5z"/><path d="M4.5 21h15M9.5 5.2c0-1.3 1-1.3 1-2.6M13.5 5.2c0-1.3 1-1.3 1-2.6M7.6 14h8.8"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path style="fill:var(--duo,none)" d="M3.5 16.5a8.5 8.5 0 1 1 17 0z"/><path d="M12 16.5l4-5M3.5 16.5h17"/></symbol>
+  <symbol id="i-thermo" viewBox="0 0 24 24"><path style="fill:var(--duo,none)" d="M10 13.5V5a2 2 0 1 1 4 0v8.5a4 4 0 1 1-4 0z"/><path d="M12 9.5v7"/></symbol>
+  <symbol id="i-drop" viewBox="0 0 24 24"><path style="fill:var(--duo,none)" d="M12 3s6.5 6.6 6.5 11.2a6.5 6.5 0 0 1-13 0C5.5 9.6 12 3 12 3z"/><path d="M9 15a3 3 0 0 0 3 3"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><rect style="fill:var(--duo,none)" x="4" y="3.5" width="16" height="17" rx="3"/><path d="M7.8 9l1.5 1.5L12 7.8M7.8 15l1.5 1.5L12 13.8M14.5 9.5H17M14.5 15.5H17"/></symbol>
+  <symbol id="i-person" viewBox="0 0 24 24"><circle style="fill:var(--duo,none)" cx="12" cy="8" r="3.8"/><path style="fill:var(--duo,none)" d="M4.5 20.5a7.5 7.5 0 0 1 15 0z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-checkc" viewBox="0 0 24 24"><circle style="fill:var(--duo,none)" cx="12" cy="12" r="9"/><path d="M8 12.3l2.7 2.7L16 9.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path style="fill:var(--duo,none)" d="M10.3 4.5a2 2 0 0 1 3.4 0l7.3 12.6a2 2 0 0 1-1.7 3H4.7a2 2 0 0 1-1.7-3z"/><path d="M12 9.5v4M12 16.8v.01"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle style="fill:var(--duo,none)" cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V3.5"/><path d="M7.5 8 12 3.5 16.5 8"/><path d="M5 12v7.5h14V12"/></symbol>
+  <symbol id="i-sheet" viewBox="0 0 24 24"><rect style="fill:var(--duo,none)" x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M3 9.5h18M8.5 9.5v10M14.5 9.5v10M3 14.5h18"/></symbol>
+  <symbol id="i-print" viewBox="0 0 24 24"><path d="M7 9V3.5h10V9"/><rect style="fill:var(--duo,none)" x="3.5" y="9" width="17" height="8" rx="2"/><path d="M7 14h10v6.5H7z"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path style="fill:var(--duo,none)" d="M6 3.5h8l4 4v13H6z"/><path d="M14 3.5v4h4"/><path d="M9 13h6M9 16.5h4"/></symbol>
+</svg>
+
+<div class="shell">
+  <header class="nav" id="nav">
+    <div class="nav-row">
+      <button class="tbtn" id="openMonthBtn" type="button" aria-label="ใบตรวจรายเดือน (พิมพ์)">
+        <svg class="i duo" style="width:1.45rem;height:1.45rem;stroke-width:1.8"><use href="#i-sheet"/></svg>
+      </button>
+      <span class="nav-title" id="navTitle" aria-hidden="true"></span>
+      <button class="tbtn" id="openHistoryBtn" type="button" aria-label="ประวัติการตรวจ">
+        <svg class="i duo" style="width:1.45rem;height:1.45rem;stroke-width:1.8"><use href="#i-clock"/></svg><span class="count" id="historyCount" data-n="0">0</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="head">
+    <h1 class="large" id="largeTitle">Daily Inspection</h1>
+    <p class="sub">ใบตรวจเช็ครายวัน <span class="code">CE97F1005Q</span></p>
+    <div class="seg" id="typeSeg" role="tablist" aria-label="ประเภทเครื่อง">
+      <button type="button" role="tab" data-type="ACP" aria-label="Air Compressor">Compressor</button>
+      <button type="button" role="tab" data-type="AD">Air Dryer</button>
+      <button type="button" role="tab" data-type="CT">Cooling Tower</button>
+    </div>
+  </div>
+
+  <main>
+    <div class="sec" style="margin-top:12px">
+      <div class="sec-h"><h2>ข้อมูลเครื่อง</h2></div>
+      <div class="grp">
+        <div class="row mrow"><span class="tile lg" id="machineTile"></span><span class="lab"><b id="machineName"></b><small>Daily Inspection Sheet</small></span></div>
+        <label class="row"><span class="lab"><b>เครื่องที่</b></span><span class="val">
+          <select id="machineNo" class="inp"><option value="NO.1">NO. 1</option><option value="NO.2">NO. 2</option><option value="NO.3">NO. 3</option></select></span></label>
+        <label class="row"><span class="lab"><b>วันที่</b></span><span class="val"><input id="inspectDate" type="date" class="inp"></span></label>
+        <label class="row"><span class="lab"><b>สถานะเครื่อง</b></span><span class="val"><span class="st-dot" id="stDot"></span>
+          <select id="machineStatus" class="inp"><option value="Running">Running</option><option value="M/C Stop">M/C Stop</option><option value="Unload">Unload</option></select></span></label>
+      </div>
+    </div>
+    <div id="formContainer"></div>
+  </main>
+</div>
+
+<footer class="bar">
+  <div class="bar-in">
+    <div class="progress" aria-live="polite"><b id="overallProgress">กรอกแล้ว 0/0</b><small id="overallSub"></small><div class="pbar" id="pbar"><i></i></div></div>
+    <button class="save" id="saveBtn" type="button"><svg class="i"><use href="#i-check"/></svg>บันทึก</button>
+  </div>
+</footer>
+
+<section class="month" id="monthView" hidden aria-labelledby="mTitle">
+  <div class="mnav">
+    <button class="tbtn" id="mClose" type="button"><svg class="i" style="width:1.3rem;height:1.3rem;stroke-width:2.4"><use href="#i-back"/></svg>กลับ</button>
+    <span class="t" id="mTitle">ใบตรวจรายเดือน</span>
+    <button class="tbtn" id="mPrint" type="button" style="font-weight:600"><svg class="i duo" style="width:1.3rem;height:1.3rem;stroke-width:1.8"><use href="#i-print"/></svg>พิมพ์</button>
+  </div>
+  <div class="mctl">
+    <div class="seg" id="mTypeSeg" role="tablist" aria-label="ประเภทเครื่อง" style="margin-top:0">
+      <button type="button" role="tab" data-mtype="ACP" aria-label="Air Compressor">Compressor</button>
+      <button type="button" role="tab" data-mtype="AD">Air Dryer</button>
+      <button type="button" role="tab" data-mtype="CT">Cooling Tower</button>
+    </div>
+    <div class="grp" style="margin-top:12px">
+      <label class="row"><span class="lab"><b>เครื่องที่</b></span><span class="val">
+        <select id="mNo" class="inp"><option value="NO.1">NO. 1</option><option value="NO.2">NO. 2</option><option value="NO.3">NO. 3</option></select></span></label>
+      <label class="row"><span class="lab"><b>เดือน/ปี</b></span><span class="val"><input id="mMonth" type="month" class="inp" style="width:auto;text-align:left;color:var(--tint)"></span></label>
+    </div>
+  </div>
+  <p class="mhint" id="mHint"></p>
+  <div class="paper-wrap"><div class="paper" id="paper"></div></div>
+</section>
+
+<div class="toast" id="toast" role="status"><svg class="i duo"><use href="#i-checkc"/></svg><span></span></div>
+
+<div class="dim" id="historyModal" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="hTitle">
+    <div class="grab"></div>
+    <div class="sheet-h">
+      <h3 id="hTitle">ประวัติการตรวจเช็ค</h3>
+      <button class="tbtn" id="exportCsvBtn" type="button" aria-label="ส่งออก CSV"><svg class="i" style="width:1.3rem;height:1.3rem"><use href="#i-share"/></svg></button>
+      <button class="tbtn" id="closeHistoryBtn" type="button" style="font-weight:600;padding:0 8px">เสร็จ</button>
+    </div>
+    <div class="sheet-b" id="historyList"></div>
+  </div>
+</div>
+
+<div class="dim alert-dim" id="alertDim" aria-hidden="true">
+  <div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="aT" aria-describedby="aM">
+    <div class="m"><b id="aT"></b><span id="aM"></span></div>
+    <div class="a"><button type="button" id="aCancel">แก้ไขต่อ</button><button type="button" id="aOk">บันทึก</button></div>
+  </div>
+</div>
+
+<script>
+const FORMS = {
+  ACP: { name: 'Air Compressor', sections: [
+    { id: 'acp_pressure', title: 'ความดัน & ชั่วโมงเดินเครื่อง', icon: 'gauge', color: '#007AFF', type: 'numeric', defaultOpen: true, fields: [
+      { id: 'oil_pressure', label: 'Oil Pressure', spec: 'ระหว่าง 2.0 – 3.0', unit: 'kg/cm²', min: 2.0, max: 3.0 },
+      { id: 'discha1_press', label: '1st Discha. Pressure', spec: 'ไม่ต่ำกว่า 1.5', unit: 'kg/cm²', min: 1.5 },
+      { id: 'discha2_press', label: '2nd Discha. Pressure', spec: 'ไม่เกิน 6.90', unit: 'kg/cm²', max: 6.90 },
+      { id: 'suction1_press', label: '1st Suction Pressure', spec: 'ไม่ต่ำกว่า -45', unit: 'kg/cm²', min: -45 },
+      { id: 'motor_current', label: 'Motor current', spec: 'ค่ากระแสไฟฟ้า', unit: 'A' },
+      { id: 'running_hr', label: 'Running hr', spec: 'ชั่วโมงสะสม', unit: 'Hour', min: 0 } ] },
+    { id: 'acp_temp', title: 'อุณหภูมิ', icon: 'thermo', color: '#FF9500', type: 'numeric', fields: [
+      { id: 'oil_temp', label: 'Oil Temp', spec: 'น้อยกว่า 60', unit: '°C', max: 60, strict: true },
+      { id: 'discha1_temp', label: '1st Discha. Temp', spec: 'ไม่เกิน 180', unit: '°C', max: 180 },
+      { id: 'suction2_temp', label: '2nd Suction Temp', spec: 'ไม่เกิน 55', unit: '°C', max: 55 },
+      { id: 'discha2_temp', label: '2nd Discha. Temp', spec: 'ไม่เกิน 180', unit: '°C', max: 180 },
+      { id: 'suction1_temp', label: '1st Suction Temp', spec: 'ไม่เกิน 55', unit: '°C', max: 55 } ] },
+    { id: 'acp_water', title: 'ระบบน้ำหล่อเย็น', icon: 'drop', color: '#30B0C7', type: 'numeric', fields: [
+      { id: 'water_in_temp', label: 'Water inlet Temp', spec: 'ไม่เกิน 40', unit: '°C', max: 40 },
+      { id: 'water_out_temp', label: 'Water Outlet Temp', spec: 'ไม่เกิน 45', unit: '°C', max: 45 },
+      { id: 'water_in_press', label: 'Water inlet Pressure', spec: 'ไม่ต่ำกว่า 0.8', unit: 'kg/cm²', min: 0.8 },
+      { id: 'water_out_press', label: 'Water Outlet Pressure', spec: 'ไม่ต่ำกว่า 0.3', unit: 'kg/cm²', min: 0.3 } ] },
+    { id: 'acp_visual', title: 'เช็คสภาพ & วาล์ว', icon: 'list', color: '#34C759', type: 'checklist', fields: [
+      { id: 'drain_valve', label: 'Drain Solenoid valve', spec: 'การทำงานปกติ' },
+      { id: 'oil_level', label: 'Lubricate oil level', spec: 'ระดับน้ำมันอยู่ช่วง H–L' },
+      { id: 'way3_valve', label: '3 Way Solenoid valve', spec: 'ไม่มีน้ำซึม' },
+      { id: 'general_check', label: 'เช็คสภาพทั่วไป', spec: 'ภาพรวมตัวเครื่อง' } ] },
+    { id: 'acp_meta', title: 'ผู้ตรวจเช็ค & หมายเหตุ', icon: 'person', color: '#8E8E93', type: 'meta' } ] },
+  AD: { name: 'Air Dryer', sections: [
+    { id: 'ad_numeric', title: 'ค่าวัด Pressure & Dew Point', icon: 'gauge', color: '#007AFF', type: 'numeric', defaultOpen: true, fields: [
+      { id: 'dew_point', label: 'Dew Point', spec: 'ไม่เกิน 10 °C', unit: '°C', max: 10 },
+      { id: 'low_press', label: 'Low Pressure', spec: '0.35 – 0.6', unit: 'MPa', min: 0.35, max: 0.6 },
+      { id: 'high_press', label: 'High Pressure', spec: '1.1 – 1.9', unit: 'MPa', min: 1.1, max: 1.9 } ] },
+    { id: 'ad_visual', title: 'เช็คสภาพเครื่อง', icon: 'list', color: '#34C759', type: 'checklist', defaultOpen: true, fields: [
+      { id: 'comp_noise', label: 'Compressor noise', spec: 'เสียงการทำงาน' },
+      { id: 'running_lamp', label: 'Running Lamp', spec: 'ไฟแสดงสถานะ' },
+      { id: 'drain_test', label: 'Drain test', spec: 'การระบายน้ำทิ้ง' } ] },
+    { id: 'ad_meta', title: 'ผลการวิเคราะห์ & หมายเหตุ', icon: 'person', color: '#8E8E93', type: 'meta', hasAnalysis: true } ] },
+  CT: { name: 'Cooling Tower', sections: [
+    { id: 'ct_numeric', title: 'ค่าวัด Temp & Water', icon: 'thermo', color: '#FF9500', type: 'numeric', defaultOpen: true, fields: [
+      { id: 'ct_water_temp', label: 'Water inlet Temp', spec: 'ไม่เกิน 40 °C', unit: '°C', max: 40 },
+      { id: 'iw_value', label: 'ค่าน้ำ IW', spec: '200 – 400', unit: 'µS/cm', min: 200, max: 400 } ] },
+    { id: 'ct_visual', title: 'เช็คสภาพรอบเครื่อง', icon: 'list', color: '#34C759', type: 'checklist', defaultOpen: true, fields: [
+      { id: 'ct_scale', label: 'Scale in cooling tower', spec: 'สะอาดและไม่มีตะกรัน' },
+      { id: 'ct_overflow', label: 'เช็คระดับน้ำ', spec: 'ต่ำกว่า Overflow (0.5–1 cm)' },
+      { id: 'ct_spray', label: 'Water spray', spec: 'ทุกรูของ Sprinkler pipe ต้องมีน้ำออกมา' },
+      { id: 'ct_head', label: 'Sprinkler head', spec: 'ไม่รั่ว ไม่หลวม' },
+      { id: 'ct_moving', label: 'Moving of sprinkler', spec: 'หมุนปกติ' },
+      { id: 'ct_around', label: 'Around cooling tower', spec: 'รอบ ๆ Cooling ต้องไม่มีรอยแตก' },
+      { id: 'ct_tray', label: 'Water tray', spec: 'ไม่มีน้ำเลอะรอบ ๆ ถาด' },
+      { id: 'ct_louver', label: 'Inlet louver', spec: 'ไม่แตกและไม่หลวม' },
+      { id: 'ct_pvc', label: 'PVC filling', spec: 'สะอาด ไม่แตก ไม่หลวม' },
+      { id: 'ct_tank', label: 'Water level in Underground Tank', spec: 'ระดับน้ำต้องสัมผัสกับลูกลอย' } ] },
+    { id: 'ct_meta', title: 'ผลการวิเคราะห์ & หมายเหตุ', icon: 'person', color: '#8E8E93', type: 'meta', hasAnalysis: true } ] },
+};
+
+const STORAGE_KEY = 'daily_inspection_records_v1';
+const MACHINE_COLOR = { ACP: '#5856D6', AD: '#30B0C7', CT: '#32ADE6' };
+const $ = id => document.getElementById(id);
+const icon = (n, cls = '') => `<svg class="i ${cls}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const haptic = p => { try { navigator.vibrate && navigator.vibrate(p); } catch {} };
+const localToday = () => { const d = new Date(); return new Date(d - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); };
+const store = {
+  get() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; } },
+  set(v) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(v)); return true; } catch { return false; } },
+};
+
+let currentType = 'ACP';
+try { currentType = localStorage.getItem('di_type') || 'ACP'; } catch {}
+if (!FORMS[currentType]) currentType = 'ACP';
+let formValues = {}, openAccordions = {}, tried = false;
+const draftInspector = (() => { try { return localStorage.getItem('di_inspector') || ''; } catch { return ''; } })();
+
+$('inspectDate').value = localToday();
+
+function validateNumeric(f, raw) {
+  if (raw === '' || raw == null || Number.isNaN(parseFloat(raw))) return 'empty';
+  const v = parseFloat(raw);
+  if (f.min !== undefined && v < f.min) return 'invalid';
+  if (f.max !== undefined && (f.strict ? v >= f.max : v > f.max)) return 'invalid';
+  return (f.min !== undefined || f.max !== undefined) ? 'valid' : 'filled';
+}
+const isStopped = () => $('machineStatus').value === 'M/C Stop';
+
+function initOpenState(type) {
+  openAccordions = {};
+  FORMS[type].sections.forEach(s => { openAccordions[s.id] = !!s.defaultOpen; });
+}
+function stats(sec) {
+  let filled = 0, issues = 0;
+  (sec.fields || []).forEach(f => {
+    const v = formValues[f.id];
+    if (sec.type === 'numeric') { const s = validateNumeric(f, v); if (s !== 'empty') filled++; if (s === 'invalid') issues++; }
+    else { if (v) filled++; if (v === 'ผิดปกติ') issues++; }
+  });
+  return { filled, issues, total: (sec.fields || []).length };
+}
+function badge(sec) {
+  if (sec.type === 'meta') return (formValues.inspector || '').trim() ? { t: `${icon('check')}กรอกแล้ว`, c: 'done' } : { t: 'ยังไม่ระบุผู้ตรวจ', c: tried ? 'warn' : '' };
+  const { filled, issues, total } = stats(sec);
+  if (issues) return { t: `${icon('warn')}ผิดปกติ ${issues}`, c: 'warn' };
+  if (filled === total) return { t: `${icon('check')}${filled}/${total}`, c: 'done' };
+  return { t: `${filled}/${total}`, c: '' };
+}
+
+function renderForm() {
+  const schema = FORMS[currentType];
+  document.querySelectorAll('#typeSeg button').forEach(b => b.setAttribute('aria-selected', b.dataset.type === currentType));
+  $('navTitle').textContent = schema.name; $('machineName').textContent = schema.name;
+  $('machineTile').style.setProperty('--c', MACHINE_COLOR[currentType]);
+  $('machineTile').innerHTML = icon(currentType.toLowerCase());
+  let html = isStopped() ? `<div class="banner" role="note">${icon('warn')}<span>เครื่องอยู่ในสถานะ <b>M/C Stop</b> ข้ามช่องที่ต้องวัดขณะเดินเครื่องได้ แล้วกดบันทึกได้เลย</span></div>` : '';
+  schema.sections.forEach(sec => {
+    const b = badge(sec), open = !!openAccordions[sec.id];
+    html += `<div class="sec"><div class="acc ${open ? 'open' : ''}" data-sec="${sec.id}">
+      <button class="acc-h" type="button" data-toggle="${sec.id}" aria-expanded="${open}" aria-controls="b_${sec.id}">
+        <span class="tile" style="--c:${sec.color}">${icon(sec.icon)}</span>
+        <span class="t">${sec.title}</span><span class="badge ${b.c}">${b.t}</span>${icon('chev', 'chev')}
+      </button>
+      <div class="acc-b" id="b_${sec.id}">${renderSectionBody(sec)}</div></div></div>`;
+  });
+  $('formContainer').innerHTML = html;
+  updateOverallProgress();
+}
+
+function renderSectionBody(sec) {
+  if (sec.type === 'numeric') return sec.fields.map(f => {
+    const v = formValues[f.id] ?? '', s = validateNumeric(f, v);
+    return `<label class="row ${s} ${tried && s === 'empty' && !isStopped() ? 'miss' : ''}" id="row_${f.id}">
+      <span class="lab"><b>${f.label}</b><small class="spec">เกณฑ์: ${f.spec}</small>
+        <span class="msg">${s === 'invalid' ? icon('warn') + 'ค่าเกินเกณฑ์' : icon('checkc') + 'อยู่ในเกณฑ์'}</span></span>
+      <span class="val"><input type="number" inputmode="decimal" step="any" class="inp" placeholder="–" value="${esc(v)}" data-num="${f.id}" data-sec="${sec.id}" aria-label="${f.label} (${f.unit})"><span class="unit">${f.unit}</span></span></label>`;
+  }).join('');
+
+  if (sec.type === 'checklist') {
+    const empty = sec.fields.filter(f => !formValues[f.id]).length;
+    return (empty ? `<button type="button" class="quick" data-allok="${sec.id}">${icon('check')}ที่เหลือ "ปกติ" ทั้งหมด (${empty} ข้อ)</button>` : '') +
+      sec.fields.map(f => okng(f.id, f.label, f.spec, formValues[f.id], tried && !formValues[f.id] && !isStopped())).join('');
+  }
+
+  const issues = FORMS[currentType].sections.reduce((n, s) => n + (s.fields ? stats(s).issues : 0), 0);
+  return (sec.hasAnalysis ? okng('analysis', 'ผลการวิเคราะห์โดยรวม', issues ? `พบรายการผิดปกติ ${issues} ข้อในฟอร์มนี้` : 'ยังไม่พบรายการผิดปกติ', formValues.analysis, false) : '') +
+    `<label class="row ${tried && !(formValues.inspector || '').trim() ? 'miss' : ''}"><span class="lab"><b>ผู้ตรวจเช็ค</b></span>
+      <span class="val"><input id="inspectorInput" type="text" class="inp wide" placeholder="ชื่อผู้ตรวจ" autocomplete="name" value="${esc(formValues.inspector)}"></span></label>
+     <div class="row" style="padding-bottom:4px"><span class="lab"><b>หมายเหตุ</b><small>M/C Stop / Unload หรืออาการผิดปกติ</small></span></div>
+     <textarea id="remarkInput" class="inp" placeholder="ระบุอาการผิดปกติ หรือหมายเหตุเพิ่มเติม" aria-label="หมายเหตุ">${esc(formValues.remark)}</textarea>`;
+}
+function okng(id, label, spec, v, miss) {
+  return `<div class="row ${miss ? 'miss' : ''}"><span class="lab" id="l_${id}"><b>${label}</b><small>${spec}</small></span>
+    <div class="okng" role="radiogroup" aria-labelledby="l_${id}">
+      <button type="button" role="radio" data-check="${id}" data-v="ปกติ" aria-checked="${v === 'ปกติ'}">${icon('check', 'ck')}ปกติ</button>
+      <button type="button" role="radio" data-check="${id}" data-v="ผิดปกติ" aria-checked="${v === 'ผิดปกติ'}">${icon('x', 'ck')}ผิดปกติ</button>
+    </div></div>`;
+}
+
+function refreshBadge(secId) {
+  const sec = FORMS[currentType].sections.find(s => s.id === secId), el = document.querySelector(`.acc[data-sec="${secId}"] .badge`);
+  if (!sec || !el) return; const b = badge(sec); el.className = `badge ${b.c}`; el.innerHTML = b.t;
+}
+function updateOverallProgress() {
+  let total = 0, filled = 0, issues = 0;
+  FORMS[currentType].sections.forEach(s => { if (!s.fields) return; const st = stats(s); total += st.total; filled += st.filled; issues += st.issues; });
+  $('overallProgress').textContent = `กรอกแล้ว ${filled}/${total}`;
+  $('overallSub').innerHTML = issues ? `<span style="color:var(--red-t)">${icon('warn')} ผิดปกติ ${issues} รายการ</span>` : filled === total ? 'ครบทุกช่องแล้ว' : 'ข้ามได้ถ้าเครื่อง M/C Stop';
+  $('pbar').className = 'pbar ' + (issues ? 'warn' : filled === total ? 'done' : '');
+  $('pbar').firstElementChild.style.width = (total ? filled / total * 100 : 0) + '%';
+}
+
+/* events */
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-toggle]');
+  if (t) { const id = t.dataset.toggle; openAccordions[id] = !openAccordions[id];
+    t.closest('.acc').classList.toggle('open', openAccordions[id]); t.setAttribute('aria-expanded', openAccordions[id]); return; }
+  const c = e.target.closest('[data-check]');
+  if (c) { formValues[c.dataset.check] = c.dataset.v; haptic(c.dataset.v === 'ผิดปกติ' ? [10, 30, 10] : 5); renderForm(); return; }
+  const a = e.target.closest('[data-allok]');
+  if (a) { const sec = FORMS[currentType].sections.find(s => s.id === a.dataset.allok);
+    sec.fields.forEach(f => { if (!formValues[f.id]) formValues[f.id] = 'ปกติ'; });
+    renderForm(); haptic([5, 30, 5]); showToast('ตั้งข้อที่เหลือเป็นปกติแล้ว'); return; }
+  const tab = e.target.closest('#typeSeg button');
+  if (tab && tab.dataset.type !== currentType) {
+    if (Object.keys(formValues).some(k => k !== 'inspector' && formValues[k])) {
+      askConfirm('เปลี่ยนเครื่อง?', 'ข้อมูลที่กรอกไว้ของเครื่องนี้จะหาย', 'เปลี่ยน', () => switchType(tab.dataset.type));
+    } else switchType(tab.dataset.type);
+  }
+});
+function switchType(t) {
+  currentType = t; try { localStorage.setItem('di_type', t); } catch {}
+  formValues = { inspector: formValues.inspector }; tried = false; initOpenState(t); renderForm(); haptic(5);
+}
+document.addEventListener('input', e => {
+  const n = e.target.dataset.num;
+  if (n) {
+    formValues[n] = e.target.value;
+    const sec = FORMS[currentType].sections.find(s => s.id === e.target.dataset.sec), f = sec.fields.find(x => x.id === n), s = validateNumeric(f, e.target.value);
+    const row = $('row_' + n); row.classList.remove('valid', 'invalid', 'empty', 'filled', 'miss'); row.classList.add(s);
+    row.querySelector('.msg').innerHTML = s === 'invalid' ? icon('warn') + 'ค่าเกินเกณฑ์' : icon('checkc') + 'อยู่ในเกณฑ์';
+    refreshBadge(sec.id); updateOverallProgress(); return;
+  }
+  if (e.target.id === 'inspectorInput') { formValues.inspector = e.target.value; e.target.closest('.row').classList.remove('miss'); refreshBadge(FORMS[currentType].sections.find(s => s.type === 'meta').id); }
+  if (e.target.id === 'remarkInput') formValues.remark = e.target.value;
+});
+$('machineStatus').addEventListener('change', () => { setStatusDot(); renderForm(); });
+function setStatusDot() { const v = $('machineStatus').value; $('stDot').style.background = v === 'Running' ? 'var(--green)' : v === 'M/C Stop' ? 'var(--red)' : 'var(--orange)'; }
+
+/* save */
+$('saveBtn').addEventListener('click', () => {
+  if (!$('inspectDate').value) { showToast('เลือกวันที่ก่อนบันทึก', true); $('inspectDate').focus(); return; }
+  tried = true;
+  if (!(formValues.inspector || '').trim()) {
+    const meta = FORMS[currentType].sections.find(s => s.type === 'meta'); openAccordions[meta.id] = true; renderForm();
+    haptic([30, 60, 30]); showToast('ระบุชื่อผู้ตรวจเช็คก่อนบันทึก', true);
+    const inp = $('inspectorInput'); inp.scrollIntoView({ behavior: 'smooth', block: 'center' }); inp.focus({ preventScroll: true }); return;
+  }
+  let total = 0, filled = 0;
+  FORMS[currentType].sections.forEach(s => { if (s.fields) { const st = stats(s); total += st.total; filled += st.filled; } });
+  if (filled < total && !isStopped()) {
+    FORMS[currentType].sections.forEach(s => { if (s.fields && stats(s).filled < s.fields.length) openAccordions[s.id] = true; });
+    renderForm();
+    askConfirm(`ยังกรอกไม่ครบ ${total - filled} ช่อง`, 'ช่องที่ขาดขึ้นเป็นสีแดง จะบันทึกเท่าที่กรอกไว้เลยไหม', 'บันทึก', doSave);
+    return;
+  }
+  doSave();
+});
+const thDate = s => { const [y, m, d] = (s || '').split('-'); return y ? `${+d}/${+m}/${y}` : '-'; };
+/* one record per day: same machine type + machine no + date replaces the old one */
+function doSave() {
+  const date = $('inspectDate').value, no = $('machineNo').value;
+  const idx = store.get().findIndex(r => r.type === currentType && r.machineNo === no && r.date === date);
+  if (idx >= 0) {
+    askConfirm('มีบันทึกของวันนี้แล้ว', `${FORMS[currentType].name} ${no} วันที่ ${thDate(date)} บันทึกไว้แล้ว ต้องการแทนที่ด้วยข้อมูลชุดนี้ไหม`, 'แทนที่', () => commitSave(true));
+    return;
+  }
+  commitSave(false);
+}
+function commitSave(replace) {
+  const date = $('inspectDate').value, no = $('machineNo').value;
+  let records = store.get();
+  if (replace) records = records.filter(r => !(r.type === currentType && r.machineNo === no && r.date === date));
+  records.unshift({ id: Date.now(), savedAt: new Date().toLocaleString('th-TH'), type: currentType, machineName: FORMS[currentType].name,
+    machineNo: no, date, status: $('machineStatus').value, data: { ...formValues } });
+  if (!store.set(records)) { showToast('บันทึกไม่สำเร็จ เบราว์เซอร์นี้เก็บข้อมูลไม่ได้', true); return; }
+  try { localStorage.setItem('di_inspector', formValues.inspector.trim()); } catch {}
+  formValues = { inspector: formValues.inspector }; tried = false; initOpenState(currentType); renderForm();
+  updateHistoryCount(); window.scrollTo({ top: 0, behavior: 'smooth' }); haptic([10, 40, 10]);
+  showToast(replace ? 'แทนที่บันทึกของวันนี้แล้ว' : 'บันทึกลงใบรายเดือนแล้ว');
+}
+
+/* history */
+function updateHistoryCount() { const n = store.get().length; $('historyCount').textContent = n > 99 ? '99+' : n; $('historyCount').dataset.n = n; }
+function issueCount(r) { return Object.entries(r.data).filter(([k, v]) => k !== 'analysis' && v === 'ผิดปกติ').length; }
+$('openHistoryBtn').addEventListener('click', () => {
+  const recs = store.get();
+  $('historyList').innerHTML = `<button class="mbtn" type="button" id="toMonth">${icon('sheet', 'duo')}ดูใบตรวจรายเดือน / พิมพ์</button>` +
+    (recs.length ? `<div class="grp">${recs.map(r => {
+    const n = issueCount(r), d = r.date ? r.date.split('-').reverse().join('/') : '-';
+    return `<div class="hitem"><span class="t"><b>${esc(r.machineName)} · ${esc(r.machineNo)}</b>
+      <small>${d} · ${esc(r.data.inspector || '-')} · ${esc(r.status)}${r.data.remark ? ' · ' + esc(r.data.remark) : ''}</small></span>
+      <span class="badge ${n ? 'warn' : 'done'}">${n ? icon('warn') + 'ผิดปกติ ' + n : icon('check') + 'ปกติ'}</span></div>`;
+  }).join('')}</div>` : `<div class="nodata">${icon('doc')}ยังไม่มีประวัติการบันทึก</div>`);
+  openDim('historyModal'); $('closeHistoryBtn').focus();
+});
+$('closeHistoryBtn').addEventListener('click', () => closeDim('historyModal'));
+$('historyModal').addEventListener('click', e => { if (e.target.id === 'historyModal') closeDim('historyModal'); });
+$('exportCsvBtn').addEventListener('click', () => {
+  const recs = store.get(); if (!recs.length) { showToast('ยังไม่มีข้อมูลสำหรับส่งออก', true); return; }
+  const rows = [['SavedAt', 'Type', 'MachineNo', 'Date', 'Status', 'Inspector', 'Remark', 'DataJSON'],
+    ...recs.map(r => [r.savedAt, r.machineName, r.machineNo, r.date, r.status, r.data.inspector || '', r.data.remark || '', JSON.stringify(r.data)])];
+  const csv = '﻿' + rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+  a.download = `daily_inspection_${localToday()}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+
+/* monthly sheet — columns in the same order as the paper forms (AD_/ACP_/CT_ Monthly_ CE97F1005Q.pdf) */
+const SHEET = {
+  ACP: { title: 'AIR COMPRESSOR', pair: ['เช็คสภาพทั่วไป', 'general_check'], cols: [
+    ['Oil Pressure', 'ระหว่าง 2.0 - 3.0 kg/cm2', 'oil_pressure'], ['1st Discha. Pressure', 'ไม่ต่ำกว่า 1.5 kg/cm2', 'discha1_press'],
+    ['2nd Discha. Pressure', 'ไม่เกิน 6.90 kg/cm2', 'discha2_press'], ['Motor current', 'แอมป์', 'motor_current'],
+    ['Oil tempe', '< 60 C', 'oil_temp'], ['1st Discha. Temp.', 'ไม่เกิน 180˚C', 'discha1_temp'],
+    ['2nd Suction Temp.', 'ไม่เกิน 55˚C', 'suction2_temp'], ['2nd Discha. Temp.', 'ไม่เกิน 180˚C', 'discha2_temp'],
+    ['1st Suction Pressure', 'ไม่ต่ำกว่า -45 kg/cm2', 'suction1_press'], ['1st Suction Temp.', 'ไม่เกิน 55˚C', 'suction1_temp'],
+    ['Running hr', 'Hour', 'running_hr'], ['Drain Solenoid valve', null, 'drain_valve'],
+    ['Lubricate oil level', 'ช่วง H-L', 'oil_level'], ['3 Way Solenoid valve', 'ไม่มีน้ำซึม', 'way3_valve'],
+    ['Water inlet Temp.', 'ไม่เกิน 40˚C', 'water_in_temp'], ['Water Outlet Temp.', 'ไม่เกิน 45˚C', 'water_out_temp'],
+    ['Water inlet Pressure', 'ไม่ต่ำกว่า 0.8 kg/cm2', 'water_in_press'], ['Water Outlet Pressure', 'ไม่ต่ำกว่า 0.3 kg/cm2', 'water_out_press'] ] },
+  AD: { title: 'AIR DRYER', pair: ['ผลการวิเคราะห์', 'analysis'], cols: [
+    ['Compressor noise', '(ปกติ/ผิดปกติ)', 'comp_noise'], ['Dew Point', '(ไม่เกิน 10 องศา)', 'dew_point'],
+    ['Running Lamp', '(ปกติ/ผิดปกติ)', 'running_lamp'], ['Drain test', '(ปกติ/ผิดปกติ)', 'drain_test'],
+    ['Low Pressure', '0.35-0.6 Mpa', 'low_press'], ['High Pressure', '1.1-1.9 Mpa', 'high_press'] ] },
+  CT: { title: 'Cooling Tower', pair: ['ผลการวิเคราะห์', 'analysis'], cols: [
+    ['Scale in cooling tower', 'สะอาดและไม่มีตะกรัน', 'ct_scale'], ['เช็คระดับน้ำ', 'ต่ำกว่า Overflow (0.5-1 cm)', 'ct_overflow'],
+    ['Water spray', 'ทุกรูของ Sprinkler pipe ต้องมีน้ำออกมา', 'ct_spray'], ['Sprinkler head', 'ไม่รั่วไม่หลวม', 'ct_head'],
+    ['Moving of sprinkler', 'หมุนปกติ', 'ct_moving'], ['Around cooling tower', 'ต้องไม่มีรอยแตก', 'ct_around'],
+    ['Water tray', 'ไม่มีน้ำเลอะรอบๆถาด', 'ct_tray'], ['Inlet louver', 'ไม่แตกและหลวม', 'ct_louver'],
+    ['PVC filling', 'สะอาด ไม่แตก ไม่หลวม', 'ct_pvc'], ['Water inlet Temp.', 'ไม่เกิน 40 องศา', 'ct_water_temp'],
+    ['Water level in Underground Tank', 'ระดับน้ำต้องสัมผัสกับลูกลอย', 'ct_tank'], ['ค่าน้ำ IW', '(200-400 µS/cm)', 'iw_value'] ] },
+};
+const mState = { type: 'ACP', no: 'NO.1', month: '' };
+function fieldOf(type, id) {
+  for (const s of FORMS[type].sections) { const f = (s.fields || []).find(x => x.id === id); if (f) return { f, kind: s.type }; }
+  return null;
+}
+function recIssues(r) {
+  let n = 0;
+  FORMS[r.type].sections.forEach(s => (s.fields || []).forEach(f => {
+    const v = r.data[f.id]; if (s.type === 'numeric' ? validateNumeric(f, v) === 'invalid' : v === 'ผิดปกติ') n++;
+  }));
+  return n;
+}
+function sheetCell(r, id) {
+  const m = fieldOf(r.type, id), v = r.data[id];
+  if (!m || v == null || v === '') return '<td></td>';
+  if (m.kind === 'numeric') return `<td class="${validateNumeric(m.f, v) === 'invalid' ? 'bad' : ''}">${esc(v)}</td>`;
+  return v === 'ผิดปกติ' ? '<td class="bad">✗</td>' : '<td>✓</td>';
+}
+function renderPaper() {
+  const sh = SHEET[mState.type], seen = new Set();
+  document.querySelectorAll('#mTypeSeg button').forEach(b => b.setAttribute('aria-selected', b.dataset.mtype === mState.type));
+  const recs = store.get()
+    .filter(r => r.type === mState.type && r.machineNo === mState.no && (r.date || '').startsWith(mState.month))
+    .filter(r => (seen.has(r.date) ? false : seen.add(r.date)))   // newest record per day (list is newest-first)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const [yy, mm] = (mState.month || '').split('-');
+  const row = r => {
+    const pv = r.data[sh.pair[1]] || (sh.pair[1] === 'analysis' ? (recIssues(r) ? 'ผิดปกติ' : 'ปกติ') : '');
+    const note = [r.status !== 'Running' ? r.status : '', r.data.remark].filter(Boolean).join(' · ');
+    const [, m, d] = r.date.split('-');
+    return `<tr><td>${+d}/${+m}</td>${sh.cols.map(c => sheetCell(r, c[2])).join('')}
+      <td>${pv === 'ปกติ' ? '✓' : ''}</td><td class="${pv === 'ผิดปกติ' ? 'bad' : ''}">${pv === 'ผิดปกติ' ? '✗' : ''}</td>
+      <td>${esc(r.data.inspector)}</td><td class="note">${esc(note)}</td></tr>`;
+  };
+  const blank = `<tr>${'<td></td>'.repeat(sh.cols.length + 5)}</tr>`;
+  $('paper').innerHTML = `
+    <table class="top"><colgroup><col style="width:14%"><col><col style="width:13%"></colgroup><tr>
+      <td>Month/Year<br>: <span class="u">${mm ? `${mm}/${yy}` : ''}</span></td>
+      <td class="ttl">Daily Inspection Sheet : ${sh.title} NO.<span class="u">${esc(mState.no.replace('NO.', ''))}</span></td>
+      <td class="code">CE97F1005Q<small>by NITIPHAT</small></td></tr></table>
+    <table><colgroup><col style="width:4.2%">${sh.cols.map(() => '<col>').join('')}<col style="width:4%"><col style="width:4%"><col style="width:5.5%"><col style="width:8%"></colgroup>
+      <thead><tr><th rowspan="2">Date</th>${sh.cols.map(c => `<th${c[1] ? '' : ' rowspan="2"'}>${c[0]}</th>`).join('')}
+        <th colspan="2">${sh.pair[0]}</th><th rowspan="2">ผู้ตรวจเช็ค</th><th rowspan="2">หมายเหตุ<br>( M/C Stop / Unload )</th></tr>
+      <tr>${sh.cols.filter(c => c[1]).map(c => `<th>${c[1]}</th>`).join('')}<th>ปกติ</th><th>ผิดปกติ</th></tr></thead>
+      <tbody>${recs.map(row).join('')}${blank.repeat(Math.max(0, 10 - recs.length))}</tbody></table>`;
+  $('mHint').innerHTML = `${icon('sheet', 'duo')}<span>บันทึกแล้ว <b>${recs.length}</b> วันในเดือนนี้ · เลื่อนซ้าย–ขวาเพื่อดูทั้งใบ · ค่าผิดปกติแสดงเป็นสีแดง</span>`;
+}
+function openMonth() {
+  mState.type = currentType; mState.no = $('machineNo').value; mState.month = ($('inspectDate').value || localToday()).slice(0, 7);
+  $('mNo').value = mState.no; $('mMonth').value = mState.month;
+  renderPaper(); lastFocus = document.activeElement;
+  $('monthView').hidden = false; $('monthView').scrollTop = 0; document.body.style.overflow = 'hidden'; $('mClose').focus();
+}
+function closeMonth() { $('monthView').hidden = true; if (!document.querySelector('.dim.open')) document.body.style.overflow = ''; lastFocus?.focus?.(); }
+$('openMonthBtn').addEventListener('click', openMonth);
+$('mClose').addEventListener('click', closeMonth);
+$('mPrint').addEventListener('click', () => window.print());
+$('mNo').addEventListener('change', e => { mState.no = e.target.value; renderPaper(); });
+$('mMonth').addEventListener('change', e => { mState.month = e.target.value; renderPaper(); });
+$('mTypeSeg').addEventListener('click', e => { const b = e.target.closest('[data-mtype]'); if (b) { mState.type = b.dataset.mtype; renderPaper(); haptic(5); } });
+document.addEventListener('click', e => { if (e.target.closest('#toMonth')) { closeDim('historyModal'); openMonth(); } });
+
+/* dialogs & toast */
+let lastFocus = null, onOk = null;
+function openDim(id) { lastFocus = document.activeElement; $(id).classList.add('open'); $(id).setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; }
+function closeDim(id) { $(id).classList.remove('open'); $(id).setAttribute('aria-hidden', 'true'); if (!document.querySelector('.dim.open')) document.body.style.overflow = ''; lastFocus?.focus?.(); }
+function askConfirm(title, msg, okLabel, fn) { $('aT').textContent = title; $('aM').textContent = msg; $('aOk').textContent = okLabel; onOk = fn; openDim('alertDim'); $('aCancel').focus(); haptic([20, 40, 20]); }
+$('aCancel').addEventListener('click', () => closeDim('alertDim'));
+$('aOk').addEventListener('click', () => { closeDim('alertDim'); onOk && onOk(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { if ($('alertDim').classList.contains('open')) closeDim('alertDim'); else if ($('historyModal').classList.contains('open')) closeDim('historyModal'); else if (!$('monthView').hidden) closeMonth(); } });
+function showToast(msg, err = false) {
+  const t = $('toast'); t.className = 'toast ' + (err ? 'err' : 'ok');
+  t.querySelector('use').setAttribute('href', err ? '#i-warn' : '#i-checkc'); t.querySelector('span').textContent = msg;
+  requestAnimationFrame(() => t.classList.add('show')); clearTimeout(showToast.t); showToast.t = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* large title collapse */
+new IntersectionObserver(([en]) => $('nav').classList.toggle('scrolled', !en.isIntersecting), { rootMargin: '-44px 0px 0px 0px' }).observe($('largeTitle'));
+
+formValues.inspector = draftInspector;
+setStatusDot(); initOpenState(currentType); renderForm(); updateHistoryCount();
+</script>
+</body>
+</html>
