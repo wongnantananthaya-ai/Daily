@@ -86,6 +86,9 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .ri svg.i{width:21px;height:21px;stroke-width:1.7;--duo:none}
 .row.info .lab{flex:1 1 auto}
 .row.info .lab b{white-space:nowrap}
+.datehint{display:block;margin-top:2px;font-size:.74rem;color:var(--label2)}
+.datehint.other{color:var(--orange-t);font-weight:600}
+.datehint button{border:0;background:none;padding:6px 0;margin:-6px 0;color:var(--tint);font:inherit;font-weight:600;cursor:pointer;text-decoration:underline}
 .field{display:flex;align-items:center;gap:6px;flex:none;width:9.6rem;min-height:44px;padding:0 12px;border:1.5px solid var(--field-b);border-radius:12px;background:var(--field);transition:border-color .15s,box-shadow .15s,background .15s}
 .field:focus-within{border-color:var(--tint);background:var(--card);box-shadow:0 0 0 4px color-mix(in srgb,var(--tint) 20%,transparent)}
 .field input{flex:1;min-width:0;border:0;background:transparent;outline:none;padding:0;font-weight:500;color:var(--label)}
@@ -165,6 +168,38 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .draftbtn:active{transform:scale(.97)}
 .banner.info{background:color-mix(in srgb,var(--tint) 11%,transparent);color:var(--tint);align-items:center}
 .banner .bact{flex:none;margin-left:auto;border:0;background:var(--card);color:inherit;font-weight:700;font-size:.82rem;min-height:34px;padding:0 12px;border-radius:999px;cursor:pointer}
+/* history v2: compact calendar + month list */
+.hfil{display:flex;align-items:center;gap:6px;margin:4px 2px 10px}
+.hfil-l{font-size:.8rem;color:var(--label2);margin-right:2px}
+.mcirc{width:40px;height:40px;border:0;border-radius:50%;background:var(--card);color:var(--label2);display:grid;place-items:center;cursor:pointer;font:inherit;font-size:.8rem;font-weight:600}
+.mcirc.txt{width:auto;padding:0 14px;border-radius:999px}
+.mcirc svg.i{width:22px;height:22px;stroke-width:1.7;--duo:none}
+.mcirc[aria-pressed=true]{background:var(--tint);color:#fff}
+.hcal-nav{display:flex;align-items:center;gap:8px;margin:0 0 6px}
+.hcal-nav b{flex:1;text-align:center;font-size:1.02rem;font-weight:700}
+.harr{width:36px;height:36px;border:0;border-radius:50%;background:var(--fill2);color:var(--tint);display:grid;place-items:center;cursor:pointer}
+.harr svg.i{width:18px;height:18px;stroke-width:2.4}
+.hcal2{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));row-gap:2px}
+.hcal2 i{font-style:normal;text-align:center;font-size:.68rem;color:var(--label2);padding-bottom:2px}
+.cd2{height:38px;border:0;border-radius:10px;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:inherit;font-size:.86rem;color:var(--label3);cursor:pointer;transition:opacity .2s}
+.cd2.has{color:var(--label);font-weight:600}
+.cd2 .dot{width:6px;height:6px;border-radius:50%;background:transparent}
+.cd2 .dot.ok{background:var(--green)}.cd2 .dot.ng{background:var(--red)}.cd2 .dot.st{background:var(--orange)}
+.cd2.today{box-shadow:inset 0 0 0 1.5px var(--label3)}
+.cd2.sel{background:var(--tint);color:#fff}
+.cd2.sel .dot{background:#fff}
+.cd2.dim{opacity:.3}
+.hchips{display:flex;gap:8px;margin:12px 2px 4px}
+.hchips button{min-height:36px;padding:0 14px;border:0;border-radius:999px;background:var(--card);color:var(--label);font:inherit;font-size:.86rem;font-weight:600;cursor:pointer}
+.hchips .ng{color:var(--red-t)}.hchips .st{color:var(--orange-t)}
+.hchips button[aria-pressed=true]{background:var(--label);color:#fff}
+.hchips .ng[aria-pressed=true]{background:var(--red)}.hchips .st[aria-pressed=true]{background:var(--orange)}
+.hday{scroll-margin-top:8px}
+.hday-h{margin:14px 6px 6px;font-size:.8rem;color:var(--label2);font-weight:500}
+.hday.sel .hday-h{color:var(--tint);font-weight:700}
+.hday.sel .grp{box-shadow:0 0 0 2px color-mix(in srgb,var(--tint) 40%,transparent)}
+.hic{background:var(--fill2)!important;color:var(--label2)!important}
+.hic svg.i{--duo:none!important}
 /* history calendar */
 .hseg{margin:0 0 10px}
 .mchips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px;scrollbar-width:none}
@@ -583,7 +618,7 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
         <div class="row mrow"><span class="tile lg" id="machineTile"></span><span class="lab"><b id="machineName"></b><small>Daily Inspection Sheet</small></span></div>
         <label class="row info"><span class="ri"><svg class="i duo" aria-hidden="true"><use href="#i-hash"/></svg></span><span class="lab"><b>เครื่องที่</b></span>
           <span class="field"><span class="pre">NO.</span><input id="machineNo" type="text" placeholder="เช่น 1" autocomplete="off" list="noList" aria-label="เครื่องที่ (NO.)"></span></label>
-        <label class="row info"><span class="ri"><svg class="i duo" aria-hidden="true"><use href="#i-cal"/></svg></span><span class="lab"><b>วันที่</b></span>
+        <label class="row info"><span class="ri"><svg class="i duo" aria-hidden="true"><use href="#i-cal"/></svg></span><span class="lab"><b>วันที่</b><small class="datehint" id="dateHint"></small></span>
           <span class="field"><input id="inspectDate" type="date" aria-label="วันที่ตรวจ"></span></label>
         <label class="row info"><span class="ri"><svg class="i duo" aria-hidden="true"><use href="#i-power"/></svg></span><span class="lab"><b>สถานะเครื่อง</b></span>
           <span class="field sel"><span class="st-dot" id="stDot"></span><select id="machineStatus" aria-label="สถานะเครื่อง">
@@ -767,7 +802,22 @@ if (!FORMS[currentType]) currentType = 'ACP';
 let formValues = {}, openAccordions = {}, tried = false;
 const draftInspector = (() => { try { return localStorage.getItem('di_inspector') || ''; } catch { return ''; } })();
 
-$('inspectDate').value = localToday();
+/* date: follows today automatically (also after midnight or when the app is reopened later),
+   until the inspector picks another date by hand; "กลับเป็นวันนี้" returns to auto */
+let dateAuto = true;
+function setToday() { $('inspectDate').value = localToday(); dateAuto = true; updateDateHint(); }
+function updateDateHint() {
+  const v = $('inspectDate').value, t = localToday(), h = $('dateHint'); if (!h) return;
+  if (v === t) { h.className = 'datehint'; h.textContent = 'วันนี้'; }
+  else { h.className = 'datehint'; h.textContent = ''; }   // another date picked: no extra text
+}
+function refreshAutoDate() { if (dateAuto && $('inspectDate').value !== localToday()) setToday(); else updateDateHint(); }
+$('inspectDate').addEventListener('change', () => { dateAuto = $('inspectDate').value === localToday(); updateDateHint(); });
+document.addEventListener('click', e => { if (e.target.id === 'backToday') { e.preventDefault(); setToday(); haptic(5); } });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshAutoDate(); });
+window.addEventListener('focus', refreshAutoDate);
+setInterval(refreshAutoDate, 60000);   // crosses midnight while the app stays open
+setToday();
 
 function validateNumeric(f, raw) {
   if (raw === '' || raw == null || Number.isNaN(parseFloat(raw))) return 'empty';
@@ -1024,6 +1074,7 @@ function commitSave(replace) {
   try { localStorage.setItem('di_inspector', formValues.inspector.trim()); } catch {}
   drafts.set(drafts.get().filter(d => d.id !== loadedDraftId && !(d.type === currentType && d.machineNo === no && d.date === date)));  // draft is done
   const wasEditing = !!editingId; editingId = null; loadedDraftId = null;
+  setToday();   // next inspection starts on today again
   formValues = { inspector: formValues.inspector }; tried = false; initOpenState(currentType); renderForm();
   updateHistoryCount(); window.scrollTo({ top: 0, behavior: 'smooth' }); haptic([10, 40, 10]);
   showToast(wasEditing ? 'บันทึกการแก้ไขแล้ว' : replace ? 'แทนที่บันทึกของวันนี้แล้ว' : 'บันทึกลงใบรายเดือนแล้ว');
@@ -1050,6 +1101,7 @@ function saveDraft() {
 function loadInto(src) {
   currentType = src.type; try { localStorage.setItem('di_type', currentType); } catch {}
   $('machineNo').value = src.machineNo || ''; $('inspectDate').value = src.date || localToday();
+  dateAuto = $('inspectDate').value === localToday(); updateDateHint();   // editing an older record keeps its date
   $('machineStatus').value = src.status || 'Running'; setStatusDot();
   formValues = JSON.parse(JSON.stringify(src.data || {})); $('inspectorInput').value = formValues.inspector || '';
   tried = false; initOpenState(currentType);
@@ -1070,7 +1122,7 @@ function editRecord(id) {
 }
 function resetForm() {
   editingId = null; loadedDraftId = null; formValues = { inspector: formValues.inspector }; tried = false;
-  $('inspectDate').value = localToday(); recallNo(); initOpenState(currentType); renderForm();
+  setToday(); recallNo(); initOpenState(currentType); renderForm();
 }
 function draftBanner() {
   if (editingId) return `<div class="banner info" role="note">${icon('draft', 'duo')}<span>กำลังแก้ไขบันทึกที่บันทึกไว้แล้ว กดบันทึกเพื่อแทนที่ของเดิม</span><button type="button" class="bact" data-cancel-edit>ยกเลิก</button></div>`;
@@ -1104,65 +1156,80 @@ function renderHistory() {
 }
 
 /* history as a calendar: month chips → colored calendar → records of the tapped day */
-const H = { month: '', day: '', type: 'all' };
+const H = { month: '', day: '', type: 'all', filter: 'all' };
 const recStatus = r => isBadRec(r) ? 'ng' : (r.status && r.status !== 'Running' ? 'st' : 'ok');
 const RANK = { ok: 1, st: 2, ng: 3 };
 function historyCalendar(all) {
   const recs = all.filter(r => r.date && (H.type === 'all' || r.type === H.type));
-  const months = [...new Set([...all.map(r => (r.date || '').slice(0, 7)).filter(Boolean), localToday().slice(0, 7)])].sort();
-  if (!months.includes(H.month)) H.month = (all.map(r => r.date).sort().pop() || localToday()).slice(0, 7);
+  if (!H.month) H.month = (all.map(r => r.date).filter(Boolean).sort().pop() || localToday()).slice(0, 7);   // open on the latest month with records
   const inMonth = recs.filter(r => r.date.startsWith(H.month));
   const byDay = {}; inMonth.forEach(r => (byDay[r.date] ||= []).push(r));
-  if (!H.day || !H.day.startsWith(H.month)) H.day = Object.keys(byDay).sort().pop() || (localToday().startsWith(H.month) ? localToday() : H.month + '-01');
   const [yy, mm] = H.month.split('-').map(Number), first = new Date(yy, mm - 1, 1), days = new Date(yy, mm, 0).getDate();
   const label = (m, o) => new Date(+m.slice(0, 4), +m.slice(5, 7) - 1, 1).toLocaleDateString('th-TH', o);
   const nDays = Object.keys(byDay).length, nBad = Object.values(byDay).filter(l => l.some(r => recStatus(r) === 'ng')).length,
         nStop = Object.values(byDay).filter(l => l.some(r => recStatus(r) === 'st')).length;
+  // filter chips: all / abnormal / stop (by record)
+  const fOk = r => H.filter === 'ng' ? recStatus(r) === 'ng' : H.filter === 'st' ? recStatus(r) === 'st' : true;
+  const shown = inMonth.filter(fOk);
+  // compact calendar: date number + a status dot underneath
   let cal = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'].map(d => `<i>${d}</i>`).join('') + '<span></span>'.repeat(first.getDay());
   for (let d = 1; d <= days; d++) {
     const key = `${H.month}-${String(d).padStart(2, '0')}`, list = byDay[key] || [];
     const st = list.reduce((w, r) => RANK[recStatus(r)] > RANK[w] ? recStatus(r) : w, list.length ? 'ok' : '');
     const name = { ok: 'ปกติ', ng: 'ผิดปกติ', st: 'M/C Stop' }[st] || 'ไม่มีบันทึก';
-    cal += `<button type="button" class="cd ${st} ${key === H.day ? 'sel' : ''} ${key === localToday() ? 'today' : ''}" data-hd="${key}" aria-label="${d} ${name}${list.length > 1 ? ` ${list.length} รายการ` : ''}">${d}${list.length > 1 ? `<sup>${list.length}</sup>` : ''}</button>`;
+    const dim = H.filter !== 'all' && list.length && !list.some(fOk);
+    cal += `<button type="button" class="cd2 ${st ? 'has' : ''} ${key === H.day ? 'sel' : ''} ${key === localToday() ? 'today' : ''} ${dim ? 'dim' : ''}" data-hd="${key}" aria-label="${d} ${name}${list.length > 1 ? ` ${list.length} รายการ` : ''}">
+      <span>${d}</span><i class="dot ${st}"></i></button>`;
   }
-  const dayRecs = (byDay[H.day] || []).slice().sort((a, b) => a.type.localeCompare(b.type) || a.machineNo.localeCompare(b.machineNo));
-  const dayTitle = new Date(+H.day.slice(0, 4), +H.day.slice(5, 7) - 1, +H.day.slice(8, 10)).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  const typeSeg = [['all', 'ทั้งหมด'], ['ACP', 'Compressor'], ['AD', 'Dryer'], ['CT', 'Cooling']]
-    .map(([k, l]) => `<button type="button" role="tab" data-htype="${k}" aria-selected="${H.type === k}">${l}</button>`).join('');
-  return `<div class="sheet-sec">บันทึกแล้ว</div>
-    <div class="seg hseg" role="tablist" aria-label="เครื่อง">${typeSeg}</div>
-    <div class="mchips" id="mchips">${months.map(m => `<button type="button" data-hm="${m}" aria-pressed="${m === H.month}">${label(m, { month: 'short', year: '2-digit' })}</button>`).join('')}</div>
+  // month list grouped by day, newest first
+  const groups = {}; shown.forEach(r => (groups[r.date] ||= []).push(r));
+  const item = r => {
+    const s = recStatus(r), lines = abnormalIds(r.type, r.data).map(id => {
+      const fm = fieldOf(r.type, id), note = r.data.issues?.[id]?.note;
+      return `${esc(fm.f.label)}${fm.kind === 'numeric' ? ` ${esc(r.data[id])} ${fm.f.unit}` : ''}${note ? ' — ' + esc(note) : ''}`;
+    });
+    return `<div class="hitem"><button type="button" class="hopen" data-edit-rec="${r.id}">
+      <span class="hic">${icon(r.type.toLowerCase())}</span>
+      <span class="t"><b>${esc(FORMS[r.type].name)} · NO. ${esc(normNo(r.machineNo))}</b>
+        ${lines.length ? `<small class="bad">${lines.join('<br>')}</small>` : `<small>${esc(r.data.inspector || '-')}${r.status !== 'Running' ? ' · ' + esc(r.status) : ''}${r.data.remark ? ' · ' + esc(r.data.remark) : ''}</small>`}</span>
+      <span class="badge ${s === 'ng' ? 'warn' : s === 'st' ? 'stop' : 'done'}">${s === 'ng' ? icon('x') + 'ผิดปกติ' : s === 'st' ? 'Stop' : icon('check') + 'ปกติ'}</span>${icon('chev', 'chev')}</button></div>`;
+  };
+  const list = Object.keys(groups).sort().reverse().map(day => {
+    const t = new Date(+day.slice(0, 4), +day.slice(5, 7) - 1, +day.slice(8, 10)).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'short' });
+    const g = groups[day].sort((a, b) => a.type.localeCompare(b.type) || a.machineNo.localeCompare(b.machineNo));
+    return `<div class="hday ${day === H.day ? 'sel' : ''}" id="hd-${day}"><div class="hday-h">${t}${g.length > 1 ? ` · ${g.length} รายการ` : ''}</div><div class="grp">${g.map(item).join('')}</div></div>`;
+  }).join('');
+  const machines = [['all', 'ทั้งหมด', null], ['ACP', 'Air Compressor', 'acp'], ['AD', 'Air Dryer', 'ad'], ['CT', 'Cooling Tower', 'ct']];
+  return `<div class="hfil" role="group" aria-label="เครื่อง"><span class="hfil-l">เครื่อง</span>${machines.map(([k, l, ic]) =>
+      `<button type="button" class="mcirc ${ic ? '' : 'txt'}" data-htype="${k}" aria-pressed="${H.type === k}" aria-label="${l}" title="${l}">${ic ? icon(ic) : l}</button>`).join('')}</div>
     <div class="hcal-card">
-      <div class="hcal-h"><b>${label(H.month, { month: 'long', year: 'numeric' })}</b><small>${nDays} วัน · ผิดปกติ ${nBad} · Stop ${nStop}</small></div>
-      <div class="hcal">${cal}</div>
-      <div class="hleg"><span class="ok">ปกติ</span><span class="ng">ผิดปกติ</span><span class="st">M/C Stop</span><span class="no">ไม่มีบันทึก</span></div>
+      <div class="hcal-nav"><button type="button" class="harr" data-hmv="-1" aria-label="เดือนก่อน">${icon('back')}</button>
+        <b>${label(H.month, { month: 'long', year: 'numeric' })}</b>
+        <button type="button" class="harr" data-hmv="1" aria-label="เดือนถัดไป">${icon('chev')}</button></div>
+      <div class="hcal2">${cal}</div>
     </div>
-    <div class="sheet-sec">${dayTitle} · แตะเพื่อแก้ไข</div>
-    ${dayRecs.length ? `<div class="grp">${dayRecs.map(r => {
-      const s = recStatus(r), lines = abnormalIds(r.type, r.data).map(id => {
-        const fm = fieldOf(r.type, id), note = r.data.issues?.[id]?.note;
-        return `${esc(fm.f.label)}${fm.kind === 'numeric' ? ` ${esc(r.data[id])} ${fm.f.unit}` : ''}${note ? ' — ' + esc(note) : ''}`;
-      });
-      return `<div class="hitem"><button type="button" class="hopen" data-edit-rec="${r.id}">
-        <span class="hic" style="--c:${MACHINE_COLOR[r.type]}">${icon(r.type.toLowerCase())}</span>
-        <span class="t"><b>${esc(FORMS[r.type].name)} · NO. ${esc(normNo(r.machineNo))}</b>
-          <small>${esc(r.data.inspector || '-')}${r.status !== 'Running' ? ' · ' + esc(r.status) : ''}${r.data.remark ? ' · ' + esc(r.data.remark) : ''}</small>
-          ${lines.length ? `<small class="bad">${lines.join('<br>')}</small>` : ''}</span>
-        <span class="badge ${s === 'ng' ? 'warn' : s === 'st' ? 'stop' : 'done'}">${s === 'ng' ? icon('warn') + 'ผิดปกติ' : s === 'st' ? 'Stop' : icon('check') + 'ปกติ'}</span>${icon('chev', 'chev')}</button></div>`;
-    }).join('')}</div>` : `<div class="nodata" style="padding:24px 16px">ไม่มีบันทึกในวันนี้</div>`}`;
+    <div class="hchips" role="group" aria-label="กรอง">
+      <button type="button" data-hf="all" aria-pressed="${H.filter === 'all'}">ทั้งหมด ${nDays}</button>
+      <button type="button" class="ng" data-hf="ng" aria-pressed="${H.filter === 'ng'}">ผิดปกติ ${nBad}</button>
+      <button type="button" class="st" data-hf="st" aria-pressed="${H.filter === 'st'}">Stop ${nStop}</button></div>
+    ${list || `<div class="nodata" style="padding:28px 16px">${inMonth.length ? 'ไม่มีบันทึกในหมวดนี้' : 'ยังไม่มีบันทึกในเดือนนี้'}</div>`}`;
 }
 $('historyList').addEventListener('click', e => {
-  const m = e.target.closest('[data-hm]'), d = e.target.closest('[data-hd]'), t = e.target.closest('[data-htype]');
-  if (!m && !d && !t) return;
-  if (m) { H.month = m.dataset.hm; H.day = ''; }
-  if (d) H.day = d.dataset.hd;
+  const d = e.target.closest('[data-hd]'), t = e.target.closest('[data-htype]'), mv = e.target.closest('[data-hmv]'), f = e.target.closest('[data-hf]');
+  if (!d && !t && !mv && !f) return;
+  const sc = $('historyList'), y = sc.scrollTop;   // the sheet body itself is the scroller
+  if (mv) { const [yy, mm] = H.month.split('-').map(Number), n = new Date(yy, mm - 1 + +mv.dataset.hmv, 1);
+    H.month = `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}`; H.day = ''; }
   if (t) H.type = t.dataset.htype;
-  const y = $('historyList').parentElement.scrollTop; renderHistory(); $('historyList').parentElement.scrollTop = y; haptic(5);
+  if (f) H.filter = f.dataset.hf;
+  if (d) H.day = d.dataset.hd;
+  renderHistory(); sc.scrollTop = y; haptic(5);
+  if (d) {   // tap a day → scroll the list to that day
+    const g = document.getElementById('hd-' + H.day);
+    if (g) g.scrollIntoView({ behavior: 'smooth', block: 'start' }); else showToast('ไม่มีบันทึกในวันนั้น');
+  }
 });
-$('openHistoryBtn').addEventListener('click', () => {
-  H.month = ''; H.day = ''; renderHistory(); openDim('historyModal'); $('closeHistoryBtn').focus();
-  const sel = document.querySelector('#mchips [aria-pressed=true]'); sel?.scrollIntoView({ inline: 'center', block: 'nearest' });
-});
+$('openHistoryBtn').addEventListener('click', () => { H.month = ''; H.day = ''; H.filter = 'all'; renderHistory(); openDim('historyModal'); $('closeHistoryBtn').focus(); });
 $('closeHistoryBtn').addEventListener('click', () => closeDim('historyModal'));
 $('historyModal').addEventListener('click', e => { if (e.target.id === 'historyModal') closeDim('historyModal'); });
 $('exportCsvBtn').addEventListener('click', () => {
