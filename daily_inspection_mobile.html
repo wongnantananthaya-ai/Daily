@@ -82,8 +82,8 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 
 /* machine info rows: leading icon, label, equal-width field on the right */
 .row.info{min-height:58px;flex-wrap:nowrap}
-.ri{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;flex:none;color:var(--mc,var(--tint));background:color-mix(in srgb,var(--mc,var(--tint)) 14%,transparent);transition:color .25s,background .25s}
-.ri svg.i{width:18px;height:18px;stroke-width:1.8;--duo:color-mix(in srgb,var(--mc,var(--tint)) 24%,transparent)}
+.ri{width:24px;height:32px;display:grid;place-items:center;flex:none;color:var(--label2);transition:color .25s}   /* plain icon, no color tile */
+.ri svg.i{width:21px;height:21px;stroke-width:1.7;--duo:none}
 .row.info .lab{flex:1 1 auto}
 .row.info .lab b{white-space:nowrap}
 .field{display:flex;align-items:center;gap:6px;flex:none;width:9.6rem;min-height:44px;padding:0 12px;border:1.5px solid var(--field-b);border-radius:12px;background:var(--field);transition:border-color .15s,box-shadow .15s,background .15s}
@@ -93,7 +93,7 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .field input[type=date]{color:var(--tint)}
 .field .pre{font-size:.8rem;font-weight:700;color:var(--label2);letter-spacing:.02em}
 .row.miss .field{border-color:var(--red)}
-.row.miss .ri{color:var(--red);background:color-mix(in srgb,var(--red) 12%,transparent)}
+.row.miss .ri{color:var(--red)}
 .field.sel{position:relative;padding-right:30px;gap:8px}
 .field.sel::after{content:"";position:absolute;right:13px;top:50%;width:7px;height:7px;margin-top:-6px;border-right:2px solid var(--label2);border-bottom:2px solid var(--label2);transform:rotate(45deg);pointer-events:none}
 .field select{flex:1;min-width:0;border:0;background:transparent;outline:none;padding:0;min-height:42px;font-size:1rem;font-weight:500;color:var(--label);appearance:none;-webkit-appearance:none;cursor:pointer}
@@ -104,9 +104,10 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .acc{background:var(--card);border-radius:12px;overflow:hidden}
 .acc-h{display:flex;align-items:center;gap:10px;width:100%;min-height:56px;padding:10px 16px;border:0;background:none;text-align:left;cursor:pointer}
 .acc-h:active{background:var(--fill2)}
-.tile{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:none;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent)}
-.tile svg.i{width:19px;height:19px;stroke-width:1.8;--duo:color-mix(in srgb,var(--c) 24%,transparent)}
-.tile.lg{width:46px;height:46px}
+/* section + machine icons: neutral gray, no color tiles */
+.tile{width:26px;height:34px;display:grid;place-items:center;flex:none;color:var(--label2)}
+.tile svg.i{width:22px;height:22px;stroke-width:1.7;--duo:none}
+.tile.lg{width:46px;height:46px;border-radius:50%;background:var(--fill2);color:var(--label)}
 .tile.lg svg.i{width:26px;height:26px}
 .mrow b{font-weight:600}
 .duo{--duo:color-mix(in srgb,currentColor 22%,transparent)}
@@ -118,7 +119,7 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .acc.open .chev{transform:rotate(90deg)}
 .acc-b{display:none;border-top:.5px solid var(--sep)}
 .acc.open .acc-b{display:block}
-.quick{display:flex;align-items:center;justify-content:center;gap:6px;width:calc(100% - 32px);margin:12px 16px 4px;min-height:44px;border:0;border-radius:10px;background:color-mix(in srgb,var(--green) 14%,transparent);color:var(--green-t);font-weight:600;font-size:.94rem;cursor:pointer}
+.quick{display:flex;align-items:center;justify-content:center;gap:6px;width:calc(100% - 32px);margin:12px 16px 4px;min-height:44px;border:0;border-radius:10px;background:var(--fill2);color:var(--label);font-weight:600;font-size:.94rem;cursor:pointer}
 .quick:active{opacity:.6}
 
 /* ok / ng segmented */
@@ -342,6 +343,88 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .camfloat svg.i{width:18px;height:18px;stroke-width:1.9;--duo:rgba(10,91,211,.2)}
 .cambtn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:100%;min-height:44px;border:0;border-radius:8px;background:#E8F1FF;color:#0A5BD3;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer}
 .cambtn svg.i{width:20px;height:20px;stroke-width:1.8;--duo:rgba(10,91,211,.18)}
+/* main "ตรวจ" button + answer summary */
+.checkbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;min-height:80px;margin:0 0 24px;padding:12px 16px;border:1.5px solid color-mix(in srgb,var(--tint) 35%,transparent);border-radius:18px;background:var(--card);color:var(--tint);cursor:pointer;transition:transform .15s,background .15s}
+.checkbtn:active{transform:scale(.98);background:color-mix(in srgb,var(--tint) 6%,var(--card))}
+.checkbtn .cb-t{font-size:1.45rem;font-weight:700;letter-spacing:.02em}
+.checkbtn .cb-s{font-size:.82rem;color:var(--label2)}
+.sec-n{font-size:.76rem;color:var(--label2)}
+.sumrow{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:10px 16px;border:0;background:none;text-align:left;cursor:pointer;position:relative;color:var(--label)}
+.sumrow+.sumrow::before{content:"";position:absolute;top:0;left:16px;right:0;border-top:.5px solid var(--sep)}
+.sumrow:active{background:var(--fill2)}
+.sumrow .sl{flex:1;min-width:0}
+.sumrow .sl small{display:block;margin-top:2px;font-size:.78rem;color:var(--red-t)}
+.sumrow .sv{flex:none;font-weight:600;font-variant-numeric:tabular-nums}
+.sumrow .sv small{font-weight:400;color:var(--label2);font-size:.78rem}
+.sumrow .sv.ok{color:var(--ok-t)}.sumrow .sv.bad{color:var(--red-t)}
+.sumrow .chev{color:var(--label3)}
+/* step-by-step fill (one question per screen) */
+.wzstart{display:flex;align-items:center;gap:12px;width:100%;margin:0 0 22px;padding:14px 16px;border:0;border-radius:14px;background:var(--card);color:var(--label);text-align:left;cursor:pointer;transition:transform .15s}
+.wzstart:active{transform:scale(.98)}
+.wzstart>svg.i:first-child{width:26px;height:26px;stroke-width:1.7;color:var(--tint);--duo:none}
+.wzstart>svg.i:last-child{color:var(--label3)}
+.wzstart span{flex:1}
+.wzstart b{display:block;font-size:1.02rem;font-weight:600;color:var(--tint)}
+.wzstart small{display:block;font-size:.8rem;color:var(--label2);margin-top:2px}
+.wz{position:fixed;inset:0;z-index:58;background:#fff}
+.wz[hidden]{display:none}
+.wz-in{max-width:560px;height:100%;margin:0 auto;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.wz-top{display:flex;align-items:center;gap:12px;padding:12px 20px 10px;font-size:.88rem;color:var(--label2)}
+.wz-left{margin-left:auto}
+.wz-x{width:36px;height:36px;border:0;border-radius:50%;background:var(--fill2);color:var(--label2);display:grid;place-items:center;cursor:pointer}
+.wz-bar{height:6px;margin:0 20px;border-radius:3px;background:#E9E9EF;overflow:hidden}
+.wz-bar i{display:block;height:100%;width:0;border-radius:3px;background:var(--tint);transition:width .35s cubic-bezier(.32,.72,0,1)}
+.wz-ctx{display:flex;align-items:center;gap:8px;margin:10px 20px 0;font-size:.82rem;color:var(--label2)}
+.wz-ctx span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wz-ctx button{flex:none;border:0;background:var(--fill2);color:var(--tint);font-size:.8rem;font-weight:600;min-height:32px;padding:0 12px;border-radius:999px;cursor:pointer}
+.wz-body{flex:1;overflow:auto;padding:28px 20px 12px;display:flex;flex-direction:column;justify-content:center}
+.wz-eyebrow{font-size:.82rem;font-weight:600;color:var(--tint);margin:0 0 6px}
+.wz-q{margin:0 0 20px;font-size:1.65rem;font-weight:700;line-height:1.25;letter-spacing:-.01em}
+.wz-chips{display:flex;flex-wrap:wrap;gap:10px}
+.wz-chips.col{flex-direction:column}
+.wz-chip{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 20px;border:1.5px solid #DADADF;border-radius:999px;background:#fff;color:var(--label);font-size:1rem;font-weight:500;cursor:pointer;transition:background .15s,border-color .15s,transform .12s}
+.wz-chip:active{transform:scale(.97)}
+.wz-chip[aria-pressed=true]{border-color:var(--tint);background:color-mix(in srgb,var(--tint) 9%,#fff);color:var(--tint);font-weight:600}
+.wz-chip.big{flex:1;min-height:68px;border-radius:18px;font-size:1.12rem}
+.wz-chip.left{justify-content:flex-start;padding:0 20px}
+.wz-chip.ok[aria-pressed=true]{border-color:var(--green);background:#EAF8EE;color:var(--ok-t)}
+.wz-chip.ng[aria-pressed=true]{border-color:var(--red);background:#FFEEED;color:var(--red-t)}
+.wz-chip svg.i{width:22px;height:22px;stroke-width:2.4}
+.wz-chip .dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+.dot.run{background:var(--green)}.dot.stop{background:var(--red)}.dot.unl{background:var(--orange)}
+.wz-num{display:flex;align-items:center;gap:10px;min-height:76px;padding:0 20px;border:2px solid #DADADF;border-radius:18px;background:#fff;transition:border-color .15s}
+.wz-num:focus-within{border-color:var(--tint)}
+.wz-num.sm{min-height:58px;margin-top:12px}
+.wz-num[hidden]{display:none}
+.wz-num input{flex:1;min-width:0;border:0;outline:none;background:transparent;font-size:2.1rem;font-weight:700;color:var(--label)}
+.wz-num.sm input{font-size:1.2rem;font-weight:600}
+.wz-num .unit{font-size:1.1rem;font-weight:600;color:var(--label2);min-width:0;width:auto}
+.wz-num.good{border-color:var(--green)}.wz-num.bad{border-color:var(--red)}
+.wz-num.bad input{color:var(--red-t)}
+.wz-state{margin:12px 2px 0;font-size:.92rem;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.wz-state .spec{color:var(--label2)}
+.wz-state b{display:inline-flex;align-items:center;gap:4px}
+.wz-state .bad{color:var(--red-t)}.wz-state .good{color:var(--ok-t)}
+.wz-help{margin:14px 2px 0;font-size:.88rem;color:var(--label2);line-height:1.5}
+.wz-ta{width:100%!important;margin:0!important;min-height:9em!important;font-size:1.06rem}
+.wz .issue{margin-top:16px;padding:14px;border-radius:16px}
+.wz-err{margin:12px 2px 0;min-height:1.3em;font-size:.88rem;font-weight:600;color:var(--red-t)}
+.wz-foot{display:flex;gap:12px;padding:10px 20px 18px}
+.wz-foot[hidden]{display:none}
+.wz-back{flex:none;width:54px;height:54px;border:1.5px solid #DADADF;border-radius:50%;background:#fff;color:var(--label);display:grid;place-items:center;cursor:pointer}
+.wz-back:disabled{opacity:.35}
+.wz-back svg.i{width:22px;height:22px;stroke-width:2.4}
+.wz-next{flex:1;min-height:54px;border:0;border-radius:999px;background:var(--tint);color:#fff;font-size:1.06rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:transform .15s}
+.wz-next:active{transform:scale(.98)}
+.wz-next.full{width:100%;margin-top:22px}
+.wz-sec{width:100%;min-height:52px;margin-top:10px;border:0;border-radius:999px;background:color-mix(in srgb,var(--orange) 16%,#fff);color:var(--orange-t);font-weight:700;font-size:1rem;cursor:pointer}
+.wz-link{width:100%;min-height:44px;margin-top:6px;border:0;background:none;color:var(--tint);font-size:.95rem;font-weight:600;cursor:pointer}
+.wz-done{text-align:center}
+.wz-done .wz-q{margin-bottom:6px}
+.wz-big{width:84px;height:84px;margin:0 auto 16px;border-radius:50%;display:grid;place-items:center}
+.wz-big svg.i{width:48px;height:48px;stroke-width:1.7}
+.wz-big.ok{background:#EAF8EE;color:var(--green);--duo:rgba(52,199,89,.2)}.wz-big.ng{background:#FFEEED;color:var(--red);--duo:rgba(255,59,48,.18)}
+.wz-sum{margin-top:16px;text-align:left;background:var(--bg)}
 /* full-screen landscape sheet: on a portrait phone the stage is turned 90° so the page uses the long side */
 .ls{position:fixed;inset:0;z-index:64;background:#1C1C1E;touch-action:none;overflow:hidden;user-select:none;-webkit-user-select:none}
 .ls[hidden]{display:none}
@@ -483,7 +566,6 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 <footer class="bar">
   <div class="bar-in">
     <div class="progress" aria-live="polite"><b id="overallProgress">กรอกแล้ว 0/0</b><small id="overallSub"></small><div class="pbar" id="pbar"><i></i></div></div>
-    <button class="draftbtn" id="draftBtn" type="button"><svg class="i duo"><use href="#i-draft"/></svg>บันทึกร่าง</button>
     <button class="save" id="saveBtn" type="button"><svg class="i"><use href="#i-check"/></svg>บันทึก</button>
   </div>
 </footer>
@@ -520,6 +602,20 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
     <button type="button" id="zOut" aria-label="ซูมออก">−</button><span id="zLabel" aria-live="polite">100%</span><button type="button" id="zIn" aria-label="ซูมเข้า">+</button><button type="button" id="zLand" class="landbtn"><svg class="i" style="width:1.15rem;height:1.15rem;stroke-width:2"><use href="#i-rotate"/></svg>แนวนอน</button>
   </div>
 </section>
+
+<div class="wz" id="wz" hidden role="dialog" aria-modal="true" aria-labelledby="wzQ">
+  <div class="wz-in">
+    <div class="wz-top"><button type="button" class="wz-x" id="wzClose" aria-label="ปิด กลับไปหน้าฟอร์ม"><svg class="i"><use href="#i-x"/></svg></button>
+      <span id="wzStep"></span><span class="wz-left" id="wzLeft"></span></div>
+    <div class="wz-bar"><i id="wzBar"></i></div>
+    <div class="wz-ctx"><span id="wzCtx"></span><button type="button" id="wzChange">แก้ข้อมูลเครื่อง</button></div>
+    <div class="wz-body" id="wzBody"></div>
+    <div class="wz-foot" id="wzFoot">
+      <button type="button" class="wz-back" id="wzBack" aria-label="ข้อก่อนหน้า"><svg class="i"><use href="#i-back"/></svg></button>
+      <button type="button" class="wz-next" id="wzNext">ถัดไป</button>
+    </div>
+  </div>
+</div>
 
 <div class="ls" id="ls" hidden role="dialog" aria-modal="true" aria-label="ใบตรวจรายเดือน เต็มจอแนวนอน">
   <div class="ls-stage" id="lsStage">
@@ -633,7 +729,7 @@ const store = {
 };
 
 let currentType = 'ACP';
-try { currentType = localStorage.getItem('di_type') || 'ACP'; } catch {}
+// the app always opens on Air Compressor (switch with the tabs on the form)
 if (!FORMS[currentType]) currentType = 'ACP';
 let formValues = {}, openAccordions = {}, tried = false;
 const draftInspector = (() => { try { return localStorage.getItem('di_inspector') || ''; } catch { return ''; } })();
@@ -677,16 +773,25 @@ function renderForm() {
   $('machineTile').style.setProperty('--c', MACHINE_COLOR[currentType]);
   document.documentElement.style.setProperty('--mc', MACHINE_COLOR[currentType]);   // row icons follow the machine's color
   $('machineTile').innerHTML = icon(currentType.toLowerCase());
+  /* main page = machine info box (above) + a big "ตรวจ" button; inspection items are answered one per screen */
+  const fs = schema.sections.flatMap(s => s.fields || []), nFilled = fs.filter(f => filled(formValues[f.id])).length;
+  const nBad = abnormalIds(currentType, formValues).length;
   let html = draftBanner() + (isStopped() ? `<div class="banner" role="note">${icon('warn')}<span>เครื่องอยู่ในสถานะ <b>M/C Stop</b> ข้ามช่องที่ต้องวัดขณะเดินเครื่องได้ แล้วกดบันทึกได้เลย</span></div>` : '');
+  html += `<button type="button" class="checkbtn" data-wz><span class="cb-t">ตรวจ</span>
+    <span class="cb-s">${isStopped() ? 'เครื่องหยุด · เพิ่มหมายเหตุได้' : nFilled ? `ตรวจแล้ว ${nFilled}/${fs.length} ข้อ${nBad ? ` · ผิดปกติ ${nBad}` : ''} · กดเพื่อตรวจต่อ` : `${fs.length} ข้อ · ตอบทีละข้อ`}</span></button>`;
+  // compact summary of what has been answered; tap a row to jump back to that question
   schema.sections.forEach(sec => {
-    const b = badge(sec), open = !!openAccordions[sec.id];
-    html += `<div class="sec"><div class="acc ${open ? 'open' : ''}" data-sec="${sec.id}">
-      <button class="acc-h" type="button" data-toggle="${sec.id}" aria-expanded="${open}" aria-controls="b_${sec.id}">
-        <span class="tile" style="--c:${sec.color}">${icon(sec.icon)}</span>
-        <span class="t">${sec.title}</span><span class="badge ${b.c}">${b.t}</span>${icon('chev', 'chev')}
-      </button>
-      <div class="acc-b" id="b_${sec.id}">${renderSectionBody(sec)}</div></div></div>`;
+    if (!sec.fields) return;
+    const done = sec.fields.filter(f => filled(formValues[f.id]));
+    if (!done.length) return;
+    html += `<div class="sec"><div class="sec-h"><h2>${sec.title}</h2><small class="sec-n">${done.length}/${sec.fields.length}</small></div><div class="grp">${done.map(f => {
+      const v = formValues[f.id], bad = sec.type === 'numeric' ? validateNumeric(f, v) === 'invalid' : v === 'ผิดปกติ';
+      const val = sec.type === 'numeric' ? `${esc(v)} <small>${f.unit}</small>` : (bad ? '✕ ผิดปกติ' : '✓ ปกติ');
+      return `<button type="button" class="sumrow" data-wzat="${f.id}"><span class="sl">${esc(f.label)}${bad && formValues.issues?.[f.id]?.note ? `<small>${esc(formValues.issues[f.id].note)}</small>` : ''}</span>
+        <span class="sv ${bad ? 'bad' : sec.type === 'numeric' ? '' : 'ok'}">${val}</span>${icon('chev', 'chev')}</button>`;
+    }).join('')}</div></div>`;
   });
+  if ((formValues.remark || '').trim()) html += `<div class="sec"><div class="sec-h"><h2>หมายเหตุ</h2></div><div class="grp"><button type="button" class="sumrow" data-wzat="remark"><span class="sl">${esc(formValues.remark)}</span>${icon('chev', 'chev')}</button></div></div>`;
   $('formContainer').innerHTML = html;
   updateOverallProgress();
 }
@@ -728,7 +833,7 @@ function issuePanel(id) {
     <button type="button" class="sharebtn" data-share="${id}">${icon('share')}ส่งแจ้งหัวหน้า (LINE / แชท)</button>
   </div>`;
 }
-function refreshPanel(id) { const p = document.querySelector(`.issue[data-issue="${id}"]`); if (p) p.outerHTML = issuePanel(id); }
+function refreshPanel(id) { document.querySelectorAll(`.issue[data-issue="${id}"]`).forEach(p => { p.outerHTML = issuePanel(id); }); }   // form + step-by-step view
 async function compressImage(file) {
   const url = URL.createObjectURL(file);
   try {
@@ -847,17 +952,15 @@ $('saveBtn').addEventListener('click', () => {
   if (lacking.length) {
     FORMS[currentType].sections.forEach(s => { if ((s.fields || []).some(f => lacking.includes(f.id))) openAccordions[s.id] = true; });
     renderForm();
-    lacking.forEach(id => document.querySelector(`.issue[data-issue="${id}"]`)?.classList.add('need'));
-    const first = document.querySelector(`.issue[data-issue="${lacking[0]}"]`);
-    first?.scrollIntoView({ behavior: 'smooth', block: 'center' }); first?.querySelector('textarea')?.focus({ preventScroll: true });
-    haptic([30, 60, 30]); showToast(`รายการผิดปกติ ${lacking.length} ข้อ ยังไม่มีหมายเหตุหรือรูป`, true); return;
+    haptic([30, 60, 30]); showToast(`รายการผิดปกติ ${lacking.length} ข้อ ยังไม่มีหมายเหตุหรือรูป`, true);
+    openWizard(lacking[0]); document.querySelector('#wzBody .issue')?.classList.add('need'); return;
   }
   let total = 0, filled = 0;
   FORMS[currentType].sections.forEach(s => { if (s.fields) { const st = stats(s); total += st.total; filled += st.filled; } });
   if (filled < total && !isStopped()) {
     FORMS[currentType].sections.forEach(s => { if (s.fields && stats(s).filled < s.fields.length) openAccordions[s.id] = true; });
     renderForm();
-    askConfirm(`ยังกรอกไม่ครบ ${total - filled} ช่อง`, 'ช่องที่ขาดขึ้นเป็นสีแดง จะบันทึกเท่าที่กรอกไว้เลยไหม', 'บันทึก', doSave);
+    askConfirm(`ยังตรวจไม่ครบ ${total - filled} ข้อ`, 'กด "ตรวจ" เพื่อตรวจข้อที่เหลือ หรือจะบันทึกเท่าที่ตรวจไว้เลยไหม', 'บันทึก', doSave);
     return;
   }
   doSave();
@@ -944,7 +1047,6 @@ function draftBanner() {
   if (!ds.length || hasUnsaved()) return '';
   return `<div class="banner info" role="note">${icon('draft', 'duo')}<span>มีร่างที่ยังไม่ได้บันทึก ${ds.length} รายการ<br><small>ล่าสุด NO. ${esc(ds[0].machineNo || '-')} · ${thDate(ds[0].date)}</small></span><button type="button" class="bact" data-open-draft="${ds[0].id}">เปิดต่อ</button></div>`;
 }
-$('draftBtn').addEventListener('click', saveDraft);
 document.addEventListener('click', e => {
   const od = e.target.closest('[data-open-draft]'); if (od) { openDraft(+od.dataset.openDraft); return; }
   const dd = e.target.closest('[data-del-draft]');
@@ -1423,6 +1525,160 @@ function showToast(msg, err = false) {
   t.querySelector('use').setAttribute('href', err ? '#i-warn' : '#i-checkc'); t.querySelector('span').textContent = msg;
   requestAnimationFrame(() => t.classList.add('show')); clearTimeout(showToast.t); showToast.t = setTimeout(() => t.classList.remove('show'), 2200);
 }
+
+/* ---- step-by-step fill: one question per screen, tap a choice to move on ---- */
+const filled = v => v !== undefined && v !== null && String(v).trim() !== '';
+const WZ = { i: 0, steps: [] };
+function wzSteps() {
+  const s = [];   // machine no / date / status / inspector are filled on the main page
+  if (!isStopped()) FORMS[currentType].sections.forEach(sec => (sec.fields || []).forEach(f => s.push({ k: 'f', f, sec })));
+  if (FORMS[currentType].sections.find(x => x.type === 'meta')?.hasAnalysis) s.push({ k: 'analysis' });
+  s.push({ k: 'remark' }, { k: 'done' });
+  return s;
+}
+const anyFilled = () => FORMS[currentType].sections.some(s => (s.fields || []).some(f => filled(formValues[f.id])));
+function wzAnswered(st) {
+  if (st.k === 'no') return !!normNo($('machineNo').value);
+  if (st.k === 'insp') return !!(formValues.inspector || '').trim();
+  if (st.k === 'status') return true;   // defaults to Running; still reachable with the back button
+  if (st.k === 'f') return filled(formValues[st.f.id]);
+  if (st.k === 'analysis') return !!formValues.analysis;
+  return st.k !== 'done' ? true : false;
+}
+const wzBad = st => st.k === 'f' && (st.sec.type === 'numeric' ? validateNumeric(st.f, formValues[st.f.id]) === 'invalid' : formValues[st.f.id] === 'ผิดปกติ');
+function wzInfoReady() {   // the info box must be filled before checking
+  const noOk = !!normNo($('machineNo').value), inspOk = !!(formValues.inspector || '').trim();
+  $('machineNo').closest('.row').classList.toggle('miss', !noOk); $('inspRow').classList.toggle('miss', !inspOk);
+  if (noOk && inspOk) return true;
+  haptic([30, 60, 30]); showToast(!noOk ? 'กรอกเลขเครื่องก่อนเริ่มตรวจ' : 'ใส่ชื่อผู้ตรวจเช็คก่อนเริ่มตรวจ', true);
+  window.scrollTo({ top: 0, behavior: 'smooth' }); (!noOk ? $('machineNo') : $('inspectorInput')).focus({ preventScroll: true });
+  return false;
+}
+function openWizard(at) {
+  if (!wzInfoReady()) return;
+  WZ.steps = wzSteps();
+  const j = at ? WZ.steps.findIndex(st => (st.k === 'f' && st.f.id === at) || st.k === at) : -1;
+  const i = j >= 0 ? j : WZ.steps.findIndex(st => !wzAnswered(st)); WZ.i = i < 0 ? WZ.steps.length - 1 : i;
+  $('wz').hidden = false; document.body.style.overflow = 'hidden'; wzRender(); haptic(5);
+}
+function closeWizard() { $('wz').hidden = true; document.body.style.overflow = ''; renderForm(); }
+const chip = (kind, v, label, on, cls = '') => `<button type="button" class="wz-chip ${cls}" data-wzpick="${kind}" data-v="${esc(v)}" aria-pressed="${on}">${label}</button>`;
+function wzRender() {
+  const st = WZ.steps[WZ.i], N = WZ.steps.length - 1, done = st.k === 'done';
+  $('wzStep').textContent = done ? 'ตรวจครบแล้ว' : `ข้อ ${WZ.i + 1} จาก ${N}`;
+  $('wzLeft').textContent = done ? '' : N - WZ.i - 1 ? `อีก ${N - WZ.i - 1} ข้อ` : 'ข้อสุดท้าย';
+  $('wzBar').style.width = (done ? 100 : WZ.i / N * 100) + '%';
+  $('wzFoot').hidden = done; $('wzBack').disabled = WZ.i === 0;
+  $('wzCtx').textContent = `${FORMS[currentType].name} NO.${normNo($('machineNo').value) || '-'} · ${(formValues.inspector || '').trim() || '-'} · ${$('machineStatus').value}`;
+  $('wzNext').textContent = WZ.steps[WZ.i + 1]?.k === 'done' ? 'สรุปผล' : 'ถัดไป';
+  let h = '';
+  if (st.k === 'no') {
+    const cur = normNo($('machineNo').value);
+    const nos = [...new Set(store.get().filter(r => r.type === currentType).map(r => normNo(r.machineNo)).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'th', { numeric: true }));
+    if (cur && !nos.includes(cur)) nos.unshift(cur);
+    h = `<div class="wz-eyebrow">${esc(FORMS[currentType].name)}</div><h2 class="wz-q" id="wzQ">เครื่องที่เท่าไหร่?</h2>
+      <div class="wz-chips">${nos.map(n => chip('no', n, 'NO. ' + esc(n), n === cur)).join('')}${nos.length ? `<button type="button" class="wz-chip" data-wzother>อื่น ๆ</button>` : ''}</div>
+      <div class="wz-num sm" id="wzOtherBox" ${nos.length ? 'hidden' : ''}><span class="unit">NO.</span><input id="wzText" data-for="no" autocomplete="off" placeholder="พิมพ์เลขเครื่อง" value="${esc(cur)}"></div>
+      <p class="wz-help">${nos.length ? 'เครื่องที่เคยบันทึกขึ้นก่อน กดเลือกได้เลย' : 'พิมพ์เลขเครื่อง แล้วกดถัดไป'}</p>`;
+  } else if (st.k === 'insp') {
+    const cur = (formValues.inspector || '').trim();
+    const names = [...new Set([cur, ...store.get().map(r => (r.data.inspector || '').trim())].filter(Boolean))].slice(0, 6);
+    h = `<div class="wz-eyebrow">ผู้ตรวจเช็ค</div><h2 class="wz-q" id="wzQ">ใครเป็นผู้ตรวจวันนี้?</h2>
+      <div class="wz-chips">${names.map(n => chip('insp', n, esc(n), n === cur)).join('')}${names.length ? `<button type="button" class="wz-chip" data-wzother>คนอื่น</button>` : ''}</div>
+      <div class="wz-num sm" id="wzOtherBox" ${names.length ? 'hidden' : ''}><input id="wzText" data-for="insp" autocomplete="name" placeholder="พิมพ์ชื่อผู้ตรวจ" value=""></div>
+      <p class="wz-help">${names.length ? 'ชื่อที่เคยใช้ขึ้นก่อน กดเลือกได้เลย' : 'พิมพ์ชื่อ แล้วกดถัดไป'}</p>`;
+  } else if (st.k === 'status') {
+    const cur = $('machineStatus').value;
+    h = `<div class="wz-eyebrow">${thDate($('inspectDate').value)}</div><h2 class="wz-q" id="wzQ">ตอนนี้เครื่องเป็นอย่างไร?</h2>
+      <div class="wz-chips col">${[['Running', 'เดินเครื่องปกติ (Running)', 'run'], ['M/C Stop', 'หยุดเครื่อง (M/C Stop)', 'stop'], ['Unload', 'Unload', 'unl']]
+        .map(([v, l, c]) => chip('st', v, `<i class="dot ${c}"></i>${l}`, v === cur, 'big left')).join('')}</div>
+      <p class="wz-help">ถ้าหยุดเครื่อง จะข้ามข้อที่ต้องวัดขณะเดินเครื่องให้</p>`;
+  } else if (st.k === 'f') {
+    const f = st.f, v = formValues[f.id] ?? '';
+    h = `<div class="wz-eyebrow">${esc(st.sec.title)}</div><h2 class="wz-q" id="wzQ">${esc(f.label)}</h2>`;
+    if (st.sec.type === 'numeric') {
+      const s = validateNumeric(f, v);
+      h += `<div class="wz-num ${s === 'invalid' ? 'bad' : s === 'valid' ? 'good' : ''}" id="wzNumBox"><input id="wzNum" data-id="${f.id}" inputmode="decimal" autocomplete="off" placeholder="0" value="${esc(v)}" aria-label="${esc(f.label)}"><span class="unit">${f.unit}</span></div>
+        <p class="wz-state" id="wzState">${wzStateText(f, v)}</p><div id="wzIssue">${s === 'invalid' ? issuePanel(f.id) : ''}</div>`;
+    } else {
+      h += `<div class="wz-chips">${chip('ck', 'ปกติ', `${icon('check')}ปกติ`, v === 'ปกติ', 'big ok')}${chip('ck', 'ผิดปกติ', `${icon('x')}ผิดปกติ`, v === 'ผิดปกติ', 'big ng')}</div>
+        <p class="wz-help">${esc(f.spec)}</p>${v === 'ผิดปกติ' ? issuePanel(f.id) : ''}`;
+    }
+  } else if (st.k === 'analysis') {
+    const n = abnormalIds(currentType, formValues).length, v = formValues.analysis;
+    h = `<div class="wz-eyebrow">สรุป</div><h2 class="wz-q" id="wzQ">ผลการวิเคราะห์โดยรวม</h2>
+      <div class="wz-chips">${chip('an', 'ปกติ', `${icon('check')}ปกติ`, v === 'ปกติ', 'big ok')}${chip('an', 'ผิดปกติ', `${icon('x')}ผิดปกติ`, v === 'ผิดปกติ', 'big ng')}</div>
+      <p class="wz-help">${n ? `พบรายการผิดปกติ ${n} ข้อในการตรวจนี้` : 'ยังไม่พบรายการผิดปกติ'}</p>`;
+  } else if (st.k === 'remark') {
+    h = `<div class="wz-eyebrow">หมายเหตุ</div><h2 class="wz-q" id="wzQ">มีอะไรเพิ่มเติมไหม?</h2>
+      <textarea class="inp wz-ta" id="wzRemark" placeholder="เช่น อาการผิดปกติ หรือสิ่งที่ทำไปแล้ว">${esc(formValues.remark)}</textarea>
+      <p class="wz-help">ไม่บังคับ ถ้าไม่มีกดถัดไปได้เลย</p>`;
+  } else {
+    const fs = FORMS[currentType].sections.flatMap(s => s.fields || []), nf = fs.filter(f => filled(formValues[f.id])).length;
+    const bad = abnormalIds(currentType, formValues);
+    h = `<div class="wz-done"><span class="wz-big ${bad.length ? 'ng' : 'ok'}">${icon(bad.length ? 'warn' : 'checkc', 'duo')}</span>
+      <h2 class="wz-q" id="wzQ">${bad.length ? `พบผิดปกติ ${bad.length} รายการ` : 'ปกติทุกรายการ'}</h2>
+      <p class="wz-help">${esc(FORMS[currentType].name)} NO. ${esc(normNo($('machineNo').value) || '-')} · ${thDate($('inspectDate').value)} · ${esc(formValues.inspector || '-')}<br>${isStopped() ? 'สถานะ M/C Stop' : `กรอกแล้ว ${nf}/${fs.length} ข้อ`}</p>
+      ${bad.length ? `<div class="grp wz-sum">${bad.map(id => { const m = fieldOf(currentType, id); return `<div class="row"><span class="lab"><b>${esc(m.f.label)}</b><small>${m.kind === 'numeric' ? esc(formValues[id]) + ' ' + m.f.unit + ' · ' : ''}${esc(formValues.issues?.[id]?.note || 'ไม่มีหมายเหตุ')}</small></span></div>`; }).join('')}</div>` : ''}
+      <button type="button" class="wz-next full" data-wzdo="save">${icon('check')}บันทึก</button>
+      <button type="button" class="wz-link" data-wzdo="review">ดูทั้งหมดก่อนบันทึก</button></div>`;
+  }
+  $('wzBody').innerHTML = h + `<p class="wz-err" id="wzErr" role="alert"></p>`;
+  $('wzBody').scrollTop = 0;
+  const inp = $('wzNum') || ($('wzOtherBox') && !$('wzOtherBox').hidden ? $('wzText') : null);
+  if (inp) setTimeout(() => inp.focus({ preventScroll: true }), 250);
+}
+function wzStateText(f, v) {
+  const s = validateNumeric(f, v);
+  return `<span class="spec">เกณฑ์: ${esc(f.spec)}</span>` + (s === 'invalid' ? ` <b class="bad">${icon('warn')}เกินเกณฑ์</b>` : s === 'valid' ? ` <b class="good">${icon('checkc')}อยู่ในเกณฑ์</b>` : '');
+}
+function wzNext(auto) {
+  const st = WZ.steps[WZ.i], err = m => { $('wzErr').textContent = m; haptic([30, 60, 30]); };
+  if (st.k === 'no' && !normNo($('machineNo').value)) return err('เลือกหรือพิมพ์เลขเครื่องก่อน');
+  if (st.k === 'insp' && !(formValues.inspector || '').trim()) return err('เลือกหรือพิมพ์ชื่อผู้ตรวจก่อน');
+  if (wzBad(st)) { const it = formValues.issues?.[st.f.id]; if (!it || (!it.note.trim() && !it.photos.length)) { document.querySelector('#wzBody .issue')?.classList.add('need'); return err('รายการผิดปกติ: เขียนหมายเหตุ หรือแนบรูปก่อน'); } }
+  const go = () => { if (WZ.i < WZ.steps.length - 1) { WZ.i++; wzRender(); } };
+  auto ? setTimeout(go, 180) : go();
+}
+$('wzNext').addEventListener('click', () => wzNext());
+$('wzBack').addEventListener('click', () => { if (WZ.i > 0) { WZ.i--; wzRender(); } });
+$('wzClose').addEventListener('click', closeWizard);
+$('wzChange').addEventListener('click', () => { closeWizard(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+document.addEventListener('click', e => {
+  if (e.target.closest('[data-wz]')) openWizard();
+  const at = e.target.closest('[data-wzat]'); if (at) openWizard(at.dataset.wzat);
+});
+$('wzBody').addEventListener('click', e => {
+  const o = e.target.closest('[data-wzother]');
+  if (o) { $('wzOtherBox').hidden = false; o.setAttribute('aria-pressed', 'true'); $('wzText').focus(); return; }
+  const d = e.target.closest('[data-wzdo]');
+  if (d) { const a = d.dataset.wzdo; closeWizard(); if (a === 'save') $('saveBtn').click(); else if (a === 'draft') saveDraft(); return; }
+  const p = e.target.closest('[data-wzpick]'); if (!p) return;
+  const k = p.dataset.wzpick, v = p.dataset.v, st = WZ.steps[WZ.i];
+  p.parentElement.querySelectorAll('[data-wzpick]').forEach(b => b.setAttribute('aria-pressed', b === p));
+  haptic(v === 'ผิดปกติ' ? [10, 30, 10] : 5);
+  if (k === 'no') { $('machineNo').value = v; $('machineNo').dispatchEvent(new Event('input', { bubbles: true })); wzNext(true); }
+  else if (k === 'insp') { $('inspectorInput').value = v; $('inspectorInput').dispatchEvent(new Event('input', { bubbles: true })); wzNext(true); }
+  else if (k === 'st') { $('machineStatus').value = v; $('machineStatus').dispatchEvent(new Event('change')); WZ.steps = wzSteps(); wzNext(true); }
+  else if (k === 'ck') { formValues[st.f.id] = v; if (v === 'ปกติ') wzNext(true); else wzRender(); }
+  else if (k === 'an') { formValues.analysis = v; wzNext(true); }
+});
+$('wzBody').addEventListener('input', e => {
+  const t = e.target; $('wzErr').textContent = '';
+  if (t.id === 'wzText') {
+    if (t.dataset.for === 'no') { $('machineNo').value = t.value; $('machineNo').dispatchEvent(new Event('input', { bubbles: true })); }
+    else { $('inspectorInput').value = t.value; formValues.inspector = t.value; }
+  } else if (t.id === 'wzNum') {
+    const st = WZ.steps[WZ.i], f = st.f; formValues[f.id] = t.value.replace(',', '.');
+    const s = validateNumeric(f, formValues[f.id]);
+    $('wzNumBox').className = `wz-num ${s === 'invalid' ? 'bad' : s === 'valid' ? 'good' : ''}`;
+    $('wzState').innerHTML = wzStateText(f, formValues[f.id]);
+    const has = !!$('wzIssue').firstElementChild;
+    if (s === 'invalid' && !has) $('wzIssue').innerHTML = issuePanel(f.id); else if (s !== 'invalid' && has) $('wzIssue').innerHTML = '';
+  } else if (t.id === 'wzRemark') formValues.remark = t.value;
+});
+$('wzBody').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.target.id === 'wzNum' || e.target.id === 'wzText')) { e.preventDefault(); wzNext(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('wz').hidden && $('lb').hidden && !$('alertDim').classList.contains('open')) { e.stopImmediatePropagation(); closeWizard(); } }, true);
 
 /* large title collapse */
 new IntersectionObserver(([en]) => $('nav').classList.toggle('scrolled', !en.isIntersecting), { rootMargin: '-44px 0px 0px 0px' }).observe($('largeTitle'));
