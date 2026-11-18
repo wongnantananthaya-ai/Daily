@@ -374,6 +374,39 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .wz-x{width:36px;height:36px;border:0;border-radius:50%;background:var(--fill2);color:var(--label2);display:grid;place-items:center;cursor:pointer}
 .wz-bar{height:6px;margin:0 20px;border-radius:3px;background:#E9E9EF;overflow:hidden}
 .wz-bar i{display:block;height:100%;width:0;border-radius:3px;background:var(--tint);transition:width .35s cubic-bezier(.32,.72,0,1)}
+/* one-section-per-page rows */
+.wz-list{display:flex;flex-direction:column}
+.wz-fr{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:.5px solid var(--sep)}
+.wz-fr .l,.wz-cr .l{flex:1;min-width:0}
+.wz-fr .l b,.wz-cr .l b{display:block;font-weight:500;font-size:1rem;line-height:1.25}
+.wz-fr .l small,.wz-cr .l small{display:block;margin-top:2px;font-size:.78rem;color:var(--label2)}
+.wz-input{width:5.4em;min-height:48px;padding:0 12px;border:2px solid #DADADF;border-radius:12px;background:#fff;font:inherit;font-size:1.2rem;font-weight:700;text-align:right;color:var(--label);outline:none;transition:border-color .15s,box-shadow .15s}
+.wz-input::placeholder{color:var(--label3);font-weight:400}
+.wz-input:focus{border-color:var(--tint);box-shadow:0 0 0 4px color-mix(in srgb,var(--tint) 18%,transparent)}
+.wz-fr.valid .wz-input{border-color:var(--green)}
+.wz-fr.invalid .wz-input{border-color:var(--red);color:var(--red-t)}
+.wz-fr .u{width:3.4em;flex:none;font-size:.82rem;color:var(--label2)}
+.wz-fr .mk{width:20px;flex:none;display:grid;place-items:center}
+.wz-fr.valid .mk{color:var(--green)}.wz-fr.invalid .mk{color:var(--red)}
+.wz-fr .mk svg.i{width:18px;height:18px;stroke-width:2.4}
+.wz-iss:empty{display:none}
+.wz-iss .issue{margin:8px 0 6px}
+.wz-allok{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;margin:0 0 6px;border:1.5px solid var(--green);border-radius:14px;background:#F3FBF5;color:var(--ok-t);font-size:1.02rem;font-weight:700;cursor:pointer}
+.wz-allok:active{transform:scale(.98)}
+.wz-allok svg.i{width:22px;height:22px}
+.wz-cr{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;padding:10px 0;border-bottom:.5px solid var(--sep)}
+.wz-sg{display:flex;flex:none;gap:4px;padding:3px;border:1px solid var(--sep);border-radius:12px;background:#fff}
+.wz-sg button{display:inline-flex;align-items:center;gap:4px;min-height:40px;padding:0 12px;border:0;border-radius:9px;background:transparent;color:var(--label2);font:inherit;font-size:.9rem;font-weight:500;cursor:pointer}
+.wz-sg button svg.i{width:16px;height:16px;stroke-width:2.6;display:none}
+.wz-sg button[aria-checked=true] svg.i{display:inline}
+.wz-sg .ok[aria-checked=true]{background:#EAF8EE;color:var(--ok-t);box-shadow:inset 0 0 0 1.5px var(--green);font-weight:700}
+.wz-sg .ng[aria-checked=true]{background:#FFEEED;color:var(--red-t);box-shadow:inset 0 0 0 1.5px var(--red);font-weight:700}
+.wz-secrow{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:0 14px;border:0;background:none;font:inherit;text-align:left;cursor:pointer;position:relative}
+.wz-secrow+.wz-secrow::before{content:"";position:absolute;top:0;left:14px;right:0;border-top:.5px solid var(--sep)}
+.wz-secrow>span:first-child{flex:1}
+.wz-secrow .ok{color:var(--ok-t);font-weight:700}.wz-secrow .bad{color:var(--red-t);font-weight:700}.wz-secrow .part{color:var(--label2);font-weight:600}
+.wz-secrow .chev{color:var(--label3)}
+.wz-body{justify-content:flex-start!important}
 .wz-ctx{display:flex;align-items:center;gap:8px;margin:10px 20px 0;font-size:.82rem;color:var(--label2)}
 .wz-ctx span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wz-ctx button{flex:none;border:0;background:var(--fill2);color:var(--tint);font-size:.8rem;font-weight:600;min-height:32px;padding:0 12px;border-radius:999px;cursor:pointer}
@@ -1531,7 +1564,7 @@ const filled = v => v !== undefined && v !== null && String(v).trim() !== '';
 const WZ = { i: 0, steps: [] };
 function wzSteps() {
   const s = [];   // machine no / date / status / inspector are filled on the main page
-  if (!isStopped()) FORMS[currentType].sections.forEach(sec => (sec.fields || []).forEach(f => s.push({ k: 'f', f, sec })));
+  if (!isStopped()) FORMS[currentType].sections.forEach(sec => { if (sec.fields) s.push({ k: 'sec', sec }); });   // one section per page
   if (FORMS[currentType].sections.find(x => x.type === 'meta')?.hasAnalysis) s.push({ k: 'analysis' });
   s.push({ k: 'remark' }, { k: 'done' });
   return s;
@@ -1541,11 +1574,14 @@ function wzAnswered(st) {
   if (st.k === 'no') return !!normNo($('machineNo').value);
   if (st.k === 'insp') return !!(formValues.inspector || '').trim();
   if (st.k === 'status') return true;   // defaults to Running; still reachable with the back button
-  if (st.k === 'f') return filled(formValues[st.f.id]);
+  if (st.k === 'sec') return st.sec.fields.every(f => filled(formValues[f.id]));
   if (st.k === 'analysis') return !!formValues.analysis;
   return st.k !== 'done' ? true : false;
 }
-const wzBad = st => st.k === 'f' && (st.sec.type === 'numeric' ? validateNumeric(st.f, formValues[st.f.id]) === 'invalid' : formValues[st.f.id] === 'ผิดปกติ');
+const isBadVal = (sec, f) => sec.type === 'numeric' ? validateNumeric(f, formValues[f.id]) === 'invalid' : formValues[f.id] === 'ผิดปกติ';
+// abnormal items on this page that still have no note and no photo
+const wzLacking = st => st.k !== 'sec' ? [] : st.sec.fields.filter(f => isBadVal(st.sec, f))
+  .filter(f => { const it = formValues.issues?.[f.id]; return !it || (!it.note.trim() && !it.photos.length); }).map(f => f.id);
 function wzInfoReady() {   // the info box must be filled before checking
   const noOk = !!normNo($('machineNo').value), inspOk = !!(formValues.inspector || '').trim();
   $('machineNo').closest('.row').classList.toggle('miss', !noOk); $('inspRow').classList.toggle('miss', !inspOk);
@@ -1557,16 +1593,16 @@ function wzInfoReady() {   // the info box must be filled before checking
 function openWizard(at) {
   if (!wzInfoReady()) return;
   WZ.steps = wzSteps();
-  const j = at ? WZ.steps.findIndex(st => (st.k === 'f' && st.f.id === at) || st.k === at) : -1;
+  const j = at ? WZ.steps.findIndex(st => (st.k === 'sec' && st.sec.fields.some(f => f.id === at)) || st.k === at) : -1;
   const i = j >= 0 ? j : WZ.steps.findIndex(st => !wzAnswered(st)); WZ.i = i < 0 ? WZ.steps.length - 1 : i;
-  $('wz').hidden = false; document.body.style.overflow = 'hidden'; wzRender(); haptic(5);
+  $('wz').hidden = false; document.body.style.overflow = 'hidden'; WZ.focus = at; wzRender(); haptic(5);
 }
 function closeWizard() { $('wz').hidden = true; document.body.style.overflow = ''; renderForm(); }
 const chip = (kind, v, label, on, cls = '') => `<button type="button" class="wz-chip ${cls}" data-wzpick="${kind}" data-v="${esc(v)}" aria-pressed="${on}">${label}</button>`;
 function wzRender() {
   const st = WZ.steps[WZ.i], N = WZ.steps.length - 1, done = st.k === 'done';
-  $('wzStep').textContent = done ? 'ตรวจครบแล้ว' : `ข้อ ${WZ.i + 1} จาก ${N}`;
-  $('wzLeft').textContent = done ? '' : N - WZ.i - 1 ? `อีก ${N - WZ.i - 1} ข้อ` : 'ข้อสุดท้าย';
+  $('wzStep').textContent = done ? 'ตรวจครบแล้ว' : `หน้า ${WZ.i + 1} จาก ${N}`;
+  wzCount();
   $('wzBar').style.width = (done ? 100 : WZ.i / N * 100) + '%';
   $('wzFoot').hidden = done; $('wzBack').disabled = WZ.i === 0;
   $('wzCtx').textContent = `${FORMS[currentType].name} NO.${normNo($('machineNo').value) || '-'} · ${(formValues.inspector || '').trim() || '-'} · ${$('machineStatus').value}`;
@@ -1593,16 +1629,27 @@ function wzRender() {
       <div class="wz-chips col">${[['Running', 'เดินเครื่องปกติ (Running)', 'run'], ['M/C Stop', 'หยุดเครื่อง (M/C Stop)', 'stop'], ['Unload', 'Unload', 'unl']]
         .map(([v, l, c]) => chip('st', v, `<i class="dot ${c}"></i>${l}`, v === cur, 'big left')).join('')}</div>
       <p class="wz-help">ถ้าหยุดเครื่อง จะข้ามข้อที่ต้องวัดขณะเดินเครื่องให้</p>`;
-  } else if (st.k === 'f') {
-    const f = st.f, v = formValues[f.id] ?? '';
-    h = `<div class="wz-eyebrow">${esc(st.sec.title)}</div><h2 class="wz-q" id="wzQ">${esc(f.label)}</h2>`;
-    if (st.sec.type === 'numeric') {
-      const s = validateNumeric(f, v);
-      h += `<div class="wz-num ${s === 'invalid' ? 'bad' : s === 'valid' ? 'good' : ''}" id="wzNumBox"><input id="wzNum" data-id="${f.id}" inputmode="decimal" autocomplete="off" placeholder="0" value="${esc(v)}" aria-label="${esc(f.label)}"><span class="unit">${f.unit}</span></div>
-        <p class="wz-state" id="wzState">${wzStateText(f, v)}</p><div id="wzIssue">${s === 'invalid' ? issuePanel(f.id) : ''}</div>`;
+  } else if (st.k === 'sec') {
+    const sec = st.sec, n = WZ.steps.filter(x => x.k === 'sec').indexOf(st) + 1;
+    h = `<div class="wz-eyebrow">หมวด ${n}</div><h2 class="wz-q" id="wzQ">${esc(sec.title)}</h2>`;
+    if (sec.type === 'numeric') {
+      h += `<div class="wz-list">${sec.fields.map((f, k) => {
+        const v = formValues[f.id] ?? '', s = validateNumeric(f, v), last = k === sec.fields.length - 1;
+        return `<label class="wz-fr ${s}" data-row="${f.id}"><span class="l"><b>${esc(f.label)}</b><small>${esc(f.spec)}</small></span>
+          <input class="wz-input" data-wzf="${f.id}" inputmode="decimal" enterkeyhint="${last ? 'done' : 'next'}" autocomplete="off" placeholder="–" value="${esc(v)}" aria-label="${esc(f.label)} (${f.unit})">
+          <span class="u">${f.unit}</span><span class="mk" aria-hidden="true">${s === 'invalid' ? icon('warn') : s === 'valid' ? icon('check') : ''}</span></label>
+          <div class="wz-iss" data-iss="${f.id}">${s === 'invalid' ? issuePanel(f.id) : ''}</div>`;
+      }).join('')}</div><p class="wz-help">พิมพ์แล้วกด "ถัดไป" บนแป้นพิมพ์ เพื่อไปช่องต่อไป</p>`;
     } else {
-      h += `<div class="wz-chips">${chip('ck', 'ปกติ', `${icon('check')}ปกติ`, v === 'ปกติ', 'big ok')}${chip('ck', 'ผิดปกติ', `${icon('x')}ผิดปกติ`, v === 'ผิดปกติ', 'big ng')}</div>
-        <p class="wz-help">${esc(f.spec)}</p>${v === 'ผิดปกติ' ? issuePanel(f.id) : ''}`;
+      h += `<button type="button" class="wz-allok" data-wzall>${icon('checkc')}ทั้งหมดปกติ</button>
+        <div class="wz-list">${sec.fields.map(f => {
+          const v = formValues[f.id];
+          return `<div class="wz-cr"><span class="l"><b>${esc(f.label)}</b><small>${esc(f.spec)}</small></span>
+            <div class="wz-sg" role="radiogroup" aria-label="${esc(f.label)}">
+              <button type="button" role="radio" class="ok" data-wzck="${f.id}" data-v="ปกติ" aria-checked="${v === 'ปกติ'}">${icon('check')}ปกติ</button>
+              <button type="button" role="radio" class="ng" data-wzck="${f.id}" data-v="ผิดปกติ" aria-checked="${v === 'ผิดปกติ'}">${icon('x')}ผิดปกติ</button></div></div>
+            <div class="wz-iss" data-iss="${f.id}">${v === 'ผิดปกติ' ? issuePanel(f.id) : ''}</div>`;
+        }).join('')}</div>`;
     }
   } else if (st.k === 'analysis') {
     const n = abnormalIds(currentType, formValues).length, v = formValues.analysis;
@@ -1619,14 +1666,38 @@ function wzRender() {
     h = `<div class="wz-done"><span class="wz-big ${bad.length ? 'ng' : 'ok'}">${icon(bad.length ? 'warn' : 'checkc', 'duo')}</span>
       <h2 class="wz-q" id="wzQ">${bad.length ? `พบผิดปกติ ${bad.length} รายการ` : 'ปกติทุกรายการ'}</h2>
       <p class="wz-help">${esc(FORMS[currentType].name)} NO. ${esc(normNo($('machineNo').value) || '-')} · ${thDate($('inspectDate').value)} · ${esc(formValues.inspector || '-')}<br>${isStopped() ? 'สถานะ M/C Stop' : `กรอกแล้ว ${nf}/${fs.length} ข้อ`}</p>
-      ${bad.length ? `<div class="grp wz-sum">${bad.map(id => { const m = fieldOf(currentType, id); return `<div class="row"><span class="lab"><b>${esc(m.f.label)}</b><small>${m.kind === 'numeric' ? esc(formValues[id]) + ' ' + m.f.unit + ' · ' : ''}${esc(formValues.issues?.[id]?.note || 'ไม่มีหมายเหตุ')}</small></span></div>`; }).join('')}</div>` : ''}
+      ${isStopped() ? '' : `<div class="grp wz-sum">${WZ.steps.map((x, idx) => {
+        if (x.k !== 'sec') return '';
+        const fsx = x.sec.fields, nf2 = fsx.filter(f => filled(formValues[f.id])).length, nb = fsx.filter(f => isBadVal(x.sec, f)).length;
+        const tag = nb ? `<span class="bad">${nb} ผิดปกติ</span>` : nf2 === fsx.length ? `<span class="ok">${nf2}/${fsx.length} ✓</span>` : `<span class="part">${nf2}/${fsx.length}</span>`;
+        return `<button type="button" class="wz-secrow" data-wzjump="${idx}"><span>${esc(x.sec.title)}</span>${tag}${icon('chev', 'chev')}</button>`;
+      }).join('')}</div>`}
       <button type="button" class="wz-next full" data-wzdo="save">${icon('check')}บันทึก</button>
       <button type="button" class="wz-link" data-wzdo="review">ดูทั้งหมดก่อนบันทึก</button></div>`;
   }
   $('wzBody').innerHTML = h + `<p class="wz-err" id="wzErr" role="alert"></p>`;
   $('wzBody').scrollTop = 0;
-  const inp = $('wzNum') || ($('wzOtherBox') && !$('wzOtherBox').hidden ? $('wzText') : null);
+  // focus the requested field, else the first empty number box on the page
+  const ins = [...$('wzBody').querySelectorAll('[data-wzf]')];
+  const inp = (WZ.focus && ins.find(x => x.dataset.wzf === WZ.focus)) || ins.find(x => !x.value) ||
+    ($('wzOtherBox') && !$('wzOtherBox').hidden ? $('wzText') : null);
+  if (WZ.focus) { $('wzBody').querySelector(`[data-row="${WZ.focus}"],[data-wzck="${WZ.focus}"]`)?.scrollIntoView({ block: 'center' }); WZ.focus = null; }
   if (inp) setTimeout(() => inp.focus({ preventScroll: true }), 250);
+}
+function wzCount() {   // top-right: "แรงดัน 3/6"
+  const st = WZ.steps[WZ.i];
+  $('wzLeft').textContent = st.k === 'sec' ? `${st.sec.fields.filter(f => filled(formValues[f.id])).length}/${st.sec.fields.length} ข้อ` : '';
+}
+function wzRowState(id) {   // refresh one row's colour, mark and abnormal panel after a change
+  const st = WZ.steps[WZ.i], f = st.sec.fields.find(x => x.id === id), bad = isBadVal(st.sec, f);
+  const row = $('wzBody').querySelector(`[data-row="${id}"]`);
+  if (row) {
+    const s = validateNumeric(f, formValues[id]); row.className = `wz-fr ${s}`;
+    row.querySelector('.mk').innerHTML = s === 'invalid' ? icon('warn') : s === 'valid' ? icon('check') : '';
+  }
+  const box = $('wzBody').querySelector(`[data-iss="${id}"]`), has = !!box.firstElementChild;
+  if (bad && !has) box.innerHTML = issuePanel(id); else if (!bad && has) box.innerHTML = '';
+  wzCount();
 }
 function wzStateText(f, v) {
   const s = validateNumeric(f, v);
@@ -1636,7 +1707,12 @@ function wzNext(auto) {
   const st = WZ.steps[WZ.i], err = m => { $('wzErr').textContent = m; haptic([30, 60, 30]); };
   if (st.k === 'no' && !normNo($('machineNo').value)) return err('เลือกหรือพิมพ์เลขเครื่องก่อน');
   if (st.k === 'insp' && !(formValues.inspector || '').trim()) return err('เลือกหรือพิมพ์ชื่อผู้ตรวจก่อน');
-  if (wzBad(st)) { const it = formValues.issues?.[st.f.id]; if (!it || (!it.note.trim() && !it.photos.length)) { document.querySelector('#wzBody .issue')?.classList.add('need'); return err('รายการผิดปกติ: เขียนหมายเหตุ หรือแนบรูปก่อน'); } }
+  const lack = wzLacking(st);
+  if (lack.length) {
+    lack.forEach(id => $('wzBody').querySelector(`.issue[data-issue="${id}"]`)?.classList.add('need'));
+    $('wzBody').querySelector(`.issue[data-issue="${lack[0]}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return err(`รายการผิดปกติ ${lack.length} ข้อ: เขียนหมายเหตุ หรือแนบรูปก่อน`);
+  }
   const go = () => { if (WZ.i < WZ.steps.length - 1) { WZ.i++; wzRender(); } };
   auto ? setTimeout(go, 180) : go();
 }
@@ -1652,7 +1728,18 @@ $('wzBody').addEventListener('click', e => {
   const o = e.target.closest('[data-wzother]');
   if (o) { $('wzOtherBox').hidden = false; o.setAttribute('aria-pressed', 'true'); $('wzText').focus(); return; }
   const d = e.target.closest('[data-wzdo]');
-  if (d) { const a = d.dataset.wzdo; closeWizard(); if (a === 'save') $('saveBtn').click(); else if (a === 'draft') saveDraft(); return; }
+  if (d) { const a = d.dataset.wzdo; closeWizard(); if (a === 'save') $('saveBtn').click(); return; }
+  const jp = e.target.closest('[data-wzjump]'); if (jp) { WZ.i = +jp.dataset.wzjump; wzRender(); return; }
+  const ck = e.target.closest('[data-wzck]');
+  if (ck) {
+    const id = ck.dataset.wzck; formValues[id] = ck.dataset.v;
+    ck.parentElement.querySelectorAll('[data-wzck]').forEach(b => b.setAttribute('aria-checked', b === ck));
+    haptic(ck.dataset.v === 'ผิดปกติ' ? [10, 30, 10] : 5); wzRowState(id); $('wzErr').textContent = ''; return;
+  }
+  if (e.target.closest('[data-wzall]')) {   // "ทั้งหมดปกติ": set every unanswered item on this page to normal
+    WZ.steps[WZ.i].sec.fields.forEach(f => { if (!filled(formValues[f.id])) formValues[f.id] = 'ปกติ'; });
+    haptic([5, 30, 5]); wzRender(); return;
+  }
   const p = e.target.closest('[data-wzpick]'); if (!p) return;
   const k = p.dataset.wzpick, v = p.dataset.v, st = WZ.steps[WZ.i];
   p.parentElement.querySelectorAll('[data-wzpick]').forEach(b => b.setAttribute('aria-pressed', b === p));
@@ -1668,16 +1755,20 @@ $('wzBody').addEventListener('input', e => {
   if (t.id === 'wzText') {
     if (t.dataset.for === 'no') { $('machineNo').value = t.value; $('machineNo').dispatchEvent(new Event('input', { bubbles: true })); }
     else { $('inspectorInput').value = t.value; formValues.inspector = t.value; }
-  } else if (t.id === 'wzNum') {
-    const st = WZ.steps[WZ.i], f = st.f; formValues[f.id] = t.value.replace(',', '.');
-    const s = validateNumeric(f, formValues[f.id]);
-    $('wzNumBox').className = `wz-num ${s === 'invalid' ? 'bad' : s === 'valid' ? 'good' : ''}`;
-    $('wzState').innerHTML = wzStateText(f, formValues[f.id]);
-    const has = !!$('wzIssue').firstElementChild;
-    if (s === 'invalid' && !has) $('wzIssue').innerHTML = issuePanel(f.id); else if (s !== 'invalid' && has) $('wzIssue').innerHTML = '';
+  } else if (t.dataset.wzf) {
+    formValues[t.dataset.wzf] = t.value.replace(',', '.'); wzRowState(t.dataset.wzf);
   } else if (t.id === 'wzRemark') formValues.remark = t.value;
 });
-$('wzBody').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.target.id === 'wzNum' || e.target.id === 'wzText')) { e.preventDefault(); wzNext(); } });
+// keyboard "ถัดไป"/Enter: jump to the next number box; on the last one go to the next page
+$('wzBody').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  if (e.target.dataset.wzf) {
+    e.preventDefault();
+    const ins = [...$('wzBody').querySelectorAll('[data-wzf]')], k = ins.indexOf(e.target);
+    if (k < ins.length - 1) { ins[k + 1].focus(); ins[k + 1].scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    else { e.target.blur(); wzNext(); }
+  } else if (e.target.id === 'wzText') { e.preventDefault(); wzNext(); }
+});
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('wz').hidden && $('lb').hidden && !$('alertDim').classList.contains('open')) { e.stopImmediatePropagation(); closeWizard(); } }, true);
 
 /* large title collapse */
