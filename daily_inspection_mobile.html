@@ -7,6 +7,9 @@
 <meta name="theme-color" content="#F2F2F7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Daily Inspection — CE97F1005Q</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   color-scheme:light only;   /* always white theme, even when the phone is in dark mode */
@@ -310,17 +313,27 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .paper figure{margin:0;border:1px solid #000;padding:4px;break-inside:avoid}
 .paper figure img{display:block;width:100%;height:120px;object-fit:cover}
 .paper figcaption{font-size:9.5px;margin-top:4px;line-height:1.35}
-/* Report layout */
-/* PDF page — Apple-style document: white page, system type, gray secondary labels, hairlines, tinted system colors */
-.paper.rep{padding:0;display:flex;flex-direction:column;color:#1D1D1F;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue","Sukhumvit Set","Noto Sans Thai","Leelawadee UI",sans-serif;-webkit-font-smoothing:antialiased}
-.rp-head{display:flex;align-items:center;gap:16px;padding:24px 44px 14px}
-.rp-ic{width:54px;height:54px;border-radius:50%;flex:none;display:grid;place-items:center;color:var(--c);background:color-mix(in srgb,var(--c) 13%,#fff)}
-.rp-ic svg.i{width:30px;height:30px;stroke-width:1.7;--duo:color-mix(in srgb,var(--c) 22%,transparent)}
-.rp-head .eyebrow{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6E6E73}
-.rp-head h1{margin:2px 0 0;font-size:26px;font-weight:700;letter-spacing:-.01em;line-height:1.15}
-.rp-head .sub{margin-top:3px;font-size:13px;color:#6E6E73}
-.rp-head .meta{margin-left:auto;text-align:right;font-size:11px;line-height:1.6;color:#6E6E73}
-.rp-head .meta b{font-weight:600;color:#1D1D1F}
+/* Classic ISO Factory Standard (Option 1) */
+.paper.rep{padding:16px 24px 14px;display:flex;flex-direction:column;color:#000;font-family:"Sarabun","Noto Sans Thai","Leelawadee UI",sans-serif;-webkit-font-smoothing:antialiased}
+.iso-head{width:100%;border-collapse:collapse;table-layout:fixed;margin-bottom:6px;border:1px solid #64748B}
+.iso-head td{border:.75px solid #CBD5E1;padding:5px 10px;vertical-align:middle;color:#000;line-height:1.4}
+.iso-head .iso-meta{font-size:12px;text-align:left}
+.iso-head .iso-meta b{font-weight:700}
+.iso-head .iso-title{text-align:center}
+.iso-head .iso-title h1{margin:0;font-size:18px;font-weight:700;letter-spacing:.01em;line-height:1.25;color:#000}
+.iso-head .iso-doc{font-size:11.5px;text-align:left;line-height:1.45}
+.iso-head .iso-doc b{font-weight:700}
+/* 15–31 days: keep A4 landscape aspect ratio on screen too */
+.paper.rep.dense{padding:12px 20px 10px}
+.paper.rep.dense .iso-head{margin-bottom:4px}
+.paper.rep.dense .iso-head td{padding:4px 8px}
+.paper.rep.dense .iso-head .iso-meta,.paper.rep.dense .iso-head .iso-doc{font-size:10.5px;line-height:1.35}
+.paper.rep.dense .iso-head .iso-title h1{font-size:15.5px}
+.paper.rep.dense table.rt thead th{font-size:8.5px;padding:3px 2px;line-height:1.2}
+.paper.rep.dense table.rt thead tr.spec th{font-size:7.8px;padding:2px 1.5px}
+.paper.rep.dense table.rt tbody td{height:20px;font-size:10.5px;line-height:1.15;padding:1px 2px}
+.paper.rep.dense table.rt td.insp{font-size:10px}
+.paper.rep.dense table.rt td.note{font-size:9px;line-height:1.1;padding:1px 3px}
 /* month summary boxes on screen (outside the paper) */
 .mkpi{max-width:600px;margin:12px auto 0;padding:0 16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 @media (min-width:700px){.mkpi{max-width:900px;grid-template-columns:repeat(4,minmax(0,1fr))}}
@@ -352,28 +365,21 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .mkpi .ki svg.i{width:19px;height:19px;stroke-width:1.9;--duo:color-mix(in srgb,var(--k) 24%,transparent)}
 .mkpi b{display:block;font-size:1.3rem;font-weight:700;line-height:1.1}
 .mkpi .l{display:block;font-size:.74rem;color:var(--label2)}
-.rp-body{flex:1;padding:0 38px 24px}
+.rp-body{flex:1;padding:0}
 .paper table.rt tbody td:not(.note):not(.insp){white-space:nowrap}
-/* clear column + row lines, larger readable type */
-.paper table.rt{border:1.2px solid #8E8E93}
-.paper table.rt th,.paper table.rt td{border:1px solid #AEAEB2}
-.paper table.rt thead th{background:#F2F2F7;color:#1D1D1F;font-size:9.6px;font-weight:600;line-height:1.25;padding:5px 1px;vertical-align:middle;overflow-wrap:normal;word-break:normal;letter-spacing:-.015em}
-.paper table.rt thead tr:first-child th{border-bottom-color:#D1D1D6}
-.paper table.rt thead th[rowspan],.paper table.rt thead tr.spec th{border-bottom:1.2px solid #8E8E93}
-.paper table.rt thead tr.spec th{font-size:9px;font-weight:500;color:#48484A;padding:4px 2px}
-.paper table.rt tbody td{height:56px;color:#1D1D1F;font-size:13px;font-weight:500;padding:0 2px}
-.paper table.rt tbody tr:nth-child(even) td{background:#FAFAFC}
-.paper table.rt td.bad{background:#FFE9E7!important;color:#D70015;font-weight:700}
+/* ISO formal grid table; thin soft borders so black/red text stands out */
+.paper table.rt{border:1px solid #64748B}
+.paper table.rt th,.paper table.rt td{border:.75px solid #CBD5E1}
+.paper table.rt thead th{background:#F1F5F9;color:#0F172A;font-size:9px;font-weight:700;line-height:1.25;padding:4px 2px;vertical-align:middle;overflow-wrap:anywhere;word-break:normal;letter-spacing:0}
+.paper table.rt thead th[rowspan],.paper table.rt thead tr.spec th{border-bottom:1px solid #64748B}
+.paper table.rt thead tr.spec th{background:#F8FAFC;font-size:8.5px;font-weight:500;color:#475569;padding:3px 2px}
+.paper table.rt tbody td{height:48px;color:#000;font-size:13px;font-weight:500;font-variant-numeric:tabular-nums;padding:0 3px;background:#fff}
+.paper table.rt td.bad,.paper table.rt .ng-txt{color:#D70015!important;font-weight:700!important}
+.paper table.rt .ok-txt{color:#000;font-weight:600}
 .paper table.rt td.dt{font-weight:700}
-.paper table.rt td.insp{font-size:12.5px;color:#1D1D1F}
-.paper table.rt td.note{font-size:11px;font-weight:400;color:#3A3A3C;line-height:1.35}
-.paper .chip{font-size:11px!important}
-.paper .chip{display:inline-block;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:600;white-space:nowrap}
-.paper .chip.ok{background:#E8F7EC;color:#248A3D}.paper .chip.ng{background:#FFECEB;color:#D70015}
-.rp-foot{display:flex;align-items:flex-end;gap:32px;padding:8px 44px 20px;font-size:10px;color:#8E8E93}
-.rp-foot .lg{flex:1}
-.rp-foot .sig{width:170px;text-align:center}
-.rp-foot .sig i{display:block;height:24px;border-bottom:1px solid #C7C7CC;margin-bottom:5px}
+.paper table.rt td.insp{font-size:12.5px;color:#000}
+.paper table.rt td.note{font-size:11px;font-weight:400;color:#000;line-height:1.35;text-align:left;padding:3px 5px}
+.paper table.rt td.note.bad{color:#D70015!important;font-weight:600!important}
 .camfloat{position:absolute;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:#E8F1FF;color:#0A5BD3;display:grid;place-items:center;cursor:pointer;box-shadow:0 1px 3px rgba(10,91,211,.25)}
 .camfloat svg.i{width:18px;height:18px;stroke-width:1.9;--duo:rgba(10,91,211,.2)}
 .cambtn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:100%;min-height:44px;border:0;border-radius:8px;background:#E8F1FF;color:#0A5BD3;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer}
@@ -533,20 +539,37 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .mbtn:active{opacity:.6}
 @media print{
   @page{size:A4 landscape;margin:7mm}
-  html,body{background:#fff!important;overflow:visible!important}
-  .shell,.bar,.toast,.dim{display:none!important}
-  .month{position:static;overflow:visible;background:#fff}
-  .mnav,.mctl,.mhint{display:none!important}
-  .viewer{height:auto!important;width:auto!important;overflow:visible;box-shadow:none;border-radius:0;margin:0}
-  .page{position:static;transform:none!important;width:auto}
-  .zoomctl,.lb,.ls{display:none!important}
-  .camfloat,.daylist{display:none!important}
+  html,body{background:#fff!important;overflow:visible!important;width:100%!important;height:auto!important}
+  .shell,.bar,.toast,.dim,.wz,.lb,.ls{display:none!important}
+  .month{position:static!important;overflow:visible!important;background:#fff!important;display:block!important}
+  .month[hidden]{display:none!important}
+  .mnav,.mctl,.mhint,.mkpi,.zoomctl,.camfloat,.daylist{display:none!important}
+  .viewer{height:auto!important;width:100%!important;overflow:visible!important;box-shadow:none!important;border-radius:0!important;margin:0!important}
+  .page{position:static!important;transform:none!important;width:100%!important}
+  .paper{min-width:0!important;min-height:0!important;width:100%!important;padding:0!important;box-shadow:none!important;border-radius:0!important}
+  .iso-head{margin-bottom:6px!important}
+  .iso-head td{padding:5px 8px!important}
+  .iso-head .iso-meta,.iso-head .iso-doc{font-size:11px!important}
+  .iso-head .iso-title h1{font-size:17px!important}
+  .rp-body{padding:0!important}
+  .paper table.rt{width:100%!important}
+  .paper table.rt thead th{font-size:8.6px!important;padding:3px 2px!important;line-height:1.25!important;overflow-wrap:anywhere!important}
+  .paper table.rt thead tr.spec th{font-size:8px!important;padding:2.5px 1.5px!important}
   .paper table.rt tr.dim td{opacity:1!important}
-  .mkpi{display:none!important}
-  .paper{min-width:0;min-height:0;width:100%;padding:0;box-shadow:none;border-radius:0}
-  .paper tbody td{height:14.2mm}
-  .paper table.rt tbody td{height:13.6mm}
-  .paper.rep{min-height:0}
+  .paper tbody td,.paper table.rt tbody td{height:12.5mm!important;font-size:11.8px!important}
+  .paper table.rt td.insp{font-size:11.5px!important}
+  .paper table.rt td.note{font-size:10.5px!important}
+  /* 15–31 days: compact mode so 30–31 days fit on 1 A4 landscape page */
+  .paper.dense .iso-head{margin-bottom:3px!important}
+  .paper.dense .iso-head td{padding:3px 6px!important}
+  .paper.dense .iso-head .iso-meta,.paper.dense .iso-head .iso-doc{font-size:9.5px!important;line-height:1.3!important}
+  .paper.dense .iso-head .iso-title h1{font-size:14.5px!important}
+  .paper.dense table.rt thead th{font-size:8px!important;padding:2px 1.5px!important;line-height:1.18!important}
+  .paper.dense table.rt thead tr.spec th{font-size:7.4px!important;padding:1.5px 1px!important}
+  .paper.dense table.rt tbody td{height:5mm!important;min-height:4.8mm!important;font-size:9px!important;line-height:1.15!important;padding:0.5px 2px!important}
+  .paper.dense table.rt td.insp{font-size:8.5px!important}
+  .paper.dense table.rt td.note{font-size:7.5px!important;line-height:1.1!important;padding:0.5px 3px!important}
+  .paper.rep{min-height:0!important}
   .paper tr{break-inside:avoid}
   .paper .appx{break-before:page;margin-top:0}
   .paper figure img{height:42mm}
@@ -1243,27 +1266,27 @@ $('exportCsvBtn').addEventListener('click', () => {
 
 /* monthly sheet — columns in the same order as the paper forms (AD_/ACP_/CT_ Monthly_ CE97F1005Q.pdf) */
 const SHEET = {
-  ACP: { title: 'AIR COMPRESSOR', pair: ['เช็คสภาพทั่วไป', 'general_check'], cols: [
-    ['Oil Pressure', 'ระหว่าง 2.0 - 3.0 kg/cm2', 'oil_pressure'], ['1st Discha. Pressure', 'ไม่ต่ำกว่า 1.5 kg/cm2', 'discha1_press'],
-    ['2nd Discha. Pressure', 'ไม่เกิน 6.90 kg/cm2', 'discha2_press'], ['Motor current', 'แอมป์', 'motor_current'],
-    ['Oil tempe', '< 60 C', 'oil_temp'], ['1st Discha. Temp.', 'ไม่เกิน 180˚C', 'discha1_temp'],
-    ['2nd Suction Temp.', 'ไม่เกิน 55˚C', 'suction2_temp'], ['2nd Discha. Temp.', 'ไม่เกิน 180˚C', 'discha2_temp'],
-    ['1st Suction Pressure', 'ไม่ต่ำกว่า -45 kg/cm2', 'suction1_press'], ['1st Suction Temp.', 'ไม่เกิน 55˚C', 'suction1_temp'],
-    ['Running hr', 'Hour', 'running_hr'], ['Drain Solenoid valve', null, 'drain_valve'],
-    ['Lubricate oil level', 'ช่วง H-L', 'oil_level'], ['3 Way Solenoid valve', 'ไม่มีน้ำซึม', 'way3_valve'],
-    ['Water inlet Temp.', 'ไม่เกิน 40˚C', 'water_in_temp'], ['Water Outlet Temp.', 'ไม่เกิน 45˚C', 'water_out_temp'],
-    ['Water inlet Pressure', 'ไม่ต่ำกว่า 0.8 kg/cm2', 'water_in_press'], ['Water Outlet Pressure', 'ไม่ต่ำกว่า 0.3 kg/cm2', 'water_out_press'] ] },
+  ACP: { title: 'AIR COMPRESSOR', pair: ['สภาพทั่วไป', 'general_check'], cols: [
+    ['Oil Press.', '2.0-3.0 kg/cm²', 'oil_pressure'], ['1st Discha. Press.', '≥ 1.5 kg/cm²', 'discha1_press'],
+    ['2nd Discha. Press.', '≤ 6.90 kg/cm²', 'discha2_press'], ['Motor', 'Amp', 'motor_current'],
+    ['Oil Temp', '< 60°C', 'oil_temp'], ['1st Discha. Temp', '≤ 180°C', 'discha1_temp'],
+    ['2nd Suction Temp', '≤ 55°C', 'suction2_temp'], ['2nd Discha. Temp', '≤ 180°C', 'discha2_temp'],
+    ['1st Suction Press.', '≥ -45 kg/cm²', 'suction1_press'], ['1st Suction Temp', '≤ 55°C', 'suction1_temp'],
+    ['Running', 'Hr', 'running_hr'], ['Drain Valve', null, 'drain_valve'],
+    ['Oil Level', 'H-L', 'oil_level'], ['3-Way Valve', 'ไม่ซึม', 'way3_valve'],
+    ['Water In Temp', '≤ 40°C', 'water_in_temp'], ['Water Out Temp', '≤ 45°C', 'water_out_temp'],
+    ['Water In Press.', '≥ 0.8 kg/cm²', 'water_in_press'], ['Water Out Press.', '≥ 0.3 kg/cm²', 'water_out_press'] ] },
   AD: { title: 'AIR DRYER', pair: ['ผลการวิเคราะห์', 'analysis'], cols: [
-    ['Compressor noise', '(ปกติ/ผิดปกติ)', 'comp_noise'], ['Dew Point', '(ไม่เกิน 10 องศา)', 'dew_point'],
-    ['Running Lamp', '(ปกติ/ผิดปกติ)', 'running_lamp'], ['Drain test', '(ปกติ/ผิดปกติ)', 'drain_test'],
-    ['Low Pressure', '0.35-0.6 Mpa', 'low_press'], ['High Pressure', '1.1-1.9 Mpa', 'high_press'] ] },
+    ['Comp. Noise', null, 'comp_noise'], ['Dew Point', '≤ 10°C', 'dew_point'],
+    ['Running Lamp', null, 'running_lamp'], ['Drain Test', null, 'drain_test'],
+    ['Low Press.', '0.35-0.6 MPa', 'low_press'], ['High Press.', '1.1-1.9 MPa', 'high_press'] ] },
   CT: { title: 'Cooling Tower', pair: ['ผลการวิเคราะห์', 'analysis'], cols: [
-    ['Scale in cooling tower', 'สะอาดและไม่มีตะกรัน', 'ct_scale'], ['เช็คระดับน้ำ', 'ต่ำกว่า Overflow (0.5-1 cm)', 'ct_overflow'],
-    ['Water spray', 'ทุกรูของ Sprinkler pipe ต้องมีน้ำออกมา', 'ct_spray'], ['Sprinkler head', 'ไม่รั่วไม่หลวม', 'ct_head'],
-    ['Moving of sprinkler', 'หมุนปกติ', 'ct_moving'], ['Around cooling tower', 'ต้องไม่มีรอยแตก', 'ct_around'],
-    ['Water tray', 'ไม่มีน้ำเลอะรอบๆถาด', 'ct_tray'], ['Inlet louver', 'ไม่แตกและหลวม', 'ct_louver'],
-    ['PVC filling', 'สะอาด ไม่แตก ไม่หลวม', 'ct_pvc'], ['Water inlet Temp.', 'ไม่เกิน 40 องศา', 'ct_water_temp'],
-    ['Water level in Underground Tank', 'ระดับน้ำต้องสัมผัสกับลูกลอย', 'ct_tank'], ['ค่าน้ำ IW', '(200-400 µS/cm)', 'iw_value'] ] },
+    ['Scale', 'ไม่มีตะกรัน', 'ct_scale'], ['ระดับน้ำ', 'ต่ำกว่าล้น 0.5-1cm', 'ct_overflow'],
+    ['Water Spray', 'ออกทุกรู', 'ct_spray'], ['Sprinkler Head', 'ไม่รั่ว/หลวม', 'ct_head'],
+    ['Sprinkler Move', 'หมุนปกติ', 'ct_moving'], ['รอบ Tower', 'ไม่แตก', 'ct_around'],
+    ['Water Tray', 'ไม่เลอะ', 'ct_tray'], ['Inlet Louver', 'ไม่แตก/หลวม', 'ct_louver'],
+    ['PVC Filling', 'สะอาด/ไม่แตก', 'ct_pvc'], ['Water In Temp', '≤ 40°C', 'ct_water_temp'],
+    ['Underground Tank', 'สัมผัสลูกลอย', 'ct_tank'], ['ค่าน้ำ IW', '200-400 µS/cm', 'iw_value'] ] },
 };
 const mState = { type: 'ACP', no: 'NO.1', month: '' };
 function fieldOf(type, id) {
@@ -1295,27 +1318,32 @@ function renderPaper() {
   const result = recResult;
   const row = r => {
     const pv = result(r);
+    const hasBad = pv === 'ผิดปกติ' || recIssues(r) > 0;
     const issueNotes = Object.entries(r.data.issues || {}).map(([id, it]) =>
       `${fieldOf(r.type, id)?.f.label || id}: ${it.note || '-'}`);
     const note = [r.status !== 'Running' ? r.status : '', r.data.remark, ...issueNotes].filter(Boolean).join(' · ');
     const [, m, d] = r.date.split('-');
     return `<tr data-rid="${r.id}"><td class="dt">${+d}/${+m}</td>${sh.cols.map(c => sheetCell(r, c[2])).join('')}
-      <td>${pv ? `<span class="chip ${pv === 'ผิดปกติ' ? 'ng' : 'ok'}">${pv === 'ผิดปกติ' ? '✗ ผิดปกติ' : '✓ ปกติ'}</span>` : ''}</td>
-      <td class="insp">${esc(r.data.inspector)}</td><td class="note">${esc(note)}</td></tr>`;
+      <td class="${pv === 'ผิดปกติ' ? 'bad' : ''}">${pv ? `<span class="${pv === 'ผิดปกติ' ? 'ng-txt' : 'ok-txt'}">${pv === 'ผิดปกติ' ? '✗ ผิดปกติ' : 'ปกติ'}</span>` : ''}</td>
+      <td class="insp">${esc(r.data.inspector)}</td><td class="note${hasBad ? ' bad' : ''}">${esc(note)}</td></tr>`;
   };
   const blank = `<tr>${'<td></td>'.repeat(sh.cols.length + 4)}</tr>`;
   const nBad = recs.filter(r => result(r) === 'ผิดปกติ' || recIssues(r)).length;
   const nStop = recs.filter(r => r.status && r.status !== 'Running').length;
   const monthName = yy ? new Date(+yy, +mm - 1, 1).toLocaleDateString('th-TH', { month: 'long', year: 'numeric' }) : '-';
   SHEET_RECS = recs;
-  $('paper').className = 'paper rep';
+  $('paper').className = recs.length >= 15 ? 'paper rep dense' : 'paper rep';
   $('paper').innerHTML = `
-    <div class="rp-head"><span class="rp-ic" style="--c:${MACHINE_COLOR[mState.type]}">${icon(mState.type.toLowerCase())}</span>
-      <div><div class="eyebrow">Daily Inspection Sheet</div><h1>${esc(FORMS[mState.type].name)} NO. ${esc(normNo(mState.no) || '-')}</h1><div class="sub">ประจำเดือน${monthName}</div></div>
-      <div class="meta"><b>CE97F1005Q</b><br>by NITIPHAT<br>พิมพ์เมื่อ ${thDate(localToday())}</div></div>
+    <table class="iso-head"><colgroup><col style="width:23%"><col style="width:54%"><col style="width:23%"></colgroup>
+      <tr>
+        <td class="iso-meta"><b>Month / Year :</b> ${esc(monthName)}</td>
+        <td class="iso-title"><h1>DAILY INSPECTION : ${esc(FORMS[mState.type].name.toUpperCase())} NO. ${esc(normNo(mState.no) || '-')}</h1></td>
+        <td class="iso-doc"><b>Doc No. :</b> CE97F1005Q<br><b>Printed :</b> ${thDate(localToday())}</td>
+      </tr>
+    </table>
     <div class="rp-body"><table class="rt"><colgroup><col style="width:4.2%">${sh.cols.map(() => '<col>').join('')}<col style="width:6.4%"><col style="width:6.8%"><col style="width:9%"></colgroup>
       <thead><tr><th rowspan="2">Date</th>${sh.cols.map(c => `<th${c[1] ? '' : ' rowspan="2"'}>${c[0]}</th>`).join('')}
-        <th rowspan="2">${sh.pair[0]}</th><th rowspan="2">ผู้ตรวจเช็ค</th><th rowspan="2">หมายเหตุ<br>( M/C Stop / Unload )</th></tr>
+        <th rowspan="2">${sh.pair[0]}</th><th rowspan="2">ผู้ตรวจเช็ค</th><th rowspan="2">หมายเหตุ</th></tr>
       <tr class="spec">${sh.cols.filter(c => c[1]).map(c => `<th>${c[1]}</th>`).join('')}</tr></thead>
       <tbody>${recs.map(row).join('')}${blank.repeat(Math.max(0, 10 - recs.length))}</tbody></table></div>`;
   /* summary boxes live on the screen above the page (not on the paper, not printed); tap to filter */
@@ -1605,7 +1633,11 @@ function openMonth() {
 function closeMonth() { closeLandscape(); $('monthView').hidden = true; if (!document.querySelector('.dim.open')) document.body.style.overflow = ''; lastFocus?.focus?.(); }
 $('openMonthBtn').addEventListener('click', openMonth);
 $('mClose').addEventListener('click', closeMonth);
-$('mPrint').addEventListener('click', () => window.print());
+$('mPrint').addEventListener('click', () => {
+  closeLandscape();
+  renderPaper();
+  requestAnimationFrame(() => window.print());
+});
 $('mNo').addEventListener('input', e => { mState.no = normNo(e.target.value); renderPaper(); });
 $('machineNo').addEventListener('input', () => { $('machineNo').closest('.row').classList.remove('miss'); rememberNo(); });
 $('mMonth').addEventListener('change', e => { mState.month = e.target.value; renderPaper(); });
