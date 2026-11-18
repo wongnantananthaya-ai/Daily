@@ -166,14 +166,22 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 
 /* bottom bar */
 .bar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--mat);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-top:.5px solid var(--sep);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
-.bar-in{max-width:568px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.bar-in{max-width:568px;margin:0 auto;display:flex;align-items:center;gap:8px}
+.progress b,.progress small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.draftbtn{flex:none;border:1.5px solid color-mix(in srgb,var(--tint) 35%,transparent);background:var(--card);color:var(--tint);border-radius:999px;min-height:50px;padding:0 14px 0 12px;font-weight:600;font-size:.94rem;display:inline-flex;align-items:center;gap:5px;cursor:pointer;transition:transform .15s}
+.draftbtn:active{transform:scale(.97)}
+.banner.info{background:color-mix(in srgb,var(--tint) 11%,transparent);color:var(--tint);align-items:center}
+.banner .bact{flex:none;margin-left:auto;border:0;background:var(--card);color:inherit;font-weight:700;font-size:.82rem;min-height:34px;padding:0 12px;border-radius:999px;cursor:pointer}
+.sheet-sec{margin:18px 4px 8px;font-size:.76rem;text-transform:uppercase;color:var(--label2)}
+.hopen{flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:0;background:none;text-align:left;padding:0;cursor:pointer;color:inherit}
+.hdel{flex:none;border:0;background:none;color:var(--red-t);min-width:44px;min-height:44px;display:grid;place-items:center;cursor:pointer}
 .progress{flex:1;min-width:0}
 .progress b{display:block;font-size:.88rem;font-weight:600}
 .progress small{display:block;font-size:.76rem;color:var(--label2);margin-top:1px}
 .pbar{height:4px;border-radius:2px;background:var(--fill);margin-top:6px;overflow:hidden}
 .pbar i{display:block;height:100%;width:0;border-radius:2px;background:var(--tint);transition:width .4s cubic-bezier(.32,.72,0,1)}
 .pbar.warn i{background:var(--red)}.pbar.done i{background:var(--green)}
-.save{border:0;border-radius:999px;background:var(--tint);color:#fff;min-height:50px;padding:0 24px 0 20px;font-weight:600;display:inline-flex;align-items:center;gap:6px;cursor:pointer;box-shadow:0 4px 14px color-mix(in srgb,var(--tint) 35%,transparent);transition:transform .15s}
+.save{flex:none;border:0;border-radius:999px;background:var(--tint);color:#fff;min-height:50px;padding:0 20px 0 16px;font-weight:600;display:inline-flex;align-items:center;gap:6px;cursor:pointer;box-shadow:0 4px 14px color-mix(in srgb,var(--tint) 35%,transparent);transition:transform .15s}
 .save:active{transform:scale(.97)}
 
 /* toast */
@@ -215,8 +223,18 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .mnav .tbtn{padding:0 8px}
 .mctl{max-width:600px;margin:0 auto;padding:12px 16px 0}
 .mhint{max-width:600px;margin:0 auto;padding:10px 20px 12px;font-size:.76rem;color:var(--label2);display:flex;gap:6px;align-items:center}
-.paper-wrap{overflow-x:auto;padding:0 16px calc(env(safe-area-inset-bottom) + 24px)}
-.paper{min-width:1180px;margin:0 auto;background:#fff;color:#000;padding:14px;border-radius:6px;box-shadow:0 2px 14px rgba(0,0,0,.14);font-family:"Sarabun","TH Sarabun New","Leelawadee UI","Noto Sans Thai",sans-serif;font-size:10.5px;color-scheme:light}
+/* locked landscape page viewer: fits the screen, no sliding; pinch / buttons / double-tap to zoom */
+.viewer{position:relative;margin:0 auto;overflow:hidden;touch-action:none;background:#fff;border-radius:6px;box-shadow:0 2px 14px rgba(0,0,0,.16);cursor:zoom-in;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.viewer.zoomed{cursor:grab}
+.viewer.dragging{cursor:grabbing}
+.page{position:absolute;left:0;top:0;width:1123px;transform-origin:0 0;will-change:transform}
+.page img{-webkit-user-drag:none;pointer-events:none}
+.zoomctl{position:sticky;bottom:calc(env(safe-area-inset-bottom) + 12px);z-index:3;display:flex;align-items:center;gap:2px;width:max-content;margin:14px auto calc(env(safe-area-inset-bottom) + 20px);padding:4px;border-radius:999px;background:var(--mat);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);box-shadow:0 4px 18px rgba(0,0,0,.14)}
+.zoomctl button{min-width:44px;min-height:40px;border:0;background:none;color:var(--tint);font-size:1.25rem;font-weight:600;border-radius:999px;cursor:pointer}
+.zoomctl button:active{background:var(--fill)}
+.zoomctl #zFit{font-size:.82rem;padding:0 14px}
+.zoomctl span{min-width:3.6em;text-align:center;font-size:.82rem;font-weight:600;font-variant-numeric:tabular-nums;color:var(--label2)}
+.paper{position:relative;width:1123px;min-height:794px;margin:0;background:#fff;color:#000;padding:26px 44px;font-family:"Sarabun","TH Sarabun New","Leelawadee UI","Noto Sans Thai",sans-serif;font-size:10.5px;color-scheme:light}
 .paper table{border-collapse:collapse;width:100%;table-layout:fixed}
 .paper th,.paper td{border:1px solid #000;text-align:center;vertical-align:middle;padding:2px 3px;font-weight:400;line-height:1.35;overflow-wrap:anywhere}
 .paper .top{margin-bottom:-1px}
@@ -226,7 +244,8 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .paper .top small{display:block;font-size:8px;font-weight:400;color:#555}
 .paper .u{display:inline-block;min-width:110px;border-bottom:1.5px solid #000;text-align:center}
 .paper thead th{font-size:9.5px}
-.paper tbody td{height:30px;font-size:11px}
+.paper tbody td{height:54px;font-size:11px}   /* 10 rows fill one A4-landscape page like the paper form */
+.paper td.insp{font-size:11.5px;line-height:1.25}
 .paper td.bad{color:#D70015;font-weight:700}
 .paper td.note{font-size:9.5px;text-align:left}
 .paper .appx{margin-top:16px}
@@ -235,6 +254,30 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .paper figure{margin:0;border:1px solid #000;padding:4px;break-inside:avoid}
 .paper figure img{display:block;width:100%;height:120px;object-fit:cover}
 .paper figcaption{font-size:9.5px;margin-top:4px;line-height:1.35}
+.camfloat{position:absolute;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:#E8F1FF;color:#0A5BD3;display:grid;place-items:center;cursor:pointer;box-shadow:0 1px 3px rgba(10,91,211,.25)}
+.camfloat svg.i{width:18px;height:18px;stroke-width:1.9;--duo:rgba(10,91,211,.2)}
+.cambtn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:100%;min-height:44px;border:0;border-radius:8px;background:#E8F1FF;color:#0A5BD3;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer}
+.cambtn svg.i{width:20px;height:20px;stroke-width:1.8;--duo:rgba(10,91,211,.18)}
+/* photo viewer */
+.lb{position:fixed;inset:0;z-index:66;background:#000;color:#fff;display:flex;flex-direction:column}
+.lb[hidden]{display:none}
+.lb-top{display:flex;align-items:center;gap:8px;padding:calc(env(safe-area-inset-top) + 6px) 8px 6px 16px}
+.lb-top>div{flex:1;min-width:0}
+.lb-top b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-top small{display:block;font-size:.76rem;color:rgba(255,255,255,.65)}
+.lb-top .tbtn{color:#5AC8FA;font-weight:600;padding:0 10px}
+.lb-track{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior:contain}
+.lb-track::-webkit-scrollbar{display:none}
+.lb-slide{flex:0 0 100%;scroll-snap-align:center;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:8px 16px calc(env(safe-area-inset-bottom) + 20px)}
+.lb-slide img{max-width:100%;max-height:calc(100dvh - 190px);object-fit:contain;border-radius:8px}
+.lb-slide figcaption{max-width:640px;text-align:center;font-size:.88rem;line-height:1.45}
+.lb-slide figcaption b{display:block}
+.lb-slide figcaption span{color:rgba(255,255,255,.75)}
+.lb-nav{position:absolute;top:50%;width:44px;height:44px;margin-top:-22px;border:0;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(10px)}
+.lb-nav svg.i{width:22px;height:22px;stroke-width:2.4}
+.lb-nav.prev{left:10px}.lb-nav.next{right:10px}
+.lb-nav[hidden]{display:none}
+@media (hover:none){.lb-nav{display:none}}
 .mbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;border:0;border-radius:12px;background:var(--card);color:var(--tint);font-weight:600;margin:0 0 16px;cursor:pointer}
 .mbtn:active{opacity:.6}
 @media print{
@@ -243,9 +286,12 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
   .shell,.bar,.toast,.dim{display:none!important}
   .month{position:static;overflow:visible;background:#fff}
   .mnav,.mctl,.mhint{display:none!important}
-  .paper-wrap{overflow:visible;padding:0}
-  .paper{min-width:0;width:100%;padding:0;box-shadow:none;border-radius:0}
-  .paper tbody td{height:8.6mm}
+  .viewer{height:auto!important;width:auto!important;overflow:visible;box-shadow:none;border-radius:0;margin:0}
+  .page{position:static;transform:none!important;width:auto}
+  .zoomctl,.lb{display:none!important}
+  .camfloat{display:none!important}
+  .paper{min-width:0;min-height:0;width:100%;padding:0;box-shadow:none;border-radius:0}
+  .paper tbody td{height:14.2mm}
   .paper tr{break-inside:avoid}
   .paper .appx{break-before:page;margin-top:0}
   .paper figure img{height:42mm}
@@ -277,6 +323,7 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
   <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V3.5"/><path d="M7.5 8 12 3.5 16.5 8"/><path d="M5 12v7.5h14V12"/></symbol>
   <symbol id="i-sheet" viewBox="0 0 24 24"><rect style="fill:var(--duo,none)" x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M3 9.5h18M8.5 9.5v10M14.5 9.5v10M3 14.5h18"/></symbol>
   <symbol id="i-print" viewBox="0 0 24 24"><path d="M7 9V3.5h10V9"/><rect style="fill:var(--duo,none)" x="3.5" y="9" width="17" height="8" rx="2"/><path d="M7 14h10v6.5H7z"/></symbol>
+  <symbol id="i-draft" viewBox="0 0 24 24"><path style="fill:var(--duo,none)" d="M6 3.5h8l4 4v13H6z"/><path d="M14 3.5v4h4"/><path d="M9 16.5l1-3 4.5-4.5 2 2L12 15.5z"/></symbol>
   <symbol id="i-hash" viewBox="0 0 24 24"><rect style="fill:var(--duo,none)" x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M10 7.5l-1.5 9M15.5 7.5l-1.5 9M7.5 10h10M6.5 14h10"/></symbol>
   <symbol id="i-cal" viewBox="0 0 24 24"><rect style="fill:var(--duo,none)" x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1"/></symbol>
   <symbol id="i-power" viewBox="0 0 24 24"><circle style="fill:var(--duo,none)" cx="12" cy="13" r="8"/><path d="M12 3v8"/></symbol>
@@ -331,6 +378,7 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 <footer class="bar">
   <div class="bar-in">
     <div class="progress" aria-live="polite"><b id="overallProgress">กรอกแล้ว 0/0</b><small id="overallSub"></small><div class="pbar" id="pbar"><i></i></div></div>
+    <button class="draftbtn" id="draftBtn" type="button"><svg class="i duo"><use href="#i-draft"/></svg>บันทึกร่าง</button>
     <button class="save" id="saveBtn" type="button"><svg class="i"><use href="#i-check"/></svg>บันทึก</button>
   </div>
 </footer>
@@ -355,8 +403,20 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
     </div>
   </div>
   <p class="mhint" id="mHint"></p>
-  <div class="paper-wrap"><div class="paper" id="paper"></div></div>
+  <div class="viewer" id="viewer" aria-label="ใบตรวจรายเดือน (ซูมได้ด้วยสองนิ้ว ปุ่มบวกลบ หรือแตะสองครั้ง)">
+    <div class="page" id="page"><div class="paper" id="paper"></div></div>
+  </div>
+  <div class="zoomctl" role="group" aria-label="ซูม">
+    <button type="button" id="zOut" aria-label="ซูมออก">−</button><span id="zLabel" aria-live="polite">100%</span><button type="button" id="zIn" aria-label="ซูมเข้า">+</button><button type="button" id="zFit">พอดีจอ</button>
+  </div>
 </section>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-labelledby="lbTitle">
+  <div class="lb-top"><div><b id="lbTitle"></b><small id="lbCount"></small></div><button class="tbtn" id="lbClose" type="button">เสร็จ</button></div>
+  <div class="lb-track" id="lbTrack"></div>
+  <button class="lb-nav prev" id="lbPrev" type="button" aria-label="รูปก่อนหน้า"><svg class="i"><use href="#i-back"/></svg></button>
+  <button class="lb-nav next" id="lbNext" type="button" aria-label="รูปถัดไป"><svg class="i"><use href="#i-chev"/></svg></button>
+</div>
 
 <div class="toast" id="toast" role="status"><svg class="i duo"><use href="#i-checkc"/></svg><span></span></div>
 
@@ -499,7 +559,7 @@ function renderForm() {
   $('machineTile').style.setProperty('--c', MACHINE_COLOR[currentType]);
   document.documentElement.style.setProperty('--mc', MACHINE_COLOR[currentType]);   // row icons follow the machine's color
   $('machineTile').innerHTML = icon(currentType.toLowerCase());
-  let html = isStopped() ? `<div class="banner" role="note">${icon('warn')}<span>เครื่องอยู่ในสถานะ <b>M/C Stop</b> ข้ามช่องที่ต้องวัดขณะเดินเครื่องได้ แล้วกดบันทึกได้เลย</span></div>` : '';
+  let html = draftBanner() + (isStopped() ? `<div class="banner" role="note">${icon('warn')}<span>เครื่องอยู่ในสถานะ <b>M/C Stop</b> ข้ามช่องที่ต้องวัดขณะเดินเครื่องได้ แล้วกดบันทึกได้เลย</span></div>` : '');
   schema.sections.forEach(sec => {
     const b = badge(sec), open = !!openAccordions[sec.id];
     html += `<div class="sec"><div class="acc ${open ? 'open' : ''}" data-sec="${sec.id}">
@@ -625,7 +685,7 @@ document.addEventListener('click', e => {
 });
 function switchType(t) {
   currentType = t; try { localStorage.setItem('di_type', t); } catch {}
-  formValues = { inspector: formValues.inspector }; tried = false; recallNo(); initOpenState(t); renderForm(); haptic(5);
+  formValues = { inspector: formValues.inspector }; tried = false; editingId = null; loadedDraftId = null; recallNo(); initOpenState(t); renderForm(); haptic(5);
 }
 document.addEventListener('input', e => {
   const n = e.target.dataset.num;
@@ -688,8 +748,9 @@ const thDate = s => { const [y, m, d] = (s || '').split('-'); return y ? `${+d}/
 /* one record per day: same machine type + machine no + date replaces the old one */
 function doSave() {
   const date = $('inspectDate').value, no = normNo($('machineNo').value);
-  const idx = store.get().findIndex(r => r.type === currentType && normNo(r.machineNo) === no && r.date === date);
-  if (idx >= 0) {
+  const found = store.get().find(r => r.type === currentType && normNo(r.machineNo) === no && r.date === date);
+  if (found && found.id === editingId) { commitSave(true); return; }   // editing that same record: just replace it
+  if (found) {
     askConfirm('มีบันทึกของวันนี้แล้ว', `${FORMS[currentType].name} NO. ${no} วันที่ ${thDate(date)} บันทึกไว้แล้ว ต้องการแทนที่ด้วยข้อมูลชุดนี้ไหม`, 'แทนที่', () => commitSave(true));
     return;
   }
@@ -699,6 +760,7 @@ function commitSave(replace) {
   const date = $('inspectDate').value, no = normNo($('machineNo').value);
   let records = store.get();
   if (replace) records = records.filter(r => !(r.type === currentType && normNo(r.machineNo) === no && r.date === date));
+  if (editingId) records = records.filter(r => r.id !== editingId);   // edited record may have moved to a new date/no
   const data = { ...formValues }, bad = abnormalIds(currentType, formValues);
   data.issues = Object.fromEntries(Object.entries(formValues.issues || {}).filter(([id]) => bad.includes(id)));  // drop notes for items set back to normal
   records.unshift({ id: Date.now(), savedAt: new Date().toLocaleString('th-TH'), type: currentType, machineName: FORMS[currentType].name,
@@ -706,25 +768,94 @@ function commitSave(replace) {
   if (!store.set(records)) { showToast('บันทึกไม่สำเร็จ ที่เก็บในเครื่องเต็มหรือถูกปิด ลองลบรูปบางรูป', true); return; }
   rememberNo(); fillNoList();
   try { localStorage.setItem('di_inspector', formValues.inspector.trim()); } catch {}
+  drafts.set(drafts.get().filter(d => d.id !== loadedDraftId && !(d.type === currentType && d.machineNo === no && d.date === date)));  // draft is done
+  const wasEditing = !!editingId; editingId = null; loadedDraftId = null;
   formValues = { inspector: formValues.inspector }; tried = false; initOpenState(currentType); renderForm();
   updateHistoryCount(); window.scrollTo({ top: 0, behavior: 'smooth' }); haptic([10, 40, 10]);
-  showToast(replace ? 'แทนที่บันทึกของวันนี้แล้ว' : 'บันทึกลงใบรายเดือนแล้ว');
+  showToast(wasEditing ? 'บันทึกการแก้ไขแล้ว' : replace ? 'แทนที่บันทึกของวันนี้แล้ว' : 'บันทึกลงใบรายเดือนแล้ว');
 }
+
+/* drafts: save unfinished work and come back to it; saved records can be reopened for editing */
+const DRAFT_KEY = 'daily_inspection_drafts_v1';
+const drafts = {
+  get() { try { return JSON.parse(localStorage.getItem(DRAFT_KEY) || '[]'); } catch { return []; } },
+  set(v) { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(v)); return true; } catch { return false; } },
+};
+let editingId = null, loadedDraftId = null;
+const hasUnsaved = () => Object.entries(formValues).some(([k, v]) => k !== 'inspector' && (k === 'issues' ? Object.keys(v || {}).length : !!v));
+function saveDraft() {
+  if (!hasUnsaved()) { showToast('ยังไม่มีข้อมูลให้บันทึกร่าง', true); return; }
+  const no = normNo($('machineNo').value), date = $('inspectDate').value;
+  const list = drafts.get().filter(d => d.id !== loadedDraftId && !(d.type === currentType && d.machineNo === no && d.date === date));
+  const d = { id: loadedDraftId || Date.now(), type: currentType, machineNo: no, date, status: $('machineStatus').value,
+    data: JSON.parse(JSON.stringify(formValues)), savedAt: new Date().toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' }), editingId };
+  list.unshift(d);
+  if (!drafts.set(list)) { showToast('บันทึกร่างไม่สำเร็จ ที่เก็บในเครื่องเต็มหรือถูกปิด', true); return; }
+  loadedDraftId = d.id; renderForm(); haptic(10); showToast('บันทึกร่างแล้ว กลับมาแก้ได้ทุกเมื่อ');
+}
+function loadInto(src) {
+  currentType = src.type; try { localStorage.setItem('di_type', currentType); } catch {}
+  $('machineNo').value = src.machineNo || ''; $('inspectDate').value = src.date || localToday();
+  $('machineStatus').value = src.status || 'Running'; setStatusDot();
+  formValues = JSON.parse(JSON.stringify(src.data || {})); $('inspectorInput').value = formValues.inspector || '';
+  tried = false; initOpenState(currentType);
+  FORMS[currentType].sections.forEach(s => { if ((s.fields || []).some(f => formValues[f.id])) openAccordions[s.id] = true; });
+}
+function guardThen(title, okLabel, fn) {
+  closeDim('historyModal');
+  if (hasUnsaved()) askConfirm(title, 'ข้อมูลที่กรอกค้างอยู่ตอนนี้จะหาย ถ้ายังไม่ได้บันทึกร่าง', okLabel, fn); else fn();
+}
+function openDraft(id) {
+  const d = drafts.get().find(x => x.id === id); if (!d) return;
+  const go = () => { loadInto(d); loadedDraftId = d.id; editingId = d.editingId || null; renderForm(); window.scrollTo({ top: 0, behavior: 'smooth' }); showToast('เปิดร่างแล้ว แก้ต่อได้เลย'); };
+  loadedDraftId === id ? (closeDim('historyModal'), go()) : guardThen('เปิดร่างนี้?', 'เปิดร่าง', go);
+}
+function editRecord(id) {
+  const r = store.get().find(x => x.id === id); if (!r) return;
+  guardThen('แก้ไขบันทึกนี้?', 'แก้ไข', () => { loadInto(r); editingId = r.id; loadedDraftId = null; renderForm(); window.scrollTo({ top: 0, behavior: 'smooth' }); showToast('กำลังแก้ไข กดบันทึกเมื่อเสร็จ'); });
+}
+function resetForm() {
+  editingId = null; loadedDraftId = null; formValues = { inspector: formValues.inspector }; tried = false;
+  $('inspectDate').value = localToday(); recallNo(); initOpenState(currentType); renderForm();
+}
+function draftBanner() {
+  if (editingId) return `<div class="banner info" role="note">${icon('draft', 'duo')}<span>กำลังแก้ไขบันทึกที่บันทึกไว้แล้ว กดบันทึกเพื่อแทนที่ของเดิม</span><button type="button" class="bact" data-cancel-edit>ยกเลิก</button></div>`;
+  if (loadedDraftId) { const d = drafts.get().find(x => x.id === loadedDraftId);
+    return d ? `<div class="banner info" role="note">${icon('draft', 'duo')}<span>แก้ต่อจากร่าง · บันทึกร่างล่าสุด ${esc(d.savedAt)}</span><button type="button" class="bact" data-cancel-edit>ปิดร่าง</button></div>` : ''; }
+  const ds = drafts.get().filter(d => d.type === currentType);
+  if (!ds.length || hasUnsaved()) return '';
+  return `<div class="banner info" role="note">${icon('draft', 'duo')}<span>มีร่างที่ยังไม่ได้บันทึก ${ds.length} รายการ<br><small>ล่าสุด NO. ${esc(ds[0].machineNo || '-')} · ${thDate(ds[0].date)}</small></span><button type="button" class="bact" data-open-draft="${ds[0].id}">เปิดต่อ</button></div>`;
+}
+$('draftBtn').addEventListener('click', saveDraft);
+document.addEventListener('click', e => {
+  const od = e.target.closest('[data-open-draft]'); if (od) { openDraft(+od.dataset.openDraft); return; }
+  const dd = e.target.closest('[data-del-draft]');
+  if (dd) { const id = +dd.dataset.delDraft;
+    askConfirm('ลบร่างนี้?', 'ลบแล้วกู้คืนไม่ได้', 'ลบ', () => { drafts.set(drafts.get().filter(d => d.id !== id)); if (loadedDraftId === id) loadedDraftId = null; renderHistory(); renderForm(); }); return; }
+  const er = e.target.closest('[data-edit-rec]'); if (er) { editRecord(+er.dataset.editRec); return; }
+  if (e.target.closest('[data-cancel-edit]')) resetForm();
+});
 
 /* history */
 function updateHistoryCount() { const n = store.get().length; $('historyCount').textContent = n > 99 ? '99+' : n; $('historyCount').dataset.n = n; }
 function issueCount(r) { return Object.entries(r.data).filter(([k, v]) => k !== 'analysis' && v === 'ผิดปกติ').length; }
-$('openHistoryBtn').addEventListener('click', () => {
-  const recs = store.get();
+function renderHistory() {
+  const recs = store.get(), ds = drafts.get();
   $('historyList').innerHTML = `<button class="mbtn" type="button" id="toMonth">${icon('sheet', 'duo')}ดูใบตรวจรายเดือน / พิมพ์</button>` +
+    (ds.length ? `<div class="sheet-sec">ร่างที่ยังไม่ได้บันทึก (${ds.length})</div><div class="grp">${ds.map(d => `<div class="hitem">
+      <button type="button" class="hopen" data-open-draft="${d.id}"><span class="t"><b>${esc(FORMS[d.type].name)} · NO. ${esc(d.machineNo || '-')}</b>
+        <small>${thDate(d.date)} · ร่างล่าสุด ${esc(d.savedAt)}${d.editingId ? ' · แก้ไขของเดิม' : ''}</small></span>
+        <span class="badge">${icon('draft')}ร่าง</span></button>
+      <button type="button" class="hdel" data-del-draft="${d.id}" aria-label="ลบร่าง">${icon('x')}</button></div>`).join('')}</div>` : '') +
+    `<div class="sheet-sec">บันทึกแล้ว · แตะเพื่อแก้ไข</div>` +
     (recs.length ? `<div class="grp">${recs.map(r => {
-    const n = issueCount(r), d = r.date ? r.date.split('-').reverse().join('/') : '-';
-    return `<div class="hitem"><span class="t"><b>${esc(r.machineName)} · NO. ${esc(normNo(r.machineNo))}</b>
-      <small>${d} · ${esc(r.data.inspector || '-')} · ${esc(r.status)}${r.data.remark ? ' · ' + esc(r.data.remark) : ''}</small></span>
-      <span class="badge ${n ? 'warn' : 'done'}">${n ? icon('warn') + 'ผิดปกติ ' + n : icon('check') + 'ปกติ'}</span></div>`;
-  }).join('')}</div>` : `<div class="nodata">${icon('doc')}ยังไม่มีประวัติการบันทึก</div>`);
-  openDim('historyModal'); $('closeHistoryBtn').focus();
-});
+      const n = issueCount(r);
+      return `<div class="hitem"><button type="button" class="hopen" data-edit-rec="${r.id}"><span class="t"><b>${esc(r.machineName)} · NO. ${esc(normNo(r.machineNo))}</b>
+        <small>${thDate(r.date)} · ${esc(r.data.inspector || '-')} · ${esc(r.status)}${r.data.remark ? ' · ' + esc(r.data.remark) : ''}</small></span>
+        <span class="badge ${n ? 'warn' : 'done'}">${n ? icon('warn') + 'ผิดปกติ ' + n : icon('check') + 'ปกติ'}</span>${icon('chev', 'chev')}</button></div>`;
+    }).join('')}</div>` : `<div class="nodata">${icon('doc')}ยังไม่มีประวัติการบันทึก</div>`);
+}
+$('openHistoryBtn').addEventListener('click', () => { renderHistory(); openDim('historyModal'); $('closeHistoryBtn').focus(); });
 $('closeHistoryBtn').addEventListener('click', () => closeDim('historyModal'));
 $('historyModal').addEventListener('click', e => { if (e.target.id === 'historyModal') closeDim('historyModal'); });
 $('exportCsvBtn').addEventListener('click', () => {
@@ -789,36 +920,151 @@ function renderPaper() {
   const row = r => {
     const pv = r.data[sh.pair[1]] || (sh.pair[1] === 'analysis' ? (recIssues(r) ? 'ผิดปกติ' : 'ปกติ') : '');
     const issueNotes = Object.entries(r.data.issues || {}).map(([id, it]) =>
-      `${fieldOf(r.type, id)?.f.label || id}: ${it.note || '-'}${it.photos?.length ? ` (รูป ${it.photos.length})` : ''}`);
+      `${fieldOf(r.type, id)?.f.label || id}: ${it.note || '-'}`);
     const note = [r.status !== 'Running' ? r.status : '', r.data.remark, ...issueNotes].filter(Boolean).join(' · ');
     const [, m, d] = r.date.split('-');
-    return `<tr><td>${+d}/${+m}</td>${sh.cols.map(c => sheetCell(r, c[2])).join('')}
+    return `<tr data-rid="${r.id}"><td>${+d}/${+m}</td>${sh.cols.map(c => sheetCell(r, c[2])).join('')}
       <td>${pv === 'ปกติ' ? '✓' : ''}</td><td class="${pv === 'ผิดปกติ' ? 'bad' : ''}">${pv === 'ผิดปกติ' ? '✗' : ''}</td>
-      <td>${esc(r.data.inspector)}</td><td class="note">${esc(note)}</td></tr>`;
+      <td class="insp">${esc(r.data.inspector)}</td><td class="note">${esc(note)}</td></tr>`;
   };
   const blank = `<tr>${'<td></td>'.repeat(sh.cols.length + 5)}</tr>`;
+  SHEET_RECS = recs;
   $('paper').innerHTML = `
     <table class="top"><colgroup><col style="width:14%"><col><col style="width:13%"></colgroup><tr>
       <td>Month/Year<br>: <span class="u">${mm ? `${mm}/${yy}` : ''}</span></td>
       <td class="ttl">Daily Inspection Sheet : ${sh.title} NO.<span class="u">${esc(normNo(mState.no))}</span></td>
       <td class="code">CE97F1005Q<small>by NITIPHAT</small></td></tr></table>
-    <table><colgroup><col style="width:4.2%">${sh.cols.map(() => '<col>').join('')}<col style="width:4%"><col style="width:4%"><col style="width:5.5%"><col style="width:8%"></colgroup>
+    <table><colgroup><col style="width:4.2%">${sh.cols.map(() => '<col>').join('')}<col style="width:3.6%"><col style="width:3.6%"><col style="width:8.6%"><col style="width:9%"></colgroup>
       <thead><tr><th rowspan="2">Date</th>${sh.cols.map(c => `<th${c[1] ? '' : ' rowspan="2"'}>${c[0]}</th>`).join('')}
         <th colspan="2">${sh.pair[0]}</th><th rowspan="2">ผู้ตรวจเช็ค</th><th rowspan="2">หมายเหตุ<br>( M/C Stop / Unload )</th></tr>
       <tr>${sh.cols.filter(c => c[1]).map(c => `<th>${c[1]}</th>`).join('')}<th>ปกติ</th><th>ผิดปกติ</th></tr></thead>
       <tbody>${recs.map(row).join('')}${blank.repeat(Math.max(0, 10 - recs.length))}</tbody></table>`;
-  const pics = recs.flatMap(r => Object.entries(r.data.issues || {}).flatMap(([id, it]) =>
-    (it.photos || []).map(p => ({ r, p, label: fieldOf(r.type, id)?.f.label || id, note: it.note }))));
-  if (pics.length) $('paper').insertAdjacentHTML('beforeend', `<div class="appx"><h4>ภาพประกอบรายการผิดปกติ — ${sh.title} NO.${esc(normNo(mState.no))} (${mm}/${yy})</h4>
-    <div class="appx-g">${pics.map(x => { const [, m, d] = x.r.date.split('-');
-      return `<figure><img src="${x.p}" alt=""><figcaption><b>${+d}/${+m}</b> · ${esc(x.label)}${x.note ? ' — ' + esc(x.note) : ''}</figcaption></figure>`; }).join('')}</div></div>`);
-  $('mHint').innerHTML = `${icon('sheet', 'duo')}<span>บันทึกแล้ว <b>${recs.length}</b> วันในเดือนนี้ · เลื่อนซ้าย–ขวาเพื่อดูทั้งใบ · ค่าผิดปกติแสดงเป็นสีแดง</span>`;
+  $('mHint').innerHTML = `${icon('sheet', 'duo')}<span>บันทึกแล้ว <b>${recs.length}</b> วันในเดือนนี้ · ใช้สองนิ้ว ปุ่ม + − หรือแตะสองครั้งเพื่อซูม</span>`;
+  layoutViewer(true);   // also places the camera icons once the page is visible
 }
+/* camera icon floats just outside the table's right edge, next to each day that has attached photos */
+function placeCams(recs) {
+  const paper = $('paper'), tbl = paper.querySelector('table:not(.top)');
+  paper.querySelectorAll('.camfloat').forEach(b => b.remove());
+  if (!tbl || $('monthView').hidden) return;
+  const pr = paper.getBoundingClientRect(), k = pr.width / PAGE_W || 1;   // undo the current zoom/fit scale
+  const left = (tbl.getBoundingClientRect().right - pr.left) / k + 7;
+  paper.querySelectorAll('tr[data-rid]').forEach(tr => {
+    const r = recs.find(x => String(x.id) === tr.dataset.rid), n = r ? recPhotos(r).length : 0; if (!n) return;
+    const tb = tr.getBoundingClientRect(), [, m, d] = r.date.split('-');
+    paper.insertAdjacentHTML('beforeend', `<button type="button" class="camfloat" data-photos="${r.id}" aria-label="ดูภาพที่แนบ วันที่ ${+d}/${+m} (${n})"
+      style="left:${left}px;top:${(tb.top - pr.top) / k + (tb.height / k) / 2 - 15}px">${icon('camera')}</button>`);
+  });
+}
+
+/* photos of one day, opened from the camera button at the end of its row */
+let SHEET_RECS = [];
+function recPhotos(r) {
+  return Object.entries(r.data.issues || {}).flatMap(([id, it]) =>
+    (it.photos || []).map(p => ({ p, label: fieldOf(r.type, id)?.f.label || id, note: it.note || '' })));
+}
+let lbLastFocus = null;
+function openPhotos(recId) {
+  const r = SHEET_RECS.find(x => x.id === recId); if (!r) return;
+  const pics = recPhotos(r); if (!pics.length) return;
+  $('lbTitle').textContent = `${FORMS[r.type].name} NO.${normNo(r.machineNo)} · ${thDate(r.date)}`;
+  $('lbTrack').innerHTML = pics.map((x, i) => `<figure class="lb-slide"><img src="${x.p}" alt="รูปที่ ${i + 1}: ${esc(x.label)}">
+    <figcaption><b>${esc(x.label)}</b>${x.note ? `<span>${esc(x.note)}</span>` : ''}</figcaption></figure>`).join('');
+  $('lbTrack').scrollLeft = 0; lbCount();
+  $('lb').hidden = false; lbLastFocus = document.activeElement; $('lbClose').focus(); haptic(5);
+}
+function lbCount() {
+  const t = $('lbTrack'), n = t.children.length, i = Math.round(t.scrollLeft / Math.max(1, t.clientWidth));
+  $('lbCount').textContent = n > 1 ? `${i + 1} / ${n}` : '';
+  $('lbPrev').hidden = n < 2 || i === 0; $('lbNext').hidden = n < 2 || i >= n - 1;
+}
+function lbGo(d) { const t = $('lbTrack'); t.scrollBy({ left: d * t.clientWidth, behavior: 'smooth' }); }
+function closePhotos() { $('lb').hidden = true; lbLastFocus?.focus?.(); }
+$('lbTrack').addEventListener('scroll', () => { clearTimeout(lbCount.t); lbCount.t = setTimeout(lbCount, 60); });
+$('lbClose').addEventListener('click', closePhotos);
+$('lbPrev').addEventListener('click', () => lbGo(-1));
+$('lbNext').addEventListener('click', () => lbGo(1));
+$('lb').addEventListener('click', e => { if (e.target.id === 'lb' || e.target.classList.contains('lb-slide')) closePhotos(); });
+document.addEventListener('keydown', e => {
+  if ($('lb').hidden) return;
+  if (e.key === 'Escape') { e.stopImmediatePropagation(); closePhotos(); }
+  if (e.key === 'ArrowRight') lbGo(1);
+  if (e.key === 'ArrowLeft') lbGo(-1);
+}, true);
+$('paper').addEventListener('click', e => { const b = e.target.closest('[data-photos]'); if (b) openPhotos(+b.dataset.photos); });   // keyboard / no-capture clicks
+
+/* ---- page viewer: fit whole A4-landscape page on screen, zoom 100–500%, pan only while zoomed ---- */
+const PAGE_W = 1123;   // A4 landscape at 96 dpi (297 mm)
+const VZ = { zoom: 1, tx: 0, ty: 0, fit: 1, W: 0, H: 0 };
+function layoutViewer(reset) {
+  if ($('monthView').hidden) return;
+  const v = $('viewer'), ph = $('paper').offsetHeight || 794;
+  const maxW = Math.min($('monthView').clientWidth - 32, 1400), maxH = Math.max(220, window.innerHeight - 120);
+  VZ.fit = Math.min(maxW / PAGE_W, maxH / ph);
+  VZ.W = Math.round(PAGE_W * VZ.fit); VZ.H = Math.round(ph * VZ.fit);
+  v.style.width = VZ.W + 'px'; v.style.height = VZ.H + 'px';
+  if (reset) { VZ.zoom = 1; VZ.tx = 0; VZ.ty = 0; }
+  applyZoom();
+  placeCams(SHEET_RECS);
+}
+function applyZoom() {
+  const pw = VZ.W * VZ.zoom, ph = VZ.H * VZ.zoom;
+  VZ.tx = Math.min(0, Math.max(VZ.W - pw, VZ.tx)); VZ.ty = Math.min(0, Math.max(VZ.H - ph, VZ.ty));   // keep page covering the frame
+  $('page').style.transform = `translate(${VZ.tx}px,${VZ.ty}px) scale(${VZ.fit * VZ.zoom})`;
+  $('zLabel').textContent = Math.round(VZ.zoom * 100) + '%';
+  $('viewer').classList.toggle('zoomed', VZ.zoom > 1.001);
+}
+function zoomAt(z, cx = VZ.W / 2, cy = VZ.H / 2) {
+  z = Math.min(5, Math.max(1, z)); const k = z / VZ.zoom;
+  VZ.tx = cx - (cx - VZ.tx) * k; VZ.ty = cy - (cy - VZ.ty) * k; VZ.zoom = z; applyZoom();
+}
+(() => {
+  const v = $('viewer'), pts = new Map(); let pinch = null, lastTap = null, moved = 0;
+  const rel = (x, y) => { const r = v.getBoundingClientRect(); return { x: x - r.left, y: y - r.top }; };
+  const pinchInfo = () => { const [a, b] = [...pts.values()], m = rel((a.x + b.x) / 2, (a.y + b.y) / 2); return { d: Math.hypot(a.x - b.x, a.y - b.y), ...m }; };
+  v.addEventListener('pointerdown', e => {
+    v.setPointerCapture(e.pointerId); pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); moved = 0;
+    if (pts.size === 2) pinch = pinchInfo();
+    if (VZ.zoom > 1) v.classList.add('dragging');
+  });
+  v.addEventListener('pointermove', e => {
+    const p = pts.get(e.pointerId); if (!p) return;
+    const dx = e.clientX - p.x, dy = e.clientY - p.y; p.x = e.clientX; p.y = e.clientY; moved += Math.abs(dx) + Math.abs(dy);
+    if (pts.size === 2 && pinch) {
+      const cur = pinchInfo(); zoomAt(VZ.zoom * cur.d / pinch.d, cur.x, cur.y);
+      VZ.tx += cur.x - pinch.x; VZ.ty += cur.y - pinch.y; applyZoom(); pinch = cur;
+    } else if (pts.size === 1 && VZ.zoom > 1) { VZ.tx += dx; VZ.ty += dy; applyZoom(); }   // locked at 100%: no sliding
+  });
+  const end = e => {
+    if (!pts.has(e.pointerId)) return; pts.delete(e.pointerId); v.classList.remove('dragging');
+    pinch = pts.size === 2 ? pinchInfo() : null;
+    if (e.type === 'pointerup' && pts.size === 0 && moved < 10) {
+      // tap on (or within ~22px of) a camera button — the page is scaled down, so give small buttons a finger-sized target
+      const cam = document.elementFromPoint(e.clientX, e.clientY)?.closest('[data-photos]') ||
+        [...$('paper').querySelectorAll('[data-photos]')].find(b => { const r = b.getBoundingClientRect();
+          return Math.hypot(Math.max(r.left - e.clientX, 0, e.clientX - r.right), Math.max(r.top - e.clientY, 0, e.clientY - r.bottom)) <= 22; });
+      if (cam) { lastTap = null; openPhotos(+cam.dataset.photos); return; }
+      const now = Date.now(), at = rel(e.clientX, e.clientY);   // double-tap toggles zoom
+      if (lastTap && now - lastTap.t < 320 && Math.hypot(at.x - lastTap.x, at.y - lastTap.y) < 30) { zoomAt(VZ.zoom > 1.001 ? 1 : 2.5, at.x, at.y); lastTap = null; }
+      else lastTap = { t: now, ...at };
+    }
+  };
+  v.addEventListener('pointerup', end); v.addEventListener('pointercancel', end);
+  v.addEventListener('wheel', e => {
+    const at = rel(e.clientX, e.clientY);
+    if (e.ctrlKey) { e.preventDefault(); zoomAt(VZ.zoom * Math.exp(-e.deltaY * 0.01), at.x, at.y); }   // trackpad pinch / ctrl+wheel
+    else if (VZ.zoom > 1) { e.preventDefault(); VZ.tx -= e.deltaX; VZ.ty -= e.deltaY; applyZoom(); }
+  }, { passive: false });
+  $('zIn').addEventListener('click', () => zoomAt(VZ.zoom * 1.5));
+  $('zOut').addEventListener('click', () => zoomAt(VZ.zoom / 1.5));
+  $('zFit').addEventListener('click', () => zoomAt(1));
+  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => layoutViewer(true), 120); });
+})();
 function openMonth() {
   mState.type = currentType; mState.no = normNo($('machineNo').value); mState.month = ($('inspectDate').value || localToday()).slice(0, 7);
   $('mNo').value = mState.no; $('mMonth').value = mState.month;
   renderPaper(); lastFocus = document.activeElement;
-  $('monthView').hidden = false; $('monthView').scrollTop = 0; document.body.style.overflow = 'hidden'; $('mClose').focus();
+  $('monthView').hidden = false; $('monthView').scrollTop = 0; document.body.style.overflow = 'hidden'; layoutViewer(true); $('mClose').focus();
 }
 function closeMonth() { $('monthView').hidden = true; if (!document.querySelector('.dim.open')) document.body.style.overflow = ''; lastFocus?.focus?.(); }
 $('openMonthBtn').addEventListener('click', openMonth);
