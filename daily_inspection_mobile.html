@@ -172,6 +172,32 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .draftbtn:active{transform:scale(.97)}
 .banner.info{background:color-mix(in srgb,var(--tint) 11%,transparent);color:var(--tint);align-items:center}
 .banner .bact{flex:none;margin-left:auto;border:0;background:var(--card);color:inherit;font-weight:700;font-size:.82rem;min-height:34px;padding:0 12px;border-radius:999px;cursor:pointer}
+/* history calendar */
+.hseg{margin:0 0 10px}
+.mchips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px;scrollbar-width:none}
+.mchips::-webkit-scrollbar{display:none}
+.mchips button{flex:none;min-height:36px;padding:0 14px;border:0;border-radius:999px;background:var(--card);color:var(--label);font-size:.88rem;font-weight:500;cursor:pointer}
+.mchips button[aria-pressed=true]{background:var(--tint);color:#fff;font-weight:600}
+.hcal-card{background:var(--card);border-radius:14px;padding:12px 12px 10px}
+.hcal-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:0 4px 10px}
+.hcal-h b{font-size:1.06rem;font-weight:700}
+.hcal-h small{font-size:.76rem;color:var(--label2)}
+.hcal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.hcal i{font-style:normal;text-align:center;font-size:.7rem;color:var(--label2);padding-bottom:2px}
+.cd{position:relative;aspect-ratio:1;min-height:36px;border:0;border-radius:10px;background:transparent;color:var(--label3);font-size:.88rem;font-weight:500;cursor:pointer;display:grid;place-items:center}
+.cd.ok{background:color-mix(in srgb,var(--green) 16%,transparent);color:var(--ok-t);font-weight:600}
+.cd.ng{background:var(--red);color:#fff;font-weight:700}
+.cd.st{background:var(--orange);color:#fff;font-weight:700}
+.cd.today{box-shadow:inset 0 0 0 1.5px var(--label3)}
+.cd.sel{box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--tint)}
+.cd sup{position:absolute;top:2px;right:4px;font-size:.58rem;line-height:1}
+.hleg{display:flex;flex-wrap:wrap;gap:12px;margin:10px 4px 0;font-size:.72rem;color:var(--label2)}
+.hleg span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.hleg .ok::before{background:color-mix(in srgb,var(--green) 35%,transparent)}.hleg .ng::before{background:var(--red)}.hleg .st::before{background:var(--orange)}.hleg .no::before{background:var(--fill)}
+.hic{width:34px;height:34px;border-radius:50%;flex:none;display:grid;place-items:center;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent)}
+.hic svg.i{width:19px;height:19px;stroke-width:1.8;--duo:color-mix(in srgb,var(--c) 24%,transparent)}
+.hopen .t small.bad{color:var(--red-t);white-space:normal;margin-top:3px}
+.badge.stop{background:color-mix(in srgb,var(--orange) 16%,transparent);color:var(--orange-t)}
 .sheet-sec{margin:18px 4px 8px;font-size:.76rem;text-transform:uppercase;color:var(--label2)}
 .hopen{flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:0;background:none;text-align:left;padding:0;cursor:pointer;color:inherit}
 .hdel{flex:none;border:0;background:none;color:var(--red-t);min-width:44px;min-height:44px;display:grid;place-items:center;cursor:pointer}
@@ -233,6 +259,8 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .zoomctl button{min-width:44px;min-height:40px;border:0;background:none;color:var(--tint);font-size:1.25rem;font-weight:600;border-radius:999px;cursor:pointer}
 .zoomctl button:active{background:var(--fill)}
 .zoomctl #zFit{font-size:.82rem;padding:0 14px}
+.zoomctl .landbtn{display:inline-flex;align-items:center;gap:5px;font-size:.82rem;padding:0 14px;margin-left:2px;background:var(--tint);color:#fff}
+.zoomctl .landbtn:active{background:var(--tint);opacity:.8}
 .zoomctl span{min-width:3.6em;text-align:center;font-size:.82rem;font-weight:600;font-variant-numeric:tabular-nums;color:var(--label2)}
 .paper{position:relative;width:1123px;min-height:794px;margin:0;background:#fff;color:#000;padding:26px 44px;font-family:"Sarabun","TH Sarabun New","Leelawadee UI","Noto Sans Thai",sans-serif;font-size:10.5px;color-scheme:light}
 .paper table{border-collapse:collapse;width:100%;table-layout:fixed}
@@ -323,7 +351,14 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .ls{position:fixed;inset:0;z-index:64;background:#1C1C1E;touch-action:none;overflow:hidden;user-select:none;-webkit-user-select:none}
 .ls[hidden]{display:none}
 .ls-stage{position:absolute;left:0;top:0;transform-origin:0 0;overflow:hidden}
-.ls-page{position:absolute;left:0;top:0;width:1123px;transform-origin:0 0;box-shadow:0 6px 30px rgba(0,0,0,.45)}
+.ls-page{position:absolute;left:0;top:0;transform-origin:0 0}
+.ls-sheet{width:1060px;min-height:0!important;padding:0!important;border-radius:6px;overflow:hidden;box-shadow:0 6px 30px rgba(0,0,0,.45)}
+.ls-sheet table.rt{border:0}
+.ls-sheet table.rt tbody td{height:var(--rowh,46px)!important}
+.ls-sheet .dtcam{display:flex;align-items:center;justify-content:center;margin:4px auto 0;width:26px;height:22px;padding:0;border:0;border-radius:999px;background:#E8F1FF;color:#0A5BD3}
+.ls-sheet .dtcam svg.i{width:15px;height:15px;stroke-width:2;--duo:rgba(10,91,211,.2)}
+.ls-empty{padding:40px 60px;background:#fff;border-radius:12px;font-size:16px;color:#3A3A3C}
+.ls-hint.gone{opacity:0}
 .ls-page img{pointer-events:none}
 .ls-close{position:absolute;top:calc(env(safe-area-inset-top) + 10px);right:12px;z-index:2;min-height:40px;padding:0 16px;border:0;border-radius:999px;background:rgba(0,0,0,.62);color:#fff;font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .ls-hint{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);padding:6px 14px;border-radius:999px;background:rgba(0,0,0,.55);color:#fff;font-size:.76rem;white-space:nowrap;pointer-events:none;transition:opacity .4s}
@@ -486,7 +521,7 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
     <div class="grp" id="dlItems"></div>
   </section>
   <div class="zoomctl" role="group" aria-label="ซูม">
-    <button type="button" id="zOut" aria-label="ซูมออก">−</button><span id="zLabel" aria-live="polite">100%</span><button type="button" id="zIn" aria-label="ซูมเข้า">+</button><button type="button" id="zFit">พอดีจอ</button><button type="button" id="zLand" aria-label="ดูเต็มจอแนวนอน"><svg class="i" style="width:1.15rem;height:1.15rem;stroke-width:2"><use href="#i-rotate"/></svg></button>
+    <button type="button" id="zOut" aria-label="ซูมออก">−</button><span id="zLabel" aria-live="polite">100%</span><button type="button" id="zIn" aria-label="ซูมเข้า">+</button><button type="button" id="zFit">พอดีจอ</button><button type="button" id="zLand" class="landbtn"><svg class="i" style="width:1.15rem;height:1.15rem;stroke-width:2"><use href="#i-rotate"/></svg>แนวนอน</button>
   </div>
 </section>
 
@@ -494,7 +529,7 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
   <div class="ls-stage" id="lsStage">
     <div class="ls-page" id="lsPage"></div>
     <button class="ls-close" id="lsClose" type="button">✕ ปิด</button>
-    <span class="ls-hint">ใช้สองนิ้วซูม · แตะสองครั้งเพื่อขยาย</span>
+    <span class="ls-hint" id="lsHint">ใช้สองนิ้วซูม · แตะสองครั้งเพื่อขยาย</span>
   </div>
 </div>
 
@@ -934,15 +969,69 @@ function renderHistory() {
         <small>${thDate(d.date)} · ร่างล่าสุด ${esc(d.savedAt)}${d.editingId ? ' · แก้ไขของเดิม' : ''}</small></span>
         <span class="badge">${icon('draft')}ร่าง</span></button>
       <button type="button" class="hdel" data-del-draft="${d.id}" aria-label="ลบร่าง">${icon('x')}</button></div>`).join('')}</div>` : '') +
-    `<div class="sheet-sec">บันทึกแล้ว · แตะเพื่อแก้ไข</div>` +
-    (recs.length ? `<div class="grp">${recs.map(r => {
-      const n = issueCount(r);
-      return `<div class="hitem"><button type="button" class="hopen" data-edit-rec="${r.id}"><span class="t"><b>${esc(r.machineName)} · NO. ${esc(normNo(r.machineNo))}</b>
-        <small>${thDate(r.date)} · ${esc(r.data.inspector || '-')} · ${esc(r.status)}${r.data.remark ? ' · ' + esc(r.data.remark) : ''}</small></span>
-        <span class="badge ${n ? 'warn' : 'done'}">${n ? icon('warn') + 'ผิดปกติ ' + n : icon('check') + 'ปกติ'}</span>${icon('chev', 'chev')}</button></div>`;
-    }).join('')}</div>` : `<div class="nodata">${icon('doc')}ยังไม่มีประวัติการบันทึก</div>`);
+    (recs.length ? historyCalendar(recs) : `<div class="nodata">${icon('doc')}ยังไม่มีประวัติการบันทึก</div>`);
 }
-$('openHistoryBtn').addEventListener('click', () => { renderHistory(); openDim('historyModal'); $('closeHistoryBtn').focus(); });
+
+/* history as a calendar: month chips → colored calendar → records of the tapped day */
+const H = { month: '', day: '', type: 'all' };
+const recStatus = r => isBadRec(r) ? 'ng' : (r.status && r.status !== 'Running' ? 'st' : 'ok');
+const RANK = { ok: 1, st: 2, ng: 3 };
+function historyCalendar(all) {
+  const recs = all.filter(r => r.date && (H.type === 'all' || r.type === H.type));
+  const months = [...new Set([...all.map(r => (r.date || '').slice(0, 7)).filter(Boolean), localToday().slice(0, 7)])].sort();
+  if (!months.includes(H.month)) H.month = (all.map(r => r.date).sort().pop() || localToday()).slice(0, 7);
+  const inMonth = recs.filter(r => r.date.startsWith(H.month));
+  const byDay = {}; inMonth.forEach(r => (byDay[r.date] ||= []).push(r));
+  if (!H.day || !H.day.startsWith(H.month)) H.day = Object.keys(byDay).sort().pop() || (localToday().startsWith(H.month) ? localToday() : H.month + '-01');
+  const [yy, mm] = H.month.split('-').map(Number), first = new Date(yy, mm - 1, 1), days = new Date(yy, mm, 0).getDate();
+  const label = (m, o) => new Date(+m.slice(0, 4), +m.slice(5, 7) - 1, 1).toLocaleDateString('th-TH', o);
+  const nDays = Object.keys(byDay).length, nBad = Object.values(byDay).filter(l => l.some(r => recStatus(r) === 'ng')).length,
+        nStop = Object.values(byDay).filter(l => l.some(r => recStatus(r) === 'st')).length;
+  let cal = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'].map(d => `<i>${d}</i>`).join('') + '<span></span>'.repeat(first.getDay());
+  for (let d = 1; d <= days; d++) {
+    const key = `${H.month}-${String(d).padStart(2, '0')}`, list = byDay[key] || [];
+    const st = list.reduce((w, r) => RANK[recStatus(r)] > RANK[w] ? recStatus(r) : w, list.length ? 'ok' : '');
+    const name = { ok: 'ปกติ', ng: 'ผิดปกติ', st: 'M/C Stop' }[st] || 'ไม่มีบันทึก';
+    cal += `<button type="button" class="cd ${st} ${key === H.day ? 'sel' : ''} ${key === localToday() ? 'today' : ''}" data-hd="${key}" aria-label="${d} ${name}${list.length > 1 ? ` ${list.length} รายการ` : ''}">${d}${list.length > 1 ? `<sup>${list.length}</sup>` : ''}</button>`;
+  }
+  const dayRecs = (byDay[H.day] || []).slice().sort((a, b) => a.type.localeCompare(b.type) || a.machineNo.localeCompare(b.machineNo));
+  const dayTitle = new Date(+H.day.slice(0, 4), +H.day.slice(5, 7) - 1, +H.day.slice(8, 10)).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const typeSeg = [['all', 'ทั้งหมด'], ['ACP', 'Compressor'], ['AD', 'Dryer'], ['CT', 'Cooling']]
+    .map(([k, l]) => `<button type="button" role="tab" data-htype="${k}" aria-selected="${H.type === k}">${l}</button>`).join('');
+  return `<div class="sheet-sec">บันทึกแล้ว</div>
+    <div class="seg hseg" role="tablist" aria-label="เครื่อง">${typeSeg}</div>
+    <div class="mchips" id="mchips">${months.map(m => `<button type="button" data-hm="${m}" aria-pressed="${m === H.month}">${label(m, { month: 'short', year: '2-digit' })}</button>`).join('')}</div>
+    <div class="hcal-card">
+      <div class="hcal-h"><b>${label(H.month, { month: 'long', year: 'numeric' })}</b><small>${nDays} วัน · ผิดปกติ ${nBad} · Stop ${nStop}</small></div>
+      <div class="hcal">${cal}</div>
+      <div class="hleg"><span class="ok">ปกติ</span><span class="ng">ผิดปกติ</span><span class="st">M/C Stop</span><span class="no">ไม่มีบันทึก</span></div>
+    </div>
+    <div class="sheet-sec">${dayTitle} · แตะเพื่อแก้ไข</div>
+    ${dayRecs.length ? `<div class="grp">${dayRecs.map(r => {
+      const s = recStatus(r), lines = abnormalIds(r.type, r.data).map(id => {
+        const fm = fieldOf(r.type, id), note = r.data.issues?.[id]?.note;
+        return `${esc(fm.f.label)}${fm.kind === 'numeric' ? ` ${esc(r.data[id])} ${fm.f.unit}` : ''}${note ? ' — ' + esc(note) : ''}`;
+      });
+      return `<div class="hitem"><button type="button" class="hopen" data-edit-rec="${r.id}">
+        <span class="hic" style="--c:${MACHINE_COLOR[r.type]}">${icon(r.type.toLowerCase())}</span>
+        <span class="t"><b>${esc(FORMS[r.type].name)} · NO. ${esc(normNo(r.machineNo))}</b>
+          <small>${esc(r.data.inspector || '-')}${r.status !== 'Running' ? ' · ' + esc(r.status) : ''}${r.data.remark ? ' · ' + esc(r.data.remark) : ''}</small>
+          ${lines.length ? `<small class="bad">${lines.join('<br>')}</small>` : ''}</span>
+        <span class="badge ${s === 'ng' ? 'warn' : s === 'st' ? 'stop' : 'done'}">${s === 'ng' ? icon('warn') + 'ผิดปกติ' : s === 'st' ? 'Stop' : icon('check') + 'ปกติ'}</span>${icon('chev', 'chev')}</button></div>`;
+    }).join('')}</div>` : `<div class="nodata" style="padding:24px 16px">ไม่มีบันทึกในวันนี้</div>`}`;
+}
+$('historyList').addEventListener('click', e => {
+  const m = e.target.closest('[data-hm]'), d = e.target.closest('[data-hd]'), t = e.target.closest('[data-htype]');
+  if (!m && !d && !t) return;
+  if (m) { H.month = m.dataset.hm; H.day = ''; }
+  if (d) H.day = d.dataset.hd;
+  if (t) H.type = t.dataset.htype;
+  const y = $('historyList').parentElement.scrollTop; renderHistory(); $('historyList').parentElement.scrollTop = y; haptic(5);
+});
+$('openHistoryBtn').addEventListener('click', () => {
+  H.month = ''; H.day = ''; renderHistory(); openDim('historyModal'); $('closeHistoryBtn').focus();
+  const sel = document.querySelector('#mchips [aria-pressed=true]'); sel?.scrollIntoView({ inline: 'center', block: 'nearest' });
+});
 $('closeHistoryBtn').addEventListener('click', () => closeDim('historyModal'));
 $('historyModal').addEventListener('click', e => { if (e.target.id === 'historyModal') closeDim('historyModal'); });
 $('exportCsvBtn').addEventListener('click', () => {
@@ -1085,10 +1174,24 @@ $('dlClear').addEventListener('click', () => { mState.filter = null; applyFilter
 /* ---- full-screen landscape viewer ----
    Android: real fullscreen + orientation lock. Elsewhere (iPhone, or lock refused): if the screen is portrait,
    the stage is rotated 90° in CSS so the A4-landscape page fills the phone's long side; turn the phone to read it. */
-const LS = { zoom: 1, tx: 0, ty: 0, fit: 1, SW: 0, SH: 0, ph: 794, rot: false };
+const LS = { zoom: 1, tx: 0, ty: 0, fit: 1, SW: 0, SH: 0, ph: 794, pw: 1060, rot: false };
+/* landscape shows only the table rows that were filled in (no title, no summary, no blank rows) */
+function buildLandscapeTable() {
+  const src = $('paper').querySelector('table.rt');
+  const rows = src ? [...src.tBodies[0].rows].filter(tr => tr.dataset.rid) : [];
+  if (!rows.length) return `<div class="ls-empty">ยังไม่มีข้อมูลที่กรอกในเดือนนี้</div>`;
+  const body = rows.map(tr => {
+    const c = tr.cloneNode(true); c.classList.remove('dim');
+    const r = SHEET_RECS.find(x => String(x.id) === tr.dataset.rid);
+    if (r && recPhotos(r).length) c.cells[0].insertAdjacentHTML('beforeend', `<button type="button" class="dtcam" data-photos="${r.id}" aria-label="ดูภาพที่แนบ">${icon('camera')}</button>`);
+    return c.outerHTML;
+  }).join('');
+  return `<div class="paper rep ls-sheet">${`<table class="rt">${src.querySelector('colgroup').outerHTML}${src.tHead.outerHTML}<tbody>${body}</tbody></table>`}</div>`;
+}
 function openLandscape() {
-  $('lsPage').innerHTML = $('paper').outerHTML.replace('id="paper"', '');
+  $('lsPage').innerHTML = buildLandscapeTable();
   $('ls').hidden = false; document.body.style.overflow = 'hidden'; haptic(8);
+  $('lsHint').classList.remove('gone'); clearTimeout(openLandscape.t); openLandscape.t = setTimeout(() => $('lsHint').classList.add('gone'), 2500);
   lsLayout(true);
   try {
     const el = $('ls'), p = el.requestFullscreen ? el.requestFullscreen({ navigationUI: 'hide' }) : null;
@@ -1110,15 +1213,23 @@ function lsLayout(reset) {
   LS.rot = vh > vw; LS.SW = LS.rot ? vh : vw; LS.SH = LS.rot ? vw : vh;
   st.style.width = LS.SW + 'px'; st.style.height = LS.SH + 'px';
   st.style.transform = LS.rot ? `translate(${vw}px,0) rotate(90deg)` : 'none';
-  LS.ph = $('lsPage').offsetHeight || 794;
-  LS.fit = Math.min((LS.SW - 16) / PAGE_W, (LS.SH - 16) / LS.ph);
-  if (reset) LS.zoom = 1;
+  const sheet = $('lsPage').firstElementChild, M = 8;   // small margin so the table fills the screen
+  LS.pw = sheet.offsetWidth || 1060;
+  const tbl = sheet.querySelector('table');
+  if (tbl) {   // stretch rows so the table's shape matches the screen (full screen), within readable limits
+    const n = tbl.tBodies[0].rows.length, headH = tbl.tHead.offsetHeight;
+    const targetH = LS.pw * (LS.SH - 2 * M) / (LS.SW - 2 * M);
+    sheet.style.setProperty('--rowh', Math.max(34, Math.min(180, (targetH - headH) / n)) + 'px');
+  }
+  LS.ph = sheet.offsetHeight || 600;
+  LS.fit = (LS.SW - 2 * M) / LS.pw;   // always fill the width; many rows → drag up/down to scroll
+  if (reset) { LS.zoom = 1; LS.tx = 0; LS.ty = M; }
   lsApply();
 }
 function lsApply() {
-  const pw = PAGE_W * LS.fit * LS.zoom, ph = LS.ph * LS.fit * LS.zoom;
+  const pw = LS.pw * LS.fit * LS.zoom, ph = LS.ph * LS.fit * LS.zoom;
   LS.tx = pw <= LS.SW ? (LS.SW - pw) / 2 : Math.min(0, Math.max(LS.SW - pw, LS.tx));
-  LS.ty = ph <= LS.SH ? (LS.SH - ph) / 2 : Math.min(0, Math.max(LS.SH - ph, LS.ty));
+  LS.ty = ph <= LS.SH ? (LS.SH - ph) / 2 : Math.min(8, Math.max(LS.SH - ph - 8, LS.ty));
   $('lsPage').style.transform = `translate(${LS.tx}px,${LS.ty}px) scale(${LS.fit * LS.zoom})`;
   $('ls').classList.toggle('zoomed', LS.zoom > 1.001);
 }
@@ -1139,14 +1250,14 @@ function lsZoomAt(z, cx, cy) {
     const p = pts.get(e.pointerId); if (!p) return;
     const q = lg(e.clientX, e.clientY), dx = q.x - p.x, dy = q.y - p.y; p.x = q.x; p.y = q.y; moved += Math.abs(dx) + Math.abs(dy);
     if (pts.size === 2 && pinch) { const c = pinchInfo(); lsZoomAt(LS.zoom * c.d / pinch.d, c.x, c.y); LS.tx += c.x - pinch.x; LS.ty += c.y - pinch.y; lsApply(); pinch = c; }
-    else if (pts.size === 1 && LS.zoom > 1) { LS.tx += dx; LS.ty += dy; lsApply(); }
+    else if (pts.size === 1 && (LS.zoom > 1 || LS.ph * LS.fit > LS.SH)) { LS.tx += dx; LS.ty += dy; lsApply(); }   // pan when zoomed or when many rows overflow
   });
   const end = e => {
     if (!pts.has(e.pointerId)) return; pts.delete(e.pointerId); pinch = pts.size === 2 ? pinchInfo() : null;
     if (e.type !== 'pointerup' || pts.size || moved >= 10) return;
     const cam = document.elementFromPoint(e.clientX, e.clientY)?.closest('[data-photos]') ||
       [...$('lsPage').querySelectorAll('[data-photos]')].find(b => { const r = b.getBoundingClientRect();
-        return Math.hypot(Math.max(r.left - e.clientX, 0, e.clientX - r.right), Math.max(r.top - e.clientY, 0, e.clientY - r.bottom)) <= 22; });
+        return Math.hypot(Math.max(r.left - e.clientX, 0, e.clientX - r.right), Math.max(r.top - e.clientY, 0, e.clientY - r.bottom)) <= 16; });
     if (cam) { lastTap = null; openPhotos(+cam.dataset.photos); return; }
     const now = Date.now(), at = lg(e.clientX, e.clientY);
     if (lastTap && now - lastTap.t < 320 && Math.hypot(at.x - lastTap.x, at.y - lastTap.y) < 30) { lsZoomAt(LS.zoom > 1.001 ? 1 : 2.5, at.x, at.y); lastTap = null; }
@@ -1272,7 +1383,6 @@ function zoomAt(z, cx = VZ.W / 2, cy = VZ.H / 2) {
       if (cam) { lastTap = null; openPhotos(+cam.dataset.photos); return; }
       const kp = document.elementFromPoint(e.clientX, e.clientY)?.closest('[data-kpi]');   // tap a summary box
       if (kp) { lastTap = null; setFilter(kp.dataset.kpi); return; }
-      if (e.pointerType === 'touch' && VZ.zoom <= 1.001) { lastTap = null; openLandscape(); return; }   // phone: tap the page → full-screen landscape
       const now = Date.now(), at = rel(e.clientX, e.clientY);   // double-tap toggles zoom
       if (lastTap && now - lastTap.t < 320 && Math.hypot(at.x - lastTap.x, at.y - lastTap.y) < 30) { zoomAt(VZ.zoom > 1.001 ? 1 : 2.5, at.x, at.y); lastTap = null; }
       else lastTap = { t: now, ...at };
