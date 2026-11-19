@@ -976,7 +976,6 @@ function issuePanel(id) {
     <textarea class="inp" data-note="${id}" placeholder="อาการที่พบ / สิ่งที่ทำไปแล้ว" aria-label="หมายเหตุรายการผิดปกติ">${esc(it.note)}</textarea>
     <div class="photos">${it.photos.map((p, i) => `<div class="ph"><img src="${p}" alt="รูปที่ ${i + 1}"><button type="button" data-delph="${id}" data-i="${i}" aria-label="ลบรูปที่ ${i + 1}">${icon('x')}</button></div>`).join('')}
       ${it.photos.length < 3 ? `<label class="addph">${icon('camera', 'duo')}ถ่าย/เลือกรูป<input type="file" accept="image/*" data-photo="${id}" hidden></label>` : ''}</div>
-    <button type="button" class="sharebtn" data-share="${id}">${icon('share')}ส่งแจ้งหัวหน้า (LINE / แชท)</button>
   </div>`;
 }
 function refreshPanel(id) { document.querySelectorAll(`.issue[data-issue="${id}"]`).forEach(p => { p.outerHTML = issuePanel(id); }); }   // form + step-by-step view
