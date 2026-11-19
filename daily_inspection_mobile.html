@@ -101,6 +101,8 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .row.miss .field{border-color:var(--red)}
 .row.miss .ri{color:var(--red)}
 .field.sel{position:relative;padding-right:30px;gap:8px}
+.field.mno{width:8.4rem}
+.field.mno select{font-weight:600;font-size:1.06rem}
 .field.sel::after{content:"";position:absolute;right:13px;top:50%;width:7px;height:7px;margin-top:-6px;border-right:2px solid var(--label2);border-bottom:2px solid var(--label2);transform:rotate(45deg);pointer-events:none}
 .field select{flex:1;min-width:0;border:0;background:transparent;outline:none;padding:0;min-height:42px;font-size:1rem;font-weight:500;color:var(--label);appearance:none;-webkit-appearance:none;cursor:pointer}
 .field .st-dot{width:10px;height:10px;border-radius:50%;flex:none;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 18%,transparent)}
@@ -676,7 +678,7 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
     </div>
     <div class="grp" style="margin-top:12px">
       <label class="row"><span class="lab"><b>เครื่องที่</b></span><span class="val">
-        <span class="unit" style="min-width:0">NO.</span><input id="mNo" type="text" class="inp" style="width:5.5em" placeholder="เช่น 1" autocomplete="off" list="noList" aria-label="เครื่องที่ (NO.)"></span></label>
+        <span class="field sel mno"><span class="pre">NO.</span><select id="mNo" aria-label="เครื่องที่ (NO.)"></select></span></span></label>
       <label class="row"><span class="lab"><b>เดือน/ปี</b></span><span class="val"><input id="mMonth" type="month" class="inp" style="width:auto;text-align:left;color:var(--tint)"></span></label>
     </div>
   </div>
@@ -1626,7 +1628,7 @@ function zoomAt(z, cx = VZ.W / 2, cy = VZ.H / 2) {
 })();
 function openMonth() {
   mState.filter = null; mState.type = currentType; mState.no = normNo($('machineNo').value); mState.month = ($('inspectDate').value || localToday()).slice(0, 7);
-  $('mNo').value = mState.no; $('mMonth').value = mState.month;
+  fillMonthNos(); $('mMonth').value = mState.month;
   renderPaper(); lastFocus = document.activeElement;
   $('monthView').hidden = false; $('monthView').scrollTop = 0; document.body.style.overflow = 'hidden'; layoutViewer(true); $('mClose').focus();
 }
@@ -1638,10 +1640,18 @@ $('mPrint').addEventListener('click', () => {
   renderPaper();
   requestAnimationFrame(() => window.print());
 });
-$('mNo').addEventListener('input', e => { mState.no = normNo(e.target.value); renderPaper(); });
+/* machine number on the monthly sheet: dropdown of numbers already recorded for this machine type */
+function fillMonthNos() {
+  const nos = [...new Set(store.get().filter(r => r.type === mState.type).map(r => normNo(r.machineNo)).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, 'th', { numeric: true }));
+  if (!nos.includes(mState.no)) mState.no = nos[0] || '';   // no records yet for this machine type → empty
+  $('mNo').innerHTML = nos.length ? nos.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('') : `<option value="">ยังไม่มีบันทึก</option>`;
+  $('mNo').value = mState.no || '';
+}
+$('mNo').addEventListener('change', e => { mState.no = e.target.value; renderPaper(); haptic(5); });
 $('machineNo').addEventListener('input', () => { $('machineNo').closest('.row').classList.remove('miss'); rememberNo(); });
 $('mMonth').addEventListener('change', e => { mState.month = e.target.value; renderPaper(); });
-$('mTypeSeg').addEventListener('click', e => { const b = e.target.closest('[data-mtype]'); if (b) { mState.type = b.dataset.mtype; renderPaper(); haptic(5); } });
+$('mTypeSeg').addEventListener('click', e => { const b = e.target.closest('[data-mtype]'); if (b) { mState.type = b.dataset.mtype; fillMonthNos(); renderPaper(); haptic(5); } });
 document.addEventListener('click', e => { if (e.target.closest('#toMonth')) { closeDim('historyModal'); openMonth(); } });
 
 /* dialogs & toast */
