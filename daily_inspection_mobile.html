@@ -173,6 +173,36 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .draftbtn:active{transform:scale(.97)}
 .banner.info{background:color-mix(in srgb,var(--tint) 11%,transparent);color:var(--tint);align-items:center}
 .banner .bact{flex:none;margin-left:auto;border:0;background:var(--card);color:inherit;font-weight:700;font-size:.82rem;min-height:34px;padding:0 12px;border-radius:999px;cursor:pointer}
+/* swipe actions on history rows */
+.swipe{position:relative;overflow:hidden}
+.swipe+.swipe{border-top:.5px solid var(--sep)}
+.sw-acts{position:absolute;top:0;right:0;bottom:0;width:160px;display:flex}
+.sw-acts button{flex:1;border:0;color:#fff;font:inherit;font-size:.82rem;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer}
+.sw-acts button svg.i{width:20px;height:20px;stroke-width:2.2;--duo:rgba(255,255,255,.25)}
+.sw-edit{background:#8E8E93}.sw-del{background:var(--red)}
+.sw-front{position:relative;z-index:1;background:var(--card);touch-action:pan-y;transition:transform .28s cubic-bezier(.32,.72,0,1);-webkit-user-select:none;user-select:none}
+/* record detail */
+.rd-head{display:flex;align-items:center;gap:12px;padding:6px 4px 14px}
+.rd-head .t{flex:1;min-width:0}
+.rd-head .t b{display:block;font-size:1.06rem;font-weight:700}
+.rd-head .t small{display:block;margin-top:2px;font-size:.82rem;color:var(--label2)}
+.rd-row{display:flex;align-items:center;gap:12px;min-height:46px;padding:9px 16px;position:relative}
+.rd-row+.rd-row::before,.rd-iss+.rd-row::before{content:"";position:absolute;top:0;left:16px;right:0;border-top:.5px solid var(--sep)}
+.rd-row .l{flex:1;min-width:0;color:var(--label)}
+.rd-row .l small{display:block;margin-top:1px;font-size:.74rem;color:var(--label2)}
+.rd-row .v{flex:none;font-weight:600;text-align:right;color:var(--label);max-width:60%}
+.rd-row .v small{font-weight:400;color:var(--label2);font-size:.78rem}
+.rd-row .v.ok{color:var(--ok-t)}.rd-row .v.bad{color:var(--red-t)}
+.rd-row .none{color:var(--label3);font-weight:400}
+.rd-row.isbad{background:color-mix(in srgb,var(--red) 6%,transparent)}
+.rd-iss{padding:0 16px 10px;background:color-mix(in srgb,var(--red) 6%,transparent);font-size:.84rem;color:var(--red-t)}
+.rd-ph{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.rd-ph img{width:64px;height:64px;object-fit:cover;border-radius:10px;cursor:pointer}
+.rd-edit,.rd-del{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;border:0;border-radius:14px;background:var(--card);font:inherit;font-weight:600;font-size:1rem;cursor:pointer}
+.rd-edit{margin-top:22px;color:var(--tint)}
+.rd-del{margin-top:10px;color:var(--red-t)}
+.rd-edit:active,.rd-del:active{background:var(--fill2)}
+.alert .a .danger{color:var(--red)}
 /* history v2: compact calendar + month list */
 .hfil{display:flex;align-items:center;gap:6px;margin:4px 2px 10px}
 .hfil-l{font-size:.8rem;color:var(--label2);margin-right:2px}
@@ -739,6 +769,14 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
   </div>
 </div>
 
+<div class="dim" id="recDim" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="rdTitle">
+    <div class="grab"></div>
+    <div class="sheet-h"><h3 id="rdTitle">รายละเอียดการตรวจ</h3><button class="tbtn" id="rdClose" type="button" style="font-weight:600;padding:0 8px">เสร็จ</button></div>
+    <div class="sheet-b" id="rdBody"></div>
+  </div>
+</div>
+
 <div class="dim alert-dim" id="alertDim" aria-hidden="true">
   <div class="alert" role="alertdialog" aria-modal="true" aria-labelledby="aT" aria-describedby="aM">
     <div class="m"><b id="aT"></b><span id="aM"></span></div>
@@ -1141,8 +1179,75 @@ function openDraft(id) {
   const go = () => { loadInto(d); loadedDraftId = d.id; editingId = d.editingId || null; renderForm(); window.scrollTo({ top: 0, behavior: 'smooth' }); showToast('เปิดร่างแล้ว แก้ต่อได้เลย'); };
   loadedDraftId === id ? (closeDim('historyModal'), go()) : guardThen('เปิดร่างนี้?', 'เปิดร่าง', go);
 }
+/* record detail (read-only) opened from History, with Edit and Delete */
+function viewRecord(id) {
+  const r = store.get().find(x => x.id === id); if (!r) return;
+  const s = recStatus(r), date = new Date(+r.date.slice(0, 4), +r.date.slice(5, 7) - 1, +r.date.slice(8, 10)).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const line = (l, v, cls = '') => `<div class="rd-row"><span class="l">${l}</span><span class="v ${cls}">${v}</span></div>`;
+  let h = `<div class="rd-head"><span class="hic">${icon(r.type.toLowerCase())}</span>
+      <span class="t"><b>${esc(FORMS[r.type].name)} · NO. ${esc(normNo(r.machineNo))}</b><small>${date}</small></span>
+      <span class="badge ${s === 'ng' ? 'warn' : s === 'st' ? 'stop' : 'done'}">${s === 'ng' ? icon('x') + 'ผิดปกติ' : s === 'st' ? 'Stop' : icon('check') + 'ปกติ'}</span></div>
+    <div class="grp">${line('ผู้ตรวจเช็ค', esc(r.data.inspector || '-'))}${line('สถานะเครื่อง', esc(r.status || '-'))}${r.data.analysis ? line('ผลการวิเคราะห์', esc(r.data.analysis), r.data.analysis === 'ผิดปกติ' ? 'bad' : 'ok') : ''}${r.data.remark ? line('หมายเหตุ', esc(r.data.remark)) : ''}${line('บันทึกเมื่อ', esc(r.savedAt || '-'))}</div>`;
+  FORMS[r.type].sections.forEach(sec => {
+    if (!sec.fields) return;
+    h += `<div class="sheet-sec">${esc(sec.title)}</div><div class="grp">${sec.fields.map(f => {
+      const v = r.data[f.id];
+      const bad = sec.type === 'numeric' ? validateNumeric(f, v) === 'invalid' : v === 'ผิดปกติ';
+      const val = !filled(v) ? '<span class="none">–</span>' : sec.type === 'numeric' ? `${esc(v)} <small>${f.unit}</small>` : (bad ? '✕ ผิดปกติ' : '✓ ปกติ');
+      const it = r.data.issues?.[f.id];
+      const extra = it && (it.note || it.photos?.length) ? `<div class="rd-iss">${it.note ? `<span>${esc(it.note)}</span>` : ''}${it.photos?.length ? `<div class="rd-ph">${it.photos.map(p => `<img src="${p}" alt="" data-rdph="${r.id}">`).join('')}</div>` : ''}</div>` : '';
+      return `<div class="rd-row ${bad ? 'isbad' : ''}"><span class="l">${esc(f.label)}<small>${esc(f.spec)}</small></span><span class="v ${bad ? 'bad' : sec.type === 'numeric' ? '' : filled(v) ? 'ok' : ''}">${val}</span></div>${extra}`;
+    }).join('')}</div>`;
+  });
+  $('rdTitle').textContent = 'รายละเอียดการตรวจ'; $('rdBody').innerHTML = h; $('rdBody').scrollTop = 0;
+  openDim('recDim'); $('rdClose').focus();
+}
+function deleteRecord(id) {
+  const r = store.get().find(x => x.id === id); if (!r) return;
+  // delete right away (no confirm) — the swipe + red button is already a deliberate action
+  if (!store.set(store.get().filter(x => x.id !== id))) { showToast('ลบไม่สำเร็จ', true); return; }
+  if (editingId === id) resetForm();
+  swOpen = null; closeDim('recDim'); renderHistory(); updateHistoryCount(); fillNoList(); haptic([10, 40, 10]); showToast('ลบแล้ว');
+}
+/* swipe-to-reveal actions on history rows (iOS style: swipe left) */
+const SW_W = 160;
+let swOpen = null, swDrag = null, swJustDragged = false;
+function swSet(front, x, anim) { front.style.transition = anim ? '' : 'none'; front.style.transform = x ? `translateX(${x}px)` : ''; }
+function swClose() { if (swOpen) { swSet(swOpen, 0, true); swOpen.parentElement.classList.remove('open'); swOpen = null; } }
+$('historyList').addEventListener('pointerdown', e => {
+  const f = e.target.closest('.sw-front'); if (!f) { if (!e.target.closest('.sw-acts')) swClose(); return; }
+  if (swOpen && swOpen !== f) swClose();
+  swDrag = { f, x0: e.clientX, y0: e.clientY, base: swOpen === f ? -SW_W : 0, on: false, id: e.pointerId };
+});
+$('historyList').addEventListener('pointermove', e => {
+  const d = swDrag; if (!d || e.pointerId !== d.id) return;
+  const dx = e.clientX - d.x0, dy = e.clientY - d.y0;
+  if (!d.on) { if (Math.abs(dx) < 8 || Math.abs(dx) < Math.abs(dy)) { if (Math.abs(dy) > 10) swDrag = null; return; }
+    d.on = true; try { d.f.setPointerCapture(d.id); } catch {} }
+  d.x = Math.max(-SW_W - 30, Math.min(0, d.base + dx)); swSet(d.f, d.x, false);
+});
+const swEnd = e => {
+  const d = swDrag; swDrag = null; if (!d || !d.on) return;
+  swJustDragged = true; setTimeout(() => { swJustDragged = false; }, 50);
+  if (d.x < -SW_W / 2) { swSet(d.f, -SW_W, true); d.f.parentElement.classList.add('open'); swOpen = d.f; haptic(5); }
+  else { swSet(d.f, 0, true); d.f.parentElement.classList.remove('open'); if (swOpen === d.f) swOpen = null; }
+};
+$('historyList').addEventListener('pointerup', swEnd);
+$('historyList').addEventListener('pointercancel', swEnd);
+$('historyList').addEventListener('click', e => {   // after a swipe, or tapping an open row: don't open details
+  if (swJustDragged) { e.stopPropagation(); e.preventDefault(); return; }
+  const f = e.target.closest('.sw-front'); if (f && swOpen === f) { e.stopPropagation(); e.preventDefault(); swClose(); }
+}, true);
+document.addEventListener('click', e => {
+  const v = e.target.closest('[data-view-rec]'); if (v) { viewRecord(+v.dataset.viewRec); return; }
+  const d = e.target.closest('[data-del-rec]'); if (d) { deleteRecord(+d.dataset.delRec); return; }
+  const p = e.target.closest('[data-rdph]'); if (p) openPhotos(+p.dataset.rdph);
+});
+$('rdClose').addEventListener('click', () => closeDim('recDim'));
+$('recDim').addEventListener('click', e => { if (e.target.id === 'recDim') closeDim('recDim'); });
 function editRecord(id) {
   const r = store.get().find(x => x.id === id); if (!r) return;
+  closeDim('recDim');
   guardThen('แก้ไขบันทึกนี้?', 'แก้ไข', () => { loadInto(r); editingId = r.id; loadedDraftId = null; renderForm(); window.scrollTo({ top: 0, behavior: 'smooth' }); showToast('กำลังแก้ไข กดบันทึกเมื่อเสร็จ'); });
 }
 function resetForm() {
@@ -1161,7 +1266,7 @@ document.addEventListener('click', e => {
   const od = e.target.closest('[data-open-draft]'); if (od) { openDraft(+od.dataset.openDraft); return; }
   const dd = e.target.closest('[data-del-draft]');
   if (dd) { const id = +dd.dataset.delDraft;
-    askConfirm('ลบร่างนี้?', 'ลบแล้วกู้คืนไม่ได้', 'ลบ', () => { drafts.set(drafts.get().filter(d => d.id !== id)); if (loadedDraftId === id) loadedDraftId = null; renderHistory(); renderForm(); }); return; }
+    askConfirm('ลบร่างนี้?', 'ลบแล้วกู้คืนไม่ได้', 'ลบ', () => { drafts.set(drafts.get().filter(d => d.id !== id)); if (loadedDraftId === id) loadedDraftId = null; renderHistory(); renderForm(); }, true); return; }
   const er = e.target.closest('[data-edit-rec]'); if (er) { editRecord(+er.dataset.editRec); return; }
   if (e.target.closest('[data-cancel-edit]')) resetForm();
 });
@@ -1213,11 +1318,15 @@ function historyCalendar(all) {
       const fm = fieldOf(r.type, id), note = r.data.issues?.[id]?.note;
       return `${esc(fm.f.label)}${fm.kind === 'numeric' ? ` ${esc(r.data[id])} ${fm.f.unit}` : ''}${note ? ' — ' + esc(note) : ''}`;
     });
-    return `<div class="hitem"><button type="button" class="hopen" data-edit-rec="${r.id}">
+    // swipe the row left to reveal แก้ไข / ลบ; tap to view details
+    return `<div class="swipe"><div class="sw-acts" aria-hidden="true">
+        <button type="button" class="sw-edit" data-edit-rec="${r.id}" tabindex="-1">${icon('draft')}แก้ไข</button>
+        <button type="button" class="sw-del" data-del-rec="${r.id}" tabindex="-1">${icon('x')}ลบ</button></div>
+      <div class="hitem sw-front"><button type="button" class="hopen" data-view-rec="${r.id}">
       <span class="hic">${icon(r.type.toLowerCase())}</span>
       <span class="t"><b>${esc(FORMS[r.type].name)} · NO. ${esc(normNo(r.machineNo))}</b>
         ${lines.length ? `<small class="bad">${lines.join('<br>')}</small>` : `<small>${esc(r.data.inspector || '-')}${r.status !== 'Running' ? ' · ' + esc(r.status) : ''}${r.data.remark ? ' · ' + esc(r.data.remark) : ''}</small>`}</span>
-      <span class="badge ${s === 'ng' ? 'warn' : s === 'st' ? 'stop' : 'done'}">${s === 'ng' ? icon('x') + 'ผิดปกติ' : s === 'st' ? 'Stop' : icon('check') + 'ปกติ'}</span>${icon('chev', 'chev')}</button></div>`;
+      <span class="badge ${s === 'ng' ? 'warn' : s === 'st' ? 'stop' : 'done'}">${s === 'ng' ? icon('x') + 'ผิดปกติ' : s === 'st' ? 'Stop' : icon('check') + 'ปกติ'}</span>${icon('chev', 'chev')}</button></div></div>`;
   };
   const list = Object.keys(groups).sort().reverse().map(day => {
     const t = new Date(+day.slice(0, 4), +day.slice(5, 7) - 1, +day.slice(8, 10)).toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'short' });
@@ -1527,7 +1636,7 @@ function recPhotos(r) {
 }
 let lbLastFocus = null;
 function openPhotos(recId) {
-  const r = SHEET_RECS.find(x => x.id === recId); if (!r) return;
+  const r = SHEET_RECS.find(x => x.id === recId) || store.get().find(x => x.id === recId); if (!r) return;
   const pics = recPhotos(r); if (!pics.length) return;
   $('lbTitle').textContent = `${FORMS[r.type].name} NO.${normNo(r.machineNo)} · ${thDate(r.date)}`;
   $('lbTrack').innerHTML = pics.map((x, i) => `<figure class="lb-slide"><img src="${x.p}" alt="รูปที่ ${i + 1}: ${esc(x.label)}">
@@ -1658,10 +1767,10 @@ document.addEventListener('click', e => { if (e.target.closest('#toMonth')) { cl
 let lastFocus = null, onOk = null;
 function openDim(id) { lastFocus = document.activeElement; $(id).classList.add('open'); $(id).setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; }
 function closeDim(id) { $(id).classList.remove('open'); $(id).setAttribute('aria-hidden', 'true'); if (!document.querySelector('.dim.open')) document.body.style.overflow = ''; lastFocus?.focus?.(); }
-function askConfirm(title, msg, okLabel, fn) { $('aT').textContent = title; $('aM').textContent = msg; $('aOk').textContent = okLabel; onOk = fn; openDim('alertDim'); $('aCancel').focus(); haptic([20, 40, 20]); }
+function askConfirm(title, msg, okLabel, fn, danger = false) { $('aT').textContent = title; $('aM').textContent = msg; $('aOk').textContent = okLabel; $('aOk').classList.toggle('danger', danger); onOk = fn; openDim('alertDim'); $('aCancel').focus(); haptic([20, 40, 20]); }
 $('aCancel').addEventListener('click', () => closeDim('alertDim'));
 $('aOk').addEventListener('click', () => { closeDim('alertDim'); onOk && onOk(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { if ($('alertDim').classList.contains('open')) closeDim('alertDim'); else if ($('historyModal').classList.contains('open')) closeDim('historyModal'); else if (!$('monthView').hidden) closeMonth(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { if ($('alertDim').classList.contains('open')) closeDim('alertDim'); else if ($('recDim').classList.contains('open')) closeDim('recDim'); else if ($('historyModal').classList.contains('open')) closeDim('historyModal'); else if (!$('monthView').hidden) closeMonth(); } });
 function showToast(msg, err = false) {
   const t = $('toast'); t.className = 'toast ' + (err ? 'err' : 'ok');
   t.querySelector('use').setAttribute('href', err ? '#i-warn' : '#i-checkc'); t.querySelector('span').textContent = msg;
@@ -1884,6 +1993,55 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('wz').h
 new IntersectionObserver(([en]) => $('nav').classList.toggle('scrolled', !en.isIntersecting), { rootMargin: '-44px 0px 0px 0px' }).observe($('largeTitle'));
 
 formValues.inspector = draftInspector; $('inspectorInput').value = draftInspector;
+/* ---- sample data: open the page with ?demo=1 to add 10 days for all 3 machines (NO. 1); ?demo=0 removes it ----
+   Sample records are tagged demo:true and never overwrite a real record on the same machine/day. */
+function demoRecords() {
+  const out = [], names = ['สมชาย', 'วิชัย', 'นันทยา'], ok = 'ปกติ', ng = 'ผิดปกติ';
+  const rnd = (seed, lo, hi, dp = 1) => { const x = Math.sin(seed * 9301 + 49297) * 233280; return +(lo + (x - Math.floor(x)) * (hi - lo)).toFixed(dp); };
+  const base = new Date(localToday());
+  for (let i = 0; i < 10; i++) {
+    const d = new Date(base); d.setDate(base.getDate() - (9 - i));
+    const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const insp = names[i % 3], at = `${d.getDate()}/${d.getMonth() + 1}/${(d.getFullYear() + 543) % 100} 08:${String(10 + i).padStart(2, '0')}`;
+    const rec = (type, status, data) => out.push({ id: 900000 + out.length, demo: true, savedAt: at, type, machineName: FORMS[type].name, machineNo: '1', date, status, data: { inspector: insp, ...data } });
+    // Air Compressor: day 4 oil hot, day 7 stopped for maintenance
+    if (i === 6) rec('ACP', 'M/C Stop', { remark: 'หยุดซ่อมบำรุงประจำเดือน' });
+    else rec('ACP', 'Running', {
+      oil_pressure: rnd(i + 1, 2.3, 2.8), discha1_press: rnd(i + 2, 1.6, 2.0), discha2_press: rnd(i + 3, 6.0, 6.6), suction1_press: rnd(i + 4, -42, -35, 0),
+      motor_current: rnd(i + 5, 46, 51, 0), running_hr: 12034 + i * 24, oil_temp: i === 3 ? 63 : rnd(i + 6, 50, 57, 0), discha1_temp: rnd(i + 7, 164, 177, 0),
+      suction2_temp: rnd(i + 8, 40, 49, 0), discha2_temp: rnd(i + 9, 168, 178, 0), suction1_temp: rnd(i + 10, 36, 45, 0),
+      water_in_temp: rnd(i + 11, 29, 35, 0), water_out_temp: rnd(i + 12, 35, 42, 0), water_in_press: rnd(i + 13, 0.9, 1.2), water_out_press: rnd(i + 14, 0.4, 0.6),
+      drain_valve: ok, oil_level: ok, way3_valve: ok, general_check: i === 3 ? ng : ok,
+      ...(i === 3 ? { issues: { oil_temp: { note: 'น้ำมันร้อน ตรวจระดับน้ำมันและเติมแล้ว', photos: [] }, general_check: { note: 'เฝ้าระวังอุณหภูมิน้ำมัน', photos: [] } } } : {}),
+    });
+    // Air Dryer: day 6 dew point high
+    rec('AD', 'Running', {
+      dew_point: i === 5 ? 12 : rnd(i + 20, 3, 8, 0), low_press: rnd(i + 21, 0.4, 0.55, 2), high_press: rnd(i + 22, 1.3, 1.7),
+      comp_noise: ok, running_lamp: ok, drain_test: ok, analysis: i === 5 ? ng : ok,
+      ...(i === 5 ? { issues: { dew_point: { note: 'Dew point สูง เช็ค drain และไล่น้ำแล้ว', photos: [] } } } : {}),
+    });
+    // Cooling Tower: day 2 sprinkler clogged, day 8 IW high
+    rec('CT', 'Running', {
+      ct_scale: ok, ct_overflow: ok, ct_spray: i === 1 ? ng : ok, ct_head: ok, ct_moving: ok, ct_around: ok, ct_tray: ok, ct_louver: ok, ct_pvc: ok, ct_tank: ok,
+      ct_water_temp: rnd(i + 30, 30, 36, 0), iw_value: i === 7 ? 430 : rnd(i + 31, 250, 380, 0), analysis: i === 1 || i === 7 ? ng : ok,
+      ...(i === 1 ? { issues: { ct_spray: { note: 'หัวสเปรย์อุดตัน 2 จุด ทำความสะอาดแล้ว', photos: [] } } } : {}),
+      ...(i === 7 ? { issues: { iw_value: { note: 'ค่าน้ำสูง แจ้งเปลี่ยนน้ำ', photos: [] } } } : {}),
+    });
+  }
+  return out;
+}
+(() => {
+  const q = new URLSearchParams(location.search), demo = q.get('demo'); if (demo === null) return;
+  let recs = store.get().filter(r => !r.demo);   // drop old sample data first
+  if (demo === '1') {
+    const real = new Set(recs.map(r => `${r.type}|${normNo(r.machineNo)}|${r.date}`));
+    recs = recs.concat(demoRecords().filter(r => !real.has(`${r.type}|1|${r.date}`)));
+  }
+  const okSet = store.set(recs);
+  try { history.replaceState(null, '', location.pathname); } catch {}
+  setTimeout(() => showToast(!okSet ? 'บันทึกข้อมูลตัวอย่างไม่ได้' : demo === '1' ? 'ใส่ข้อมูลตัวอย่าง 10 วันแล้ว (NO. 1)' : 'ลบข้อมูลตัวอย่างแล้ว', !okSet), 300);
+})();
+
 setStatusDot(); recallNo(); fillNoList(); initOpenState(currentType); renderForm(); updateHistoryCount();
 </script>
 </body>
