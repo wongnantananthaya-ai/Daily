@@ -357,6 +357,7 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .iso-head .iso-doc b{font-weight:700}
 /* 15–31 days: keep A4 landscape aspect ratio on screen too */
 .paper.rep.dense{padding:12px 20px 10px}
+.paper.rep,.paper.rep.dense{padding-right:42px}   /* room for the camera icon beside the table (print resets padding) */
 .paper.rep.dense .iso-head{margin-bottom:4px}
 .paper.rep.dense .iso-head td{padding:4px 8px}
 .paper.rep.dense .iso-head .iso-meta,.paper.rep.dense .iso-head .iso-doc{font-size:10.5px;line-height:1.35}
@@ -1618,7 +1619,7 @@ function placeCams(recs) {
   paper.querySelectorAll('.camfloat').forEach(b => b.remove());
   if (!tbl || $('monthView').hidden) return;
   const pr = paper.getBoundingClientRect(), k = pr.width / PAGE_W || 1;   // undo the current zoom/fit scale
-  const left = (tbl.getBoundingClientRect().right - pr.left) / k + 4;
+  const left = Math.min((tbl.getBoundingClientRect().right - pr.left) / k + 5, PAGE_W - 34);   // never past the paper edge
   paper.querySelectorAll('tr[data-rid]').forEach(tr => {
     const r = recs.find(x => String(x.id) === tr.dataset.rid), n = r ? recPhotos(r).length : 0; if (!n) return;
     const tb = tr.getBoundingClientRect(), [, m, d] = r.date.split('-');
