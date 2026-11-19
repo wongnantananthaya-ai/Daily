@@ -1858,8 +1858,7 @@ function wzRender() {
           <div class="wz-iss" data-iss="${f.id}">${s === 'invalid' ? issuePanel(f.id) : ''}</div>`;
       }).join('')}</div><p class="wz-help">พิมพ์แล้วกด "ถัดไป" บนแป้นพิมพ์ เพื่อไปช่องต่อไป</p>`;
     } else {
-      h += `<button type="button" class="wz-allok" data-wzall>${icon('checkc')}ทั้งหมดปกติ</button>
-        <div class="wz-list">${sec.fields.map(f => {
+      h += `<div class="wz-list">${sec.fields.map(f => {
           const v = formValues[f.id];
           return `<div class="wz-cr"><span class="l"><b>${esc(f.label)}</b><small>${esc(f.spec)}</small></span>
             <div class="wz-sg" role="radiogroup" aria-label="${esc(f.label)}">
