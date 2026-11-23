@@ -1327,7 +1327,7 @@ async function postSheet(body, url = sheetUrl()) {
   catch { throw new Error('เชื่อมต่อไม่ได้ (ไม่มีอินเทอร์เน็ต หรือลิงก์ไม่ถูกต้อง)'); }
   let j; try { j = await res.json(); } catch { throw new Error('Sheet ตอบกลับไม่ถูกต้อง ตรวจลิงก์และการตั้งค่า Deploy (Who has access = Anyone)'); }
   if (j.auth === false) { forceRelogin(j.error); throw new Error(j.error || 'กรุณาเข้าสู่ระบบใหม่'); }
-  if (!j.ok) throw new Error(j.error || 'Sheet แจ้งข้อผิดพลาด');
+  if (!j.ok) { const e = new Error(j.error || 'Sheet แจ้งข้อผิดพลาด'); e.deny = !!j.deny; throw e; }   // deny = no permission (another user's record)
   return j;
 }
 /* link of the Apps Script web app: set once per device (login screen or ☁), or fixed here for everyone */
@@ -1412,6 +1412,7 @@ async function flushSync() {
   try {
     for (let op; (op = syncQ()[0]) && !seen.has(op.t);) {
       seen.add(op.t);
+      try {
       if (op.op === 'delete') await postSheet({ action: 'delete', key: op.key });
       else {
         const r = store.get().find(x => x.id === op.id);
@@ -1428,6 +1429,14 @@ async function flushSync() {
             cur.synced = true; store.set(recs);
           }
         }
+      }
+      } catch (e) {
+        if (!e.deny) throw e;
+        // not allowed (e.g. someone else already saved this machine for this day): drop it here and say why
+        setSyncQ(syncQ().filter(x => x.t !== op.t));
+        if (op.op === 'upsert') { store.set(store.get().filter(x => x.id !== op.id)); refreshViews(); }
+        showToast(e.message, true);
+        continue;
       }
       setSyncQ(syncQ().filter(x => x.t !== op.t));
       lsSet(SY.last, new Date().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }));
@@ -2293,21 +2302,29 @@ $('lgForm').addEventListener('submit', async e => {
   $('lgBtn').disabled = true; $('lgBtn').textContent = 'กำลังเข้าสู่ระบบ…';
   try {
     const j = await postSheet({ action: 'login', user: u, pass: p });
-    session = { user: j.user, name: j.name, token: j.token };
+    session = { user: j.user, name: j.name, token: j.token, admin: !!j.admin };
     try { localStorage.setItem(SESSION_KEY, JSON.stringify(session)); } catch {}
+    // another account used this device before: start clean, then pull only what this account may see
+    if (lsGet('di_last_user', '') !== j.user) { store.set(store.get().filter(r => r.demo)); setSyncQ([]); refreshViews(); }
+    lsSet('di_last_user', j.user);
     $('login').hidden = true; document.body.style.overflow = ''; $('lgPass').value = ''; $('lgErr').textContent = '';
-    applyUser(); renderForm(); showToast(`เข้าสู่ระบบแล้ว · ${j.name}`); syncErr = ''; pullSync();
+    applyUser(); renderForm(); showToast(`เข้าสู่ระบบแล้ว · ${j.name}${j.admin ? ' (admin)' : ''}`); syncErr = ''; pullSync();
   } catch (err) {
     $('lgErr').textContent = err.message; $('lgPass').value = ''; $('lgPass').focus(); haptic([30, 60, 30]);
     if (/เชื่อมต่อไม่ได้|ตอบกลับไม่ถูกต้อง/.test(err.message) && !$('lgUrlGrp').hidden) lsSet(SY.url, null);   // wrong link: ask again
   } finally { $('lgBtn').disabled = false; $('lgBtn').textContent = 'เข้าสู่ระบบ'; }
 });
 $('userBtn').addEventListener('click', () => {
-  askConfirm(`ออกจากระบบ${session ? ` ${session.name}` : ''}?`, 'ข้อมูลที่บันทึกแล้วอยู่ใน Google Sheet ครบ ข้อมูลที่กรอกค้างไว้จะหาย', 'ออกจากระบบ', () => {
-    const tok = session?.token; if (tok) postSheet({ action: 'logout', token: tok }).catch(() => {});
-    session = null; try { localStorage.removeItem(SESSION_KEY); } catch {}
-    resetForm(); applyUser(); $('lgUser').value = ''; showLogin();
-  }, true);
+  const pend = syncQ().length;
+  askConfirm(`ออกจากระบบ${session ? ` ${session.name}${session.admin ? ' (admin)' : ''}` : ''}?`,
+    pend ? `ยังมี ${pend} รายการที่ยังไม่ได้ส่งเข้า Google Sheet (ไม่มีเน็ต) ถ้าออกตอนนี้รายการเหล่านั้นจะหาย` : 'ข้อมูลที่บันทึกแล้วอยู่ใน Google Sheet ครบ ข้อมูลที่กรอกค้างไว้จะหาย',
+    'ออกจากระบบ', async () => {
+      await flushSync();                                  // last chance to send
+      const tok = session?.token; if (tok) postSheet({ action: 'logout', token: tok }).catch(() => {});
+      session = null; try { localStorage.removeItem(SESSION_KEY); } catch {}
+      store.set(store.get().filter(r => r.demo)); setSyncQ([]); refreshViews();   // this account's data leaves the device
+      resetForm(); applyUser(); $('lgUser').value = ''; showLogin();
+    }, true);
 });
 applyUser();
 if (!session) showLogin();
