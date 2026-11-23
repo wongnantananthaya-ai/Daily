@@ -451,8 +451,12 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .lg-btn:active{transform:scale(.98)}
 .lg-note{margin:18px 0 0;color:var(--label2);font-size:.85rem}
 #inspectorInput[readonly]{color:var(--label);cursor:default}
+img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
+@keyframes phl{50%{opacity:.55}}
+.lg-btn:disabled{opacity:.6}
 .sydot{position:absolute;top:9px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 2px var(--card)}
 .sy-help{margin:2px 2px 16px;color:var(--label2);font-size:.92rem;line-height:1.55}
+.sy-l[hidden],.sy-in[hidden],.sy-pri[hidden]{display:none}
 .sy-l{display:block;font-size:.85rem;color:var(--label2);margin:0 2px 6px}
 .sy-in{width:100%;min-height:46px;border:1px solid var(--field-b);border-radius:12px;background:var(--card);padding:0 12px;font:inherit;font-size:.92rem;color:var(--label)}
 .sy-in:focus{outline:none;border-color:var(--tint);box-shadow:0 0 0 3px rgba(0,122,255,.15)}
@@ -700,12 +704,15 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
     <img class="lg-icon" id="lgIcon" alt="" width="84" height="84">
     <h1>Daily Inspection</h1>
     <p class="lg-sub">ใบตรวจเช็ครายวัน · CE97F1005Q</p>
+    <div class="lg-grp" id="lgUrlGrp" hidden style="margin-bottom:12px">
+      <label class="lg-f"><span>ลิงก์ระบบ</span><input id="lgUrl" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://script.google.com/…/exec"></label>
+    </div>
     <div class="lg-grp">
       <label class="lg-f"><span>ผู้ใช้</span><input id="lgUser" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ชื่อผู้ใช้" enterkeyhint="next"></label>
       <label class="lg-f"><span>รหัสผ่าน</span><input id="lgPass" type="password" autocomplete="current-password" placeholder="รหัสผ่าน" enterkeyhint="go"></label>
     </div>
     <p class="lg-err" id="lgErr" role="alert"></p>
-    <button type="submit" class="lg-btn">เข้าสู่ระบบ</button>
+    <button type="submit" class="lg-btn" id="lgBtn">เข้าสู่ระบบ</button>
     <p class="lg-note">บัญชีทดสอบ: ผู้ใช้ <b>test</b> · รหัส <b>1234</b></p>
   </form>
 </div>
@@ -855,13 +862,12 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
     <div class="grab"></div>
     <div class="sheet-h"><h3 id="syTitle">Google Sheet</h3><button class="tbtn" id="syClose" type="button" style="font-weight:600;padding:0 8px">เสร็จ</button></div>
     <div class="sheet-b">
-      <p class="sy-help">วางลิงก์ Web app จาก Apps Script (ลงท้ายด้วย /exec) แล้วทุกครั้งที่กดบันทึก แก้ไข หรือลบ ข้อมูลจะถูกส่งเข้า Google Sheet ให้อัตโนมัติ ถ้าไม่มีเน็ต จะส่งให้ทีหลังเอง</p>
+      <p class="sy-help">ข้อมูลทุกเครื่องเก็บรวมกันใน Google Sheet เข้าด้วยผู้ใช้เดียวกันในมือถือหรือคอมก็เห็นข้อมูลชุดเดียวกัน ถ้าไม่มีเน็ต แอปจะส่งให้ทีหลังเอง</p>
       <label class="sy-l" for="syUrl">ลิงก์ Web app</label>
       <input id="syUrl" class="sy-in" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://script.google.com/macros/s/…/exec">
       <button type="button" id="sySave" class="sy-pri">บันทึกและทดสอบ</button>
       <div class="sy-info" id="syInfo" role="status"></div>
-      <button type="button" id="syAll" class="sy-sec">ส่งข้อมูลทั้งหมดในเครื่องขึ้น Sheet</button>
-      <button type="button" id="syOff" class="sy-sec danger">ยกเลิกการเชื่อม</button>
+      <button type="button" id="syAll" class="sy-sec">ซิงค์ข้อมูลตอนนี้</button>
     </div>
   </div>
 </div>
@@ -1300,7 +1306,7 @@ const syncQ = () => { try { return JSON.parse(lsGet(SY.q, '[]')); } catch { retu
 const setSyncQ = q => { lsSet(SY.q, JSON.stringify(q)); updateSyncDot(); };
 let syncBusy = false, syncErr = '', syncWarned = false;
 function queueSync(op) {
-  if (!lsGet(SY.url, '')) return;
+  if (!sheetUrl()) return;
   setSyncQ([...syncQ().filter(x => x.key !== op.key), { ...op, t: Date.now() + Math.random() }]);   // newest action per record wins
   flushSync();
 }
@@ -1316,23 +1322,115 @@ function syncPayload(r) {
     return { field: id, label: m.f.label, value: row[id] ?? r.data[id], spec: m.f.spec, note: it.note || '', photos: it.photos || [] }; });
   return { action: 'upsert', key: row.id, row, issues };
 }
-async function postSheet(body, url = lsGet(SY.url, '')) {
+async function postSheet(body, url = sheetUrl()) {
   let res;
+  if (session?.token && !body.token) body = { ...body, token: session.token };
   try { res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) }); }
   catch { throw new Error('เชื่อมต่อไม่ได้ (ไม่มีอินเทอร์เน็ต หรือลิงก์ไม่ถูกต้อง)'); }
   let j; try { j = await res.json(); } catch { throw new Error('Sheet ตอบกลับไม่ถูกต้อง ตรวจลิงก์และการตั้งค่า Deploy (Who has access = Anyone)'); }
+  if (j.auth === false) { forceRelogin(j.error); throw new Error(j.error || 'กรุณาเข้าสู่ระบบใหม่'); }
   if (!j.ok) throw new Error(j.error || 'Sheet แจ้งข้อผิดพลาด');
   return j;
 }
+/* link of the Apps Script web app: set once per device (login screen or ☁), or fixed here for everyone */
+const SHEET_URL_DEFAULT = 'https://script.google.com/macros/s/AKfycbxuM2GmQGbDG7tLM0uQiqsEvHcqeEQ8M93e6qsIn06fAmSB8MUMGz7mh-nRX8ZOUc6H9Q/exec';
+const sheetUrl = () => SHEET_URL_DEFAULT || lsGet(SY.url, '');   // built-in link wins, so no device has to paste it
+
+/* ---------- pull: the Sheet is the shared copy, so every device (phone or computer) shows the same records ----------
+   Local changes still waiting in the queue win; records never sent (made before linking) are kept and queued. */
+let pulling = false;
+async function pullSync() {
+  if (pulling || !session?.token || !sheetUrl() || navigator.onLine === false) return;
+  pulling = true;
+  try {
+    await flushSync();                                   // send ours first, so the list already includes them
+    const j = await postSheet({ action: 'list' });
+    const local = store.get(), pend = new Set(syncQ().map(q => q.key));
+    const byKey = new Map(local.map(r => [recKey(r), r]));
+    const out = [], toSend = [];
+    let nid = Date.now() * 100;
+    for (const s of j.records || []) {
+      if (!FORMS[s.type] || !s.date) continue;
+      const k = String(s.key);
+      if (pend.has(k)) continue;                         // our newer version is on its way
+      const l = byKey.get(k); byKey.delete(k);
+      out.push(fromServer(s, l ? l.id : nid++));
+    }
+    for (const [k, l] of byKey) {
+      if (pend.has(k)) out.push(l);                      // waiting to be sent
+      else if (!l.synced && !l.demo) { out.push(l); toSend.push(l); }   // never uploaded yet
+      else if (l.demo) out.push(l);                      // sample data stays on this device only
+      // synced before but gone from the Sheet = deleted on another device → drop it here too
+    }
+    out.sort((a, b) => (b.date || '').localeCompare(a.date || '') || b.id - a.id);
+    if (!store.set(out)) throw new Error('ที่เก็บในเครื่องเต็ม');
+    toSend.forEach(r => queueSync({ op: 'upsert', key: recKey(r), id: r.id }));
+    refreshViews();
+  } catch (e) { if (session) syncErr = e.message || String(e); }
+  finally { pulling = false; renderSyncInfo(); }
+}
+function fromServer(s, id) {
+  const data = { inspector: s.inspector || '', issues: {} };
+  if (s.analysis) data.analysis = String(s.analysis);
+  if (s.remark) data.remark = String(s.remark);
+  FORMS[s.type].sections.forEach(sec => (sec.fields || []).forEach(f => { if (s[f.id] !== undefined && s[f.id] !== '') data[f.id] = String(s[f.id]); }));
+  (s.issueList || []).forEach(it => {
+    const m = FORMS[s.type].sections.flatMap(sec => sec.fields || []).find(f => f.label === it.label);
+    if (m) data.issues[m.id] = { note: it.note || '', photos: (it.photoIds || []).map(x => 'drive:' + x) };
+  });
+  return { id, synced: true, savedAt: String(s.saved || ''), type: s.type, machineName: FORMS[s.type].name,
+    machineNo: normNo(s.no), date: s.date, status: s.status || 'Running', data };
+}
+function refreshViews() {
+  updateHistoryCount(); fillNoList();
+  if ($('historyModal').classList.contains('open')) renderHistory();
+  if (!$('monthView').hidden) { try { fillMonthNos(); renderPaper(); } catch {} }
+}
+
+/* photos already in Google Drive are stored as "drive:<fileId>" and fetched (with the login token) when shown */
+const PHOTO_CACHE = new Map(), PHOTO_WAIT = new Map();
+const BLANK_IMG = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+function drivePhoto(id) {
+  if (PHOTO_CACHE.has(id)) return Promise.resolve(PHOTO_CACHE.get(id));
+  if (!PHOTO_WAIT.has(id)) PHOTO_WAIT.set(id, postSheet({ action: 'photo', id }).then(j => { PHOTO_CACHE.set(id, j.data); PHOTO_WAIT.delete(id); return j.data; }, e => { PHOTO_WAIT.delete(id); throw e; }));
+  return PHOTO_WAIT.get(id);
+}
+function hydrateImg(img) {
+  const src = img.getAttribute('src') || '';
+  if (!src.startsWith('drive:')) return;
+  const id = src.slice(6);
+  img.dataset.drive = id; img.setAttribute('src', PHOTO_CACHE.get(id) || BLANK_IMG); img.classList.add('ph-loading');
+  if (PHOTO_CACHE.has(id)) { img.classList.remove('ph-loading'); return; }
+  drivePhoto(id).then(d => { if (img.dataset.drive === id) { img.src = d; img.classList.remove('ph-loading'); } }, () => { img.classList.remove('ph-loading'); img.alt = 'โหลดรูปไม่ได้'; });
+}
+new MutationObserver(list => list.forEach(m => {
+  if (m.type === 'attributes') hydrateImg(m.target);
+  else m.addedNodes.forEach(n => { if (n.nodeType !== 1) return; if (n.tagName === 'IMG') hydrateImg(n); else n.querySelectorAll?.('img[src^="drive:"]').forEach(hydrateImg); });
+})).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['src'] });
 async function flushSync() {
-  if (syncBusy || !lsGet(SY.url, '') || navigator.onLine === false) return;
+  if (syncBusy || !sheetUrl() || !session?.token || navigator.onLine === false) return;
   syncBusy = true; renderSyncInfo();
   const seen = new Set();
   try {
     for (let op; (op = syncQ()[0]) && !seen.has(op.t);) {
       seen.add(op.t);
       if (op.op === 'delete') await postSheet({ action: 'delete', key: op.key });
-      else { const r = store.get().find(x => x.id === op.id); if (r) await postSheet(syncPayload(r)); }
+      else {
+        const r = store.get().find(x => x.id === op.id);
+        if (r && !r.demo) {
+          const j = await postSheet(syncPayload(r));
+          // photos now live in Drive: keep only their ids here (frees phone storage), cache the pictures for this session
+          const recs = store.get(), cur = recs.find(x => x.id === op.id);
+          if (cur) {
+            Object.entries(j.photos || {}).forEach(([fid, ids]) => {
+              const it = cur.data.issues?.[fid]; if (!it) return;
+              (it.photos || []).forEach((p, i) => { if (ids[i] && !p.startsWith('drive:')) PHOTO_CACHE.set(ids[i], p); });
+              it.photos = ids.map(x => 'drive:' + x);
+            });
+            cur.synced = true; store.set(recs);
+          }
+        }
+      }
       setSyncQ(syncQ().filter(x => x.t !== op.t));
       lsSet(SY.last, new Date().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }));
     }
@@ -1342,17 +1440,22 @@ async function flushSync() {
     if (!syncWarned) { syncWarned = true; showToast('ยังส่งเข้า Google Sheet ไม่ได้ จะลองใหม่อัตโนมัติ', true); }
   } finally { syncBusy = false; updateSyncDot(); renderSyncInfo(); }
 }
-function updateSyncDot() { const d = $('syncDot'); if (d) d.hidden = !(lsGet(SY.url, '') && syncQ().length); }
+function updateSyncDot() { const d = $('syncDot'); if (d) d.hidden = !(sheetUrl() && syncQ().length); }
 function renderSyncInfo(msg) {
-  const url = lsGet(SY.url, ''), n = syncQ().length, last = lsGet(SY.last, '');
-  $('syAll').hidden = $('syOff').hidden = !url;
+  const url = sheetUrl(), n = syncQ().length, last = lsGet(SY.last, '');
+  $('syAll').hidden = !url || !session;
   $('syInfo').innerHTML = msg || (!url ? 'ยังไม่ได้เชื่อม ข้อมูลเก็บอยู่ในเครื่องนี้เท่านั้น'
-    : (syncBusy ? `<span class="wait">กำลังส่ง…</span>${n ? ` เหลือ ${n} รายการ` : ''}`
-      : syncErr ? `<span class="bad">ส่งไม่สำเร็จ</span> · ${esc(syncErr)}${n ? `<br>รอส่ง ${n} รายการ` : ''}`
-      : n ? `<span class="wait">รอส่ง ${n} รายการ</span>` : '<span class="ok">เชื่อมแล้ว</span> ข้อมูลส่งเข้า Sheet ครบ')
+    : (syncBusy || pulling ? `<span class="wait">กำลังซิงค์…</span>${n ? ` เหลือส่ง ${n} รายการ` : ''}`
+      : syncErr ? `<span class="bad">ซิงค์ไม่สำเร็จ</span> · ${esc(syncErr)}${n ? `<br>รอส่ง ${n} รายการ` : ''}`
+      : n ? `<span class="wait">รอส่ง ${n} รายการ</span>` : '<span class="ok">ซิงค์แล้ว</span> ข้อมูลตรงกับ Google Sheet')
+      + (session ? `<br><small>ผู้ใช้: ${esc(session.name)}</small>` : '')
       + (last ? `<br><small>ส่งล่าสุด ${esc(last)}</small>` : ''));
 }
-$('openSyncBtn').addEventListener('click', () => { $('syUrl').value = lsGet(SY.url, ''); renderSyncInfo(); openDim('syncDim'); });
+$('openSyncBtn').addEventListener('click', () => {
+  $('syUrl').value = sheetUrl();
+  [$('syUrl'), $('sySave'), document.querySelector('label[for="syUrl"]')].forEach(el => { el.hidden = !!SHEET_URL_DEFAULT; });   // link is built in
+  renderSyncInfo(); openDim('syncDim');
+});
 $('syClose').addEventListener('click', () => closeDim('syncDim'));
 $('sySave').addEventListener('click', async () => {
   const url = $('syUrl').value.trim();
@@ -1363,22 +1466,14 @@ $('sySave').addEventListener('click', async () => {
   try {
     const j = await postSheet({ action: 'ping' }, url);
     lsSet(SY.url, url); syncErr = ''; syncWarned = false;
-    showToast(`เชื่อมกับ "${j.sheet || 'Google Sheet'}" แล้ว`); renderSyncInfo(); updateSyncDot(); flushSync();
+    showToast(`เชื่อมกับ "${j.sheet || 'Google Sheet'}" แล้ว`); renderSyncInfo(); updateSyncDot(); pullSync();
   } catch (e) { renderSyncInfo(`<span class="bad">เชื่อมไม่สำเร็จ</span> · ${esc(e.message)}`); }
   finally { $('sySave').disabled = false; }
 });
-$('syAll').addEventListener('click', () => {
-  const recs = store.get(); if (!recs.length) { showToast('ยังไม่มีข้อมูลในเครื่อง', true); return; }
-  const keep = syncQ().filter(x => x.op === 'delete');
-  setSyncQ([...keep, ...recs.slice().reverse().map((r, i) => ({ op: 'upsert', key: recKey(r), id: r.id, t: Date.now() + i }))]);
-  showToast(`กำลังส่ง ${recs.length} รายการเข้า Sheet`); flushSync();
-});
-$('syOff').addEventListener('click', () => {
-  lsSet(SY.url, null); setSyncQ([]); syncErr = ''; $('syUrl').value = ''; renderSyncInfo(); showToast('ยกเลิกการเชื่อมแล้ว ข้อมูลใน Sheet ยังอยู่ครบ');
-});
-window.addEventListener('online', flushSync);
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') flushSync(); });
-updateSyncDot(); setTimeout(flushSync, 1500);   // after the rest of the script has loaded
+$('syAll').addEventListener('click', async () => { await pullSync(); if (!syncErr) showToast('ซิงค์ข้อมูลแล้ว'); });
+window.addEventListener('online', pullSync);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') pullSync(); });
+updateSyncDot(); setTimeout(pullSync, 1500);   // after the rest of the script has loaded
 /* swipe-to-reveal actions on history rows (iOS style: swipe left) */
 const SW_W = 160;
 let swOpen = null, swDrag = null, swJustDragged = false;
@@ -2162,39 +2257,56 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('wz').h
 /* large title collapse */
 new IntersectionObserver(([en]) => $('nav').classList.toggle('scrolled', !en.isIntersecting), { rootMargin: '-44px 0px 0px 0px' }).observe($('largeTitle'));
 
-/* ---------- login (TEST version) ----------
-   Accounts live in this file for now, so anyone who opens the source can read them.
-   Before real use, move the user list to the Google Sheet and check passwords there. */
-const USERS = [{ user: 'test', pass: '1234', name: 'Test' }];
+/* ---------- login: accounts live in the "ผู้ใช้" tab of the Google Sheet; the Apps Script checks the password
+   and returns a token. The same account works on any phone or computer, and every device syncs with the Sheet. */
 const SESSION_KEY = 'di_user';
 let session = (() => { try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch { return null; } })();
-if (session && !USERS.some(u => u.user === session.user)) session = null;   // account removed from the list
+if (session && !session.token) session = null;   // old local-only test login
 function applyUser() {
   const name = session ? session.name : draftInspector;
   if (!editingId) { formValues.inspector = name; $('inspectorInput').value = name; }
   $('inspectorInput').readOnly = !!session;   // the inspector is whoever is logged in
   $('userBtn').setAttribute('aria-label', session ? `ผู้ใช้: ${session.name} (แตะเพื่อออกจากระบบ)` : 'ผู้ใช้');
 }
-function showLogin() {
+function showLogin(msg) {
   $('lgIcon').src = document.querySelector('link[rel="apple-touch-icon"]')?.href || document.querySelector('link[rel="icon"]')?.href || '';
+  $('lgUrlGrp').hidden = !!sheetUrl();      // the link is asked for once per device
+  $('lgErr').textContent = msg || '';
   $('login').hidden = false; document.body.style.overflow = 'hidden';
-  setTimeout(() => $('lgUser').focus(), 60);
+  setTimeout(() => (sheetUrl() ? $('lgUser') : $('lgUrl')).focus(), 60);
 }
+function forceRelogin(msg) {
+  if (!session) return;
+  session = null; try { localStorage.removeItem(SESSION_KEY); } catch {}
+  applyUser(); showLogin(msg || 'กรุณาเข้าสู่ระบบใหม่');
+}
+$('lgUrl').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('lgUser').focus(); } });
 $('lgUser').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('lgPass').focus(); } });
-['lgUser', 'lgPass'].forEach(id => $(id).addEventListener('input', () => { $('lgErr').textContent = ''; }));
-$('lgForm').addEventListener('submit', e => {
+['lgUrl', 'lgUser', 'lgPass'].forEach(id => $(id).addEventListener('input', () => { $('lgErr').textContent = ''; }));
+$('lgForm').addEventListener('submit', async e => {
   e.preventDefault();
+  if (!$('lgUrlGrp').hidden) {
+    const url = $('lgUrl').value.trim();
+    if (!/^https:\/\/script\.google\.com\/.+\/exec$/.test(url)) { $('lgErr').textContent = 'ลิงก์ระบบต้องขึ้นต้นด้วย https://script.google.com/ และลงท้ายด้วย /exec'; $('lgUrl').focus(); return; }
+    lsSet(SY.url, url);
+  }
   const u = $('lgUser').value.trim().toLowerCase(), p = $('lgPass').value;
   if (!u || !p) { $('lgErr').textContent = 'กรอกชื่อผู้ใช้และรหัสผ่าน'; (!u ? $('lgUser') : $('lgPass')).focus(); return; }
-  const acc = USERS.find(x => x.user === u && x.pass === p);
-  if (!acc) { $('lgErr').textContent = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง'; $('lgPass').value = ''; $('lgPass').focus(); haptic([30, 60, 30]); return; }
-  session = { user: acc.user, name: acc.name };
-  try { localStorage.setItem(SESSION_KEY, JSON.stringify(session)); } catch {}
-  $('login').hidden = true; document.body.style.overflow = ''; $('lgPass').value = ''; $('lgErr').textContent = '';
-  applyUser(); renderForm(); showToast(`เข้าสู่ระบบแล้ว · ${acc.name}`);
+  $('lgBtn').disabled = true; $('lgBtn').textContent = 'กำลังเข้าสู่ระบบ…';
+  try {
+    const j = await postSheet({ action: 'login', user: u, pass: p });
+    session = { user: j.user, name: j.name, token: j.token };
+    try { localStorage.setItem(SESSION_KEY, JSON.stringify(session)); } catch {}
+    $('login').hidden = true; document.body.style.overflow = ''; $('lgPass').value = ''; $('lgErr').textContent = '';
+    applyUser(); renderForm(); showToast(`เข้าสู่ระบบแล้ว · ${j.name}`); syncErr = ''; pullSync();
+  } catch (err) {
+    $('lgErr').textContent = err.message; $('lgPass').value = ''; $('lgPass').focus(); haptic([30, 60, 30]);
+    if (/เชื่อมต่อไม่ได้|ตอบกลับไม่ถูกต้อง/.test(err.message) && !$('lgUrlGrp').hidden) lsSet(SY.url, null);   // wrong link: ask again
+  } finally { $('lgBtn').disabled = false; $('lgBtn').textContent = 'เข้าสู่ระบบ'; }
 });
 $('userBtn').addEventListener('click', () => {
-  askConfirm(`ออกจากระบบ${session ? ` ${session.name}` : ''}?`, 'ข้อมูลที่บันทึกแล้วยังอยู่ครบ ข้อมูลที่กรอกค้างไว้จะหาย', 'ออกจากระบบ', () => {
+  askConfirm(`ออกจากระบบ${session ? ` ${session.name}` : ''}?`, 'ข้อมูลที่บันทึกแล้วอยู่ใน Google Sheet ครบ ข้อมูลที่กรอกค้างไว้จะหาย', 'ออกจากระบบ', () => {
+    const tok = session?.token; if (tok) postSheet({ action: 'logout', token: tok }).catch(() => {});
     session = null; try { localStorage.removeItem(SESSION_KEY); } catch {}
     resetForm(); applyUser(); $('lgUser').value = ''; showLogin();
   }, true);
