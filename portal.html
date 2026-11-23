@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F5F5F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B0D12" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Daily · Night Shift">
+<title>Daily · Night Shift</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   Apple Design System — Daily · Night Shift Portal
+   - Optical typography (size-specific tracking & leading)
+   - Translucent materials & specular edge highlights (backdrop-filter)
+   - Instant pointer-down feedback & zero-latency touch handling
+   - Adaptive Light / Dark appearance + Reduced Motion & Transparency support
+   ========================================================================== */
+:root {
+  --bg: #F4F5FA;
+  --bg-elevated: rgba(255, 255, 255, 0.58);
+  --bg-solid: #FFFFFF;
+  --bg-input: rgba(255, 255, 255, 0.62);
+  --bg-input-focus: rgba(255, 255, 255, 0.96);
+  --chrome: rgba(255, 255, 255, 0.56);
+  --chrome-heavy: rgba(250, 251, 255, 0.78);
+  --label: #1D1D1F;
+  --label-2: rgba(29, 29, 31, 0.66);
+  --label-3: rgba(29, 29, 31, 0.44);
+  --sep: rgba(60, 60, 67, 0.14);
+  --edge: rgba(255, 255, 255, 0.90);
+  --edge-subtle: rgba(255, 255, 255, 0.55);
+  --scrim: rgba(0, 0, 0, 0.26);
+
+  --daily: #D7263D;
+  --daily-soft: rgba(215, 38, 61, 0.10);
+  --daily-glow: rgba(215, 38, 61, 0.22);
+  --night: #1D3B78;
+  --night-2: #2F56A6;
+  --night-soft: rgba(29, 59, 120, 0.10);
+  --night-glow: rgba(47, 86, 166, 0.24);
+  --tint: #007AFF;
+  --green: #248A3D;
+  --red: #D70015;
+
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 12px 36px -8px rgba(0, 0, 0, 0.10), 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 24px 60px -12px rgba(0, 0, 0, 0.16), 0 4px 16px rgba(0, 0, 0, 0.06);
+
+  --side: 268px;
+  --top: 54px;
+  --radius-card: 24px;
+  --radius-pill: 999px;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0B0D12;
+  --bg-elevated: rgba(24, 28, 38, 0.76);
+  --bg-solid: #151923;
+  --bg-input: rgba(255, 255, 255, 0.07);
+  --bg-input-focus: rgba(34, 40, 54, 0.96);
+  --chrome: rgba(20, 24, 34, 0.74);
+  --chrome-heavy: rgba(16, 19, 28, 0.86);
+  --label: #F5F5F7;
+  --label-2: rgba(245, 245, 247, 0.68);
+  --label-3: rgba(245, 245, 247, 0.44);
+  --sep: rgba(255, 255, 255, 0.12);
+  --edge: rgba(255, 255, 255, 0.16);
+  --edge-subtle: rgba(255, 255, 255, 0.06);
+  --scrim: rgba(0, 0, 0, 0.56);
+
+  --daily: #FF455B;
+  --daily-soft: rgba(255, 69, 91, 0.16);
+  --daily-glow: rgba(255, 69, 91, 0.28);
+  --night: #4F8BFF;
+  --night-2: #6CA0FF;
+  --night-soft: rgba(79, 139, 255, 0.16);
+  --night-glow: rgba(79, 139, 255, 0.28);
+  --tint: #0A84FF;
+  --green: #30D158;
+  --red: #FF453A;
+
+  --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.28);
+  --shadow-md: 0 16px 40px -8px rgba(0, 0, 0, 0.48);
+  --shadow-lg: 0 28px 70px -12px rgba(0, 0, 0, 0.65);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--label);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Noto Sans Thai", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  touch-action: manipulation;
+  transition: background-color 280ms ease, color 280ms ease;
+}
+
+button, input { font: inherit; color: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+
+/* Instant pointer-down response (Apple Design §1) */
+.pressable {
+  transition: transform 110ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 180ms ease, background-color 180ms ease, opacity 140ms ease;
+  will-change: transform;
+}
+.pressable:active,
+.pressable.is-pressed {
+  transform: scale(0.972);
+}
+
+/* Ambient static backdrop — Liquid Glass sunrise-to-twilight (calm, zero vestibular motion) */
+.ambient {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(960px 680px at 8% 12%, rgba(255, 186, 168, 0.52), transparent 62%),
+    radial-gradient(920px 680px at 92% 86%, rgba(164, 198, 255, 0.54), transparent 62%),
+    radial-gradient(700px 500px at 78% 14%, rgba(202, 214, 255, 0.36), transparent 60%),
+    radial-gradient(640px 480px at 22% 88%, rgba(255, 214, 220, 0.34), transparent 60%);
+}
+:root[data-theme="dark"] .ambient {
+  background:
+    radial-gradient(900px 600px at 12% 8%, rgba(255, 69, 91, 0.14), transparent 62%),
+    radial-gradient(900px 600px at 88% 88%, rgba(79, 139, 255, 0.15), transparent 62%);
+}
+
+/* ==========================================================================
+   1. LOGIN VIEW
+   ========================================================================== */
+.login {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(20px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  transition: opacity 280ms ease, transform 320ms cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+.login[hidden] {
+  display: none;
+}
+.login.is-leaving {
+  opacity: 0;
+  transform: scale(1.03);
+  pointer-events: none;
+}
+
+.login-card {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  padding: 32px 26px 26px;
+  border-radius: 30px;
+  background: var(--bg-elevated);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--edge);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 var(--edge);
+}
+
+.login-head {
+  text-align: center;
+  margin-bottom: 26px;
+}
+
+.app-squircle {
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 16px;
+  border-radius: 22px;
+  box-shadow:
+    0 12px 28px -6px rgba(16, 52, 122, 0.22),
+    0 4px 10px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.app-squircle svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.login-head h1 {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Noto Sans Thai", sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+.login-head p {
+  margin: 6px 0 0;
+  color: var(--label-2);
+  font-size: 0.9375rem;
+  letter-spacing: 0;
+}
+
+.field-stack {
+  display: grid;
+  gap: 12px;
+}
+
+.field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  padding: 0 14px;
+  border-radius: 16px;
+  background: var(--bg-input);
+  border: 1px solid transparent;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+.field:focus-within {
+  background: var(--bg-input-focus);
+  border-color: var(--tint);
+  box-shadow: 0 0 0 3.5px rgba(0, 122, 255, 0.18);
+}
+.field-ico {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  color: var(--label-3);
+  transition: color 160ms ease;
+}
+.field:focus-within .field-ico {
+  color: var(--tint);
+}
+.field-ico svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.field input {
+  flex: 1;
+  min-width: 0;
+  height: 52px;
+  border: 0;
+  background: none;
+  outline: none;
+  font-size: 1rem;
+  letter-spacing: 0;
+}
+.field input::placeholder {
+  color: var(--label-3);
+}
+
+.eye-btn {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: none;
+  border-radius: 10px;
+  color: var(--label-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.eye-btn:hover { background: var(--bg-input); }
+.eye-btn svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.err {
+  min-height: 1.35em;
+  margin: 10px 4px 10px;
+  color: var(--red);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.btn-primary {
+  width: 100%;
+  min-height: 54px;
+  border: 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--daily) 0%, #B81D34 52%, var(--night) 100%);
+  color: #FFFFFF;
+  font-size: 1.02rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 10px 24px -6px rgba(184, 29, 52, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+.btn-primary:hover {
+  filter: brightness(1.04);
+}
+.btn-primary:disabled {
+  opacity: 0.62;
+  cursor: wait;
+}
+.btn-primary svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.login-foot {
+  margin: 16px 0 0;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--label-2);
+}
+
+.theme-fab {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+/* ==========================================================================
+   2. INSPECTION SELECTION HOME (Portal)
+   ========================================================================== */
+.home {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  overflow-y: auto;
+  padding: calc(16px + env(safe-area-inset-top)) clamp(16px, 4vw, 48px) calc(36px + env(safe-area-inset-bottom));
+  transition: opacity 280ms ease, transform 320ms cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+.home[hidden] { display: none; }
+
+body.at-home .topbar,
+body.at-home .side,
+body.at-home .scrim,
+body.at-home .frames { display: none; }
+body.locked .topbar,
+body.locked .side,
+body.locked .scrim,
+body.locked .frames { display: none; }
+
+.home-shell {
+  position: relative;
+  z-index: 1;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+/* Floating Translucent Navigation Pill (Apple Design §12) */
+.pill-nav {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px 8px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--chrome);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid var(--edge);
+  box-shadow: var(--shadow-sm);
+}
+
+.brand-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--daily), var(--night));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  box-shadow: 0 4px 12px rgba(215, 38, 61, 0.24);
+}
+.brand-mark svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.brand-chip b {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clock-pill {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-input);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--label-2);
+  font-variant-numeric: tabular-nums;
+}
+.clock-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+}
+@media (min-width: 640px) { .clock-pill { display: inline-flex; } }
+
+.icon-pill {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--bg-input);
+  color: var(--label);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.icon-pill:hover { background: var(--sep); }
+.icon-pill svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 4px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-input);
+}
+.av {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--daily), var(--night));
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.user-meta {
+  display: none;
+  line-height: 1.15;
+}
+.user-meta b { display: block; font-size: 0.82rem; font-weight: 600; }
+.user-meta small { font-size: 0.72rem; color: var(--label-2); }
+@media (min-width: 520px) { .user-meta { display: block; } }
+
+.out-pill {
+  border: 0;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: var(--radius-pill);
+  background: var(--daily-soft);
+  color: var(--daily);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.out-pill:hover { filter: brightness(0.96); }
+
+/* Hero Heading (Optical Sizing §15) */
+.home-hero {
+  margin: clamp(28px, 6vh, 52px) 4px clamp(24px, 4vh, 36px);
+}
+.home-hero .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--label-2);
+  margin-bottom: 8px;
+}
+.home-hero h1 {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Noto Sans Thai", sans-serif;
+  font-size: clamp(2.1rem, 5vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+}
+.home-hero p {
+  margin: 10px 0 0;
+  color: var(--label-2);
+  font-size: 1.05rem;
+  letter-spacing: 0;
+}
+
+/* Two Inspection Cards */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+@media (min-width: 720px) {
+  .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+}
+
+.shift-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 236px;
+  padding: 26px;
+  border-radius: 28px;
+  border: 1px solid var(--edge);
+  background: var(--bg-elevated);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  backdrop-filter: blur(32px) saturate(190%);
+  box-shadow: var(--shadow-md), inset 0 1.5px 0 var(--edge), inset 0 -1px 0 rgba(255, 255, 255, 0.28);
+  text-align: left;
+  cursor: pointer;
+}
+.shift-card.daily {
+  background: linear-gradient(155deg, rgba(255, 246, 247, 0.68), rgba(255, 255, 255, 0.50));
+}
+.shift-card.night {
+  background: linear-gradient(155deg, rgba(242, 246, 255, 0.68), rgba(255, 255, 255, 0.50));
+}
+:root[data-theme="dark"] .shift-card.daily,
+:root[data-theme="dark"] .shift-card.night {
+  background: var(--bg-elevated);
+}
+.shift-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.85;
+  transition: opacity 220ms ease;
+}
+.shift-card.daily::before {
+  background: radial-gradient(360px 220px at 90% 10%, var(--daily-glow), transparent 70%);
+}
+.shift-card.night::before {
+  background: radial-gradient(360px 220px at 90% 10%, var(--night-glow), transparent 70%);
+}
+.shift-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 var(--edge);
+}
+.shift-card:active,
+.shift-card.is-pressed {
+  transform: scale(0.975);
+}
+.shift-card:focus-visible {
+  outline: 3px solid var(--tint);
+  outline-offset: 3px;
+}
+
+.card-top {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.card-icon {
+  width: 62px;
+  height: 62px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+.shift-card.daily .card-icon {
+  background: var(--daily-soft);
+  color: var(--daily);
+  border: 1px solid rgba(215, 38, 61, 0.18);
+}
+.shift-card.night .card-icon {
+  background: var(--night-soft);
+  color: var(--night);
+  border: 1px solid rgba(47, 86, 166, 0.22);
+}
+.card-icon svg {
+  width: 32px;
+  height: 32px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tag {
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+  background: var(--bg-input);
+  color: var(--label-2);
+}
+.tag.live {
+  background: rgba(48, 209, 88, 0.14);
+  color: var(--green);
+}
+.cnt-badge {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #FFFFFF;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.cnt-badge[hidden] { display: none; }
+.shift-card.daily .cnt-badge { background: var(--daily); }
+.shift-card.night .cnt-badge { background: var(--night); }
+
+.card-body {
+  position: relative;
+  margin-top: 22px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+.card-body h2 {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Noto Sans Thai", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.card-body p {
+  margin: 4px 0 0;
+  font-size: 0.94rem;
+  color: var(--label-2);
+}
+.card-body small {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: var(--label-3);
+}
+
+.go-circle {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  transition: transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.shift-card.daily .go-circle {
+  background: var(--daily);
+  box-shadow: 0 8px 20px -4px rgba(215, 38, 61, 0.45);
+}
+.shift-card.night .go-circle {
+  background: linear-gradient(135deg, var(--night), var(--night-2));
+  box-shadow: 0 8px 20px -4px rgba(29, 59, 120, 0.48);
+}
+.shift-card:hover .go-circle {
+  transform: translateX(3px);
+}
+.go-circle svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.home-status-bar {
+  margin-top: 18px;
+  padding: 12px 18px;
+  border-radius: 18px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--edge);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.84rem;
+  color: var(--label-2);
+}
+.status-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.status-ok i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  display: inline-block;
+}
+
+/* ==========================================================================
+   3. WORKSPACE SHELL (Topbar + Fluid Gesture Sidebar + App Iframes)
+   ========================================================================== */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: calc(var(--top) + env(safe-area-inset-top));
+  padding: env(safe-area-inset-top) 10px 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--chrome);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  border-bottom: 1px solid var(--sep);
+  z-index: 12;
+}
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+.topbar b {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.iconbtn {
+  width: 42px;
+  height: 42px;
+  border: 0;
+  background: none;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--label);
+  cursor: pointer;
+}
+.iconbtn:hover { background: var(--bg-input); }
+.iconbtn svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.frames {
+  position: fixed;
+  top: calc(var(--top) + env(safe-area-inset-top));
+  left: 0; right: 0; bottom: 0;
+  z-index: 5;
+}
+.frames iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: var(--bg);
+}
+.frames iframe[hidden] { display: none; }
+
+/* Scrim & Edge Swipe Zone */
+.scrim {
+  position: fixed;
+  inset: 0;
+  background: var(--scrim);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 13;
+  will-change: opacity;
+}
+.edge-grab {
+  position: fixed;
+  top: calc(var(--top) + env(safe-area-inset-top));
+  bottom: 0;
+  left: 0;
+  width: 22px;
+  z-index: 11;
+  touch-action: pan-y;
+}
+
+/* Translucent Sidebar (driven by JS spring on mobile, docked on desktop) */
+.side {
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  width: var(--side);
+  max-width: 84vw;
+  z-index: 14;
+  display: flex;
+  flex-direction: column;
+  padding: calc(12px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom));
+  background: var(--chrome-heavy);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  border-right: 1px solid var(--sep);
+  border-radius: 0 24px 24px 0;
+  box-shadow: var(--shadow-lg);
+  transform: translate3d(-105%, 0, 0);
+  will-change: transform;
+  touch-action: pan-y;
+}
+
+.side-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding: 0 4px;
+}
+.side-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 0.96rem;
+  letter-spacing: -0.01em;
+}
+
+.sec {
+  margin: 14px 10px 8px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--label-3);
+}
+
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  border: 0;
+  border-radius: 16px;
+  background: none;
+  color: var(--label);
+  text-align: left;
+  cursor: pointer;
+}
+.nav-item:hover { background: var(--bg-input); }
+.nav-item[aria-current="page"] {
+  background: linear-gradient(135deg, var(--daily), #B81D34);
+  color: #FFFFFF;
+  box-shadow: 0 8px 18px -6px rgba(215, 38, 61, 0.45);
+}
+.nav-item[data-app="night"][aria-current="page"] {
+  background: linear-gradient(135deg, var(--night), var(--night-2));
+  box-shadow: 0 8px 18px -6px rgba(29, 59, 120, 0.48);
+}
+.nav-ico {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--bg-input);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.nav-item[aria-current="page"] .nav-ico {
+  background: rgba(255, 255, 255, 0.18);
+}
+.nav-ico svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.nav-txt b {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.nav-txt small {
+  display: block;
+  font-size: 0.76rem;
+  color: var(--label-2);
+}
+.nav-item[aria-current="page"] .nav-txt small {
+  color: rgba(255, 255, 255, 0.82);
+}
+.nav-cnt {
+  margin-left: auto;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: var(--radius-pill);
+  background: var(--daily);
+  color: #fff;
+  font-size: 0.74rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-item[aria-current="page"] .nav-cnt {
+  background: #FFFFFF;
+  color: var(--daily);
+}
+.nav-item[data-app="night"][aria-current="page"] .nav-cnt {
+  color: var(--night);
+}
+.nav-cnt[hidden] { display: none; }
+
+.side-foot {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--sep);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.side-me {
+  flex: 1;
+  min-width: 0;
+}
+.side-me b {
+  display: block;
+  font-size: 0.92rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.side-me small {
+  display: block;
+  font-size: 0.76rem;
+  color: var(--label-2);
+}
+.side-out {
+  border: 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--daily-soft);
+  color: var(--daily);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (min-width: 900px) {
+  .topbar, .scrim, .edge-grab, #menuClose { display: none; }
+  .side {
+    transform: none !important;
+    border-radius: 0;
+    box-shadow: none;
+    max-width: none;
+  }
+  .frames { top: 0; left: var(--side); }
+}
+
+/* ==========================================================================
+   4. ACCESSIBILITY: Reduced Motion, Reduced Transparency, High Contrast
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+  .pressable:active, .shift-card:hover { transform: none !important; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .login-card, .pill-nav, .shift-card, .home-status-bar, .topbar, .side {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: var(--bg-solid) !important;
+  }
+}
+@media (prefers-contrast: more) {
+  .login-card, .pill-nav, .shift-card, .home-status-bar, .side {
+    border-color: var(--label-2) !important;
+  }
+}
+</style>
+</head>
+<body class="locked">
+
+<div class="ambient" aria-hidden="true"></div>
+
+<!-- ==================== LOGIN ==================== -->
+<section class="login" id="login" aria-labelledby="loginTitle">
+  <form class="login-card" id="form" novalidate>
+    <button type="button" class="icon-pill pressable theme-fab" data-theme-toggle aria-label="สลับโหมดสี" title="สลับโหมดสว่าง / มืด">
+      <svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+
+    <div class="login-head">
+      <div class="app-squircle" aria-hidden="true">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="sqBg" x1="0" y1="0" x2="0.8" y2="1">
+              <stop offset="0%" stop-color="#FFFFFF"/>
+              <stop offset="65%" stop-color="#F5F8FF"/>
+              <stop offset="100%" stop-color="#E1ECFF"/>
+            </linearGradient>
+            <linearGradient id="ringGrad" x1="0.15" y1="0.85" x2="0.85" y2="0.15">
+              <stop offset="0%" stop-color="#072768"/>
+              <stop offset="52%" stop-color="#0C327A"/>
+              <stop offset="66%" stop-color="#F59E0B"/>
+              <stop offset="100%" stop-color="#FFB020"/>
+            </linearGradient>
+            <linearGradient id="sunGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#FFC233"/>
+              <stop offset="100%" stop-color="#F59200"/>
+            </linearGradient>
+            <linearGradient id="calHead" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#143D8C"/>
+              <stop offset="100%" stop-color="#06225B"/>
+            </linearGradient>
+            <filter id="softDrop" x="-15%" y="-15%" width="130%" height="130%">
+              <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#072768" flood-opacity="0.16"/>
+            </filter>
+          </defs>
+          <rect width="120" height="120" fill="url(#sqBg)"/>
+          <!-- Clock ring -->
+          <circle cx="56" cy="58" r="32" fill="#FFFFFF" stroke="url(#ringGrad)" stroke-width="5.2"/>
+          <!-- Tick marks -->
+          <g stroke="#0A2D73" stroke-width="2.4" stroke-linecap="round">
+            <line x1="56" y1="32" x2="56" y2="35.5"/>
+            <line x1="69" y1="35.5" x2="67.2" y2="38.5"/>
+            <line x1="78.5" y1="45" x2="75.5" y2="46.8"/>
+            <line x1="82" y1="58" x2="78.5" y2="58"/>
+            <line x1="56" y1="84" x2="56" y2="80.5"/>
+            <line x1="43" y1="80.5" x2="44.8" y2="77.5"/>
+            <line x1="33.5" y1="71" x2="36.5" y2="69.2"/>
+            <line x1="30" y1="58" x2="33.5" y2="58"/>
+            <line x1="33.5" y1="45" x2="36.5" y2="46.8"/>
+            <line x1="43" y1="35.5" x2="44.8" y2="38.5"/>
+          </g>
+          <!-- Clock hands (12:10) -->
+          <g stroke="#072768" stroke-linecap="round">
+            <line x1="56" y1="58" x2="56" y2="40" stroke-width="4.2"/>
+            <line x1="56" y1="58" x2="72" y2="50" stroke-width="4.2"/>
+          </g>
+          <circle cx="56" cy="58" r="4.5" fill="#072768"/>
+          <!-- Crescent moon (bottom-left) -->
+          <path d="M31.5 55.5a11.5 11.5 0 1 0 13.5 16.5a9.2 9.2 0 0 1-13.5-16.5z" fill="#062460" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"/>
+          <!-- Sun (top-right) -->
+          <g filter="url(#softDrop)">
+            <circle cx="87" cy="34" r="9.5" fill="url(#sunGrad)" stroke="#FFFFFF" stroke-width="1.6"/>
+            <g stroke="#F59200" stroke-width="2.6" stroke-linecap="round">
+              <line x1="87" y1="18.5" x2="87" y2="21.5"/>
+              <line x1="87" y1="46.5" x2="87" y2="49.5"/>
+              <line x1="71.5" y1="34" x2="74.5" y2="34"/>
+              <line x1="99.5" y1="34" x2="102.5" y2="34"/>
+              <line x1="76" y1="23" x2="78.2" y2="25.2"/>
+              <line x1="95.8" y1="42.8" x2="98" y2="45"/>
+              <line x1="98" y1="23" x2="95.8" y2="25.2"/>
+              <line x1="78.2" y1="42.8" x2="76" y2="45"/>
+            </g>
+          </g>
+          <!-- Mini calendar badge (bottom-right) -->
+          <g filter="url(#softDrop)">
+            <rect x="63" y="65" width="38" height="33" rx="6.5" fill="#FFFFFF" stroke="#E2EAF8" stroke-width="1"/>
+            <path d="M63 71.5a6.5 6.5 0 0 1 6.5-6.5h25a6.5 6.5 0 0 1 6.5 6.5v3.5H63v-3.5z" fill="url(#calHead)"/>
+            <rect x="70.5" y="61.5" width="3.5" height="7" rx="1.75" fill="#DCE6F7" stroke="#0C327A" stroke-width="0.9"/>
+            <rect x="89.5" y="61.5" width="3.5" height="7" rx="1.75" fill="#DCE6F7" stroke="#0C327A" stroke-width="0.9"/>
+            <g rx="1.4">
+              <rect x="68" y="79" width="5.5" height="5.5" rx="1.4" fill="#82A8E8"/>
+              <rect x="76" y="79" width="5.5" height="5.5" rx="1.4" fill="#82A8E8"/>
+              <rect x="84" y="79" width="5.5" height="5.5" rx="1.4" fill="#82A8E8"/>
+              <rect x="92" y="79" width="5.5" height="5.5" rx="1.4" fill="#0B3B91"/>
+              <rect x="68" y="87" width="5.5" height="5.5" rx="1.4" fill="#82A8E8"/>
+              <rect x="76" y="87" width="5.5" height="5.5" rx="1.4" fill="#82A8E8"/>
+              <rect x="84" y="87" width="5.5" height="5.5" rx="1.4" fill="#004AD7"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <h1 id="loginTitle">Daily · Night Shift</h1>
+      <p>ตรวจเช็ครายวัน และงานกะดึก ในระบบเดียว</p>
+    </div>
+
+    <div class="field-stack">
+      <label class="field">
+        <span class="field-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="8" r="4"/></svg>
+        </span>
+        <input id="user" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ชื่อผู้ใช้" enterkeyhint="next">
+      </label>
+
+      <label class="field">
+        <span class="field-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        </span>
+        <input id="pass" type="password" autocomplete="current-password" placeholder="รหัสผ่าน" enterkeyhint="go">
+        <button type="button" class="eye-btn pressable" id="togglePass" aria-label="แสดงรหัสผ่าน">
+          <svg viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.8"/></svg>
+        </button>
+      </label>
+    </div>
+
+    <p class="err" id="err" role="alert"></p>
+
+    <button type="submit" class="btn-primary pressable" id="go">
+      <span>เข้าสู่ระบบ</span>
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+
+    <p class="login-foot">ใช้ชื่อผู้ใช้และรหัสผ่านเดียวกันทั้ง 2 แอป</p>
+  </form>
+</section>
+
+<!-- ==================== INSPECTION PORTAL HOME ==================== -->
+<section class="home" id="home" hidden aria-labelledby="hmTitle">
+  <div class="home-shell">
+    <header class="pill-nav">
+      <div class="brand-chip">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M9 11l2 2 4-4"/><rect x="4" y="4" width="16" height="16" rx="4"/></svg>
+        </span>
+        <b>Daily · Night Shift</b>
+      </div>
+
+      <div class="nav-actions">
+        <span class="clock-pill" id="liveClock" aria-live="off"><i class="clock-dot"></i><span>--:--</span></span>
+        <button type="button" class="icon-pill pressable" data-theme-toggle aria-label="สลับโหมดสี" title="สลับโหมดสว่าง / มืด">
+          <svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        </button>
+        <div class="user-pill">
+          <span class="av" id="hmAv">?</span>
+          <span class="user-meta"><b id="hmName">-</b><small id="hmRole">ผู้ตรวจ</small></span>
+        </div>
+        <button type="button" class="out-pill pressable" id="hmOut">ออก</button>
+      </div>
+    </header>
+
+    <div class="home-hero">
+      <div class="eyebrow">Inspection Portal</div>
+      <h1 id="hmTitle">เลือกงานตรวจเช็ค</h1>
+      <p>แตะการ์ดด้านล่างเพื่อเข้าสู่แบบฟอร์มตรวจเช็คที่ต้องการ</p>
+    </div>
+
+    <div class="cards-grid">
+      <button type="button" class="shift-card daily pressable" data-go="daily">
+        <div class="card-top">
+          <span class="card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16M9 15l2 2 4-4"/></svg>
+          </span>
+          <span class="badges">
+            <span class="tag" id="tagDay">Day Shift</span>
+            <span class="cnt-badge" id="hmCntDaily" hidden></span>
+          </span>
+        </div>
+        <div class="card-body">
+          <div>
+            <h2>Daily Inspection</h2>
+            <p>ตรวจเช็คเครื่องจักรรายวัน</p>
+            <small>For daily work inspection</small>
+          </div>
+          <span class="go-circle" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </div>
+      </button>
+
+      <button type="button" class="shift-card night pressable" data-go="night">
+        <div class="card-top">
+          <span class="card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/><path d="M17 4l.6 1.3 1.3.6-1.3.6-.6 1.3-.6-1.3-1.3-.6 1.3-.6z"/></svg>
+          </span>
+          <span class="badges">
+            <span class="tag" id="tagNight">20:00 – 08:00</span>
+            <span class="cnt-badge" id="hmCntNight" hidden></span>
+          </span>
+        </div>
+        <div class="card-body">
+          <div>
+            <h2>Night Shift</h2>
+            <p>ตรวจเช็คและวางแผนงานกะดึก</p>
+            <small>For night shift inspection</small>
+          </div>
+          <span class="go-circle" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </div>
+      </button>
+    </div>
+
+    <div class="home-status-bar">
+      <span class="status-ok"><i></i><span id="syncSummary">พร้อมใช้งาน · เชื่อมต่อบัญชีเดียวทั้ง 2 แอป</span></span>
+      <span id="shiftHint"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== WORKSPACE SHELL ==================== -->
+<header class="topbar">
+  <div class="topbar-left">
+    <button type="button" class="iconbtn pressable" id="menuOpen" aria-label="เปิดเมนู" aria-controls="side" aria-expanded="false">
+      <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <b id="appTitle">Daily Inspection</b>
+  </div>
+  <button type="button" class="iconbtn pressable" data-theme-toggle aria-label="สลับโหมดสี">
+    <svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+  </button>
+</header>
+
+<div class="edge-grab" id="edgeGrab" aria-hidden="true"></div>
+<div class="scrim" id="scrim"></div>
+
+<nav class="side" id="side" aria-label="เมนูหลัก">
+  <div class="side-top">
+    <div class="side-brand">
+      <span class="brand-mark" style="width:30px;height:30px;border-radius:9px" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M9 11l2 2 4-4"/><rect x="4" y="4" width="16" height="16" rx="4"/></svg>
+      </span>
+      <span>Daily · Night</span>
+    </div>
+    <button type="button" class="iconbtn pressable" id="menuClose" aria-label="ปิดเมนู">
+      <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <button type="button" class="nav-item pressable" id="goHome">
+    <span class="nav-ico"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 9.5V20h12V9.5"/></svg></span>
+    <span class="nav-txt"><b>หน้าแรก</b><small>เลือกประเภทการตรวจ</small></span>
+  </button>
+
+  <div class="sec">งานตรวจเช็ค</div>
+
+  <button type="button" class="nav-item pressable" data-app="daily">
+    <span class="nav-ico"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16M9 15l2 2 4-4"/></svg></span>
+    <span class="nav-txt"><b>Daily Inspection</b><small>ตรวจเช็คเครื่องรายวัน</small></span>
+    <span class="nav-cnt" id="cntDaily" hidden></span>
+  </button>
+
+  <button type="button" class="nav-item pressable" data-app="night">
+    <span class="nav-ico"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/><path d="M17 4v3M15.5 5.5h3"/></svg></span>
+    <span class="nav-txt"><b>Night Shift</b><small>งานกะดึก 20:00–08:00</small></span>
+    <span class="nav-cnt" id="cntNight" hidden></span>
+  </button>
+
+  <div class="side-foot">
+    <span class="av" id="meAv">?</span>
+    <div class="side-me"><b id="meName">-</b><small id="meRole">ผู้ตรวจ</small></div>
+    <button type="button" class="side-out pressable" id="logout">ออก</button>
+  </div>
+</nav>
+
+<div class="frames" id="frames"></div>
+
+<script>
+/* ==========================================================================
+   Backend & Session Configuration (Shared with Daily & Night Shift)
+   ========================================================================== */
+const APPS = { daily: 'daily_inspection_mobile.html', night: 'index.html' };
+const DAILY_API = 'https://script.google.com/macros/s/AKfycbxuM2GmQGbDG7tLM0uQiqsEvHcqeEQ8M93e6qsIn06fAmSB8MUMGz7mh-nRX8ZOUc6H9Q/exec';
+
+const $ = id => document.getElementById(id);
+const ls = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} },
+  json(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch { return null; } },
+};
+const post = async (url, body) => {
+  const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
+  return r.json();
+};
+
+const dailySession = () => { const s = ls.json('di_user'); return s && s.token ? s : null; };
+const nightSession = () => { const u = (ls.json('nsp') || {}).user; return u && u.token ? u : null; };
+
+/* ==========================================================================
+   Theme (Adaptive Light / Dark) + Live Shift Clock
+   ========================================================================== */
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  ls.set('portal_theme', t);
+}
+(function initTheme() {
+  const saved = ls.get('portal_theme');
+  applyTheme(saved === 'dark' ? 'dark' : 'light');
+})();
+document.querySelectorAll('[data-theme-toggle]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+  });
+});
+
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours();
+  const timeStr = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+  const clockEl = $('liveClock');
+  if (clockEl) clockEl.querySelector('span').textContent = timeStr;
+
+  const isNight = h >= 20 || h < 8;
+  $('tagDay').classList.toggle('live', !isNight);
+  $('tagDay').textContent = !isNight ? 'กะกลางวัน · Active' : 'Day Shift';
+  $('tagNight').classList.toggle('live', isNight);
+  $('tagNight').textContent = isNight ? '20:00 – 08:00 · Active' : '20:00 – 08:00';
+  $('shiftHint').textContent = isNight ? 'ช่วงเวลากะดึก (20:00–08:00)' : 'ช่วงเวลากะกลางวัน (08:00–20:00)';
+}
+updateClock();
+setInterval(updateClock, 15000);
+
+/* ==========================================================================
+   Fluid Spring Engine & 1:1 Gesture Sidebar (Apple Design §2–§6, §9)
+   ========================================================================== */
+const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isDesktop = () => innerWidth >= 900;
+
+const sideEl = $('side');
+const scrimEl = $('scrim');
+const sideWidth = () => sideEl.offsetWidth || 268;
+
+// Exponential-decay momentum projection (Apple WWDC 2018 formula)
+function projectMomentum(velocityPxPerSec, decelerationRate = 0.998) {
+  return (velocityPxPerSec / 1000) * decelerationRate / (1 - decelerationRate);
+}
+// Progressive rubber-band resistance past boundaries
+function rubberband(overshoot, dim, constant = 0.55) {
+  return (overshoot * dim * constant) / (dim + constant * Math.abs(overshoot));
+}
+
+const drawer = {
+  open: false,
+  x: -280,        // current translateX in px (-w = closed, 0 = open)
+  v: 0,           // velocity in px/s
+  target: -280,
+  raf: 0,
+  lastTs: 0,
+};
+
+function renderDrawer(x) {
+  if (isDesktop()) {
+    sideEl.style.transform = '';
+    scrimEl.style.opacity = '';
+    scrimEl.style.pointerEvents = 'none';
+    return;
+  }
+  const w = sideWidth();
+  const progress = Math.max(0, Math.min(1, 1 + x / w));
+  sideEl.style.transform = `translate3d(${x.toFixed(2)}px, 0, 0)`;
+  scrimEl.style.opacity = (progress * 1).toFixed(3);
+  scrimEl.style.pointerEvents = progress > 0.04 ? 'auto' : 'none';
+}
+
+function stepSpring(ts) {
+  if (!drawer.lastTs) drawer.lastTs = ts;
+  const dt = Math.min(0.032, (ts - drawer.lastTs) / 1000);
+  drawer.lastTs = ts;
+
+  // Critically damped spring (damping = 1.0, response = 0.30s)
+  const response = 0.30;
+  const omega = (2 * Math.PI) / response;
+  const stiffness = omega * omega;
+  const damping = 2 * omega;
+
+  const disp = drawer.x - drawer.target;
+  const accel = -stiffness * disp - damping * drawer.v;
+  drawer.v += accel * dt;
+  drawer.x += drawer.v * dt;
+
+  renderDrawer(drawer.x);
+
+  if (Math.abs(drawer.x - drawer.target) < 0.35 && Math.abs(drawer.v) < 2) {
+    drawer.x = drawer.target;
+    drawer.v = 0;
+    drawer.raf = 0;
+    drawer.lastTs = 0;
+    renderDrawer(drawer.x);
+    return;
+  }
+  drawer.raf = requestAnimationFrame(stepSpring);
+}
+
+function animateDrawerTo(open, initialVelocity = 0) {
+  drawer.open = open;
+  const w = sideWidth();
+  drawer.target = open ? 0 : -w - 14;
+  $('menuOpen').setAttribute('aria-expanded', open ? 'true' : 'false');
+
+  if (isDesktop()) return renderDrawer(0);
+  if (reducedMotion()) {
+    cancelAnimationFrame(drawer.raf);
+    drawer.raf = 0;
+    drawer.x = drawer.target;
+    drawer.v = 0;
+    return renderDrawer(drawer.x);
+  }
+  drawer.v = initialVelocity;
+  drawer.lastTs = 0;
+  if (!drawer.raf) drawer.raf = requestAnimationFrame(stepSpring);
+}
+
+function openMenu() {
+  animateDrawerTo(true, 0);
+  setTimeout(() => document.querySelector('.side [aria-current]')?.focus(), 60);
+}
+function closeMenu() {
+  animateDrawerTo(false, 0);
+}
+
+$('menuOpen').addEventListener('click', openMenu);
+$('menuClose').addEventListener('click', closeMenu);
+$('scrim').addEventListener('click', closeMenu);
+addEventListener('keydown', e => { if (e.key === 'Escape' && drawer.open) closeMenu(); });
+addEventListener('resize', () => {
+  if (isDesktop()) { cancelAnimationFrame(drawer.raf); drawer.raf = 0; renderDrawer(0); }
+  else if (!drawer.open) { drawer.x = -sideWidth() - 14; drawer.target = drawer.x; renderDrawer(drawer.x); }
+});
+
+// 1:1 Pointer Drag for Sidebar (interruptible mid-flight + velocity handoff)
+function attachDrawerDrag(el, isEdge) {
+  let tracking = false, startX = 0, startDrawerX = 0, samples = [];
+
+  el.addEventListener('pointerdown', e => {
+    if (isDesktop() || document.body.classList.contains('at-home') || document.body.classList.contains('locked')) return;
+    if (isEdge && drawer.open) return;
+    cancelAnimationFrame(drawer.raf);
+    drawer.raf = 0;
+    tracking = true;
+    startX = e.clientX;
+    startDrawerX = isEdge ? -sideWidth() : drawer.x;
+    samples = [{ x: e.clientX, t: performance.now() }];
+    el.setPointerCapture(e.pointerId);
+  });
+
+  el.addEventListener('pointermove', e => {
+    if (!tracking) return;
+    const dx = e.clientX - startX;
+    let raw = startDrawerX + dx;
+    const w = sideWidth();
+    if (raw > 0) raw = rubberband(raw, w, 0.35);
+    if (raw < -w) raw = -w - rubberband(-w - raw, w, 0.35);
+    drawer.x = raw;
+    renderDrawer(drawer.x);
+    const now = performance.now();
+    samples.push({ x: e.clientX, t: now });
+    if (samples.length > 5) samples.shift();
+  });
+
+  const endDrag = () => {
+    if (!tracking) return;
+    tracking = false;
+    let vx = 0;
+    if (samples.length >= 2) {
+      const first = samples[0], last = samples[samples.length - 1];
+      const dt = (last.t - first.t) / 1000;
+      if (dt > 0.005) vx = (last.x - first.x) / dt;
+    }
+    const w = sideWidth();
+    const projected = drawer.x + projectMomentum(vx, 0.996);
+    const shouldOpen = projected > -w * 0.45;
+    animateDrawerTo(shouldOpen, vx);
+  };
+  el.addEventListener('pointerup', endDrag);
+  el.addEventListener('pointercancel', endDrag);
+}
+attachDrawerDrag(sideEl, false);
+attachDrawerDrag($('edgeGrab'), true);
+
+/* ==========================================================================
+   App Routing, Iframes & Sync Status
+   ========================================================================== */
+let current = ls.get('shell_tab') === 'night' ? 'night' : 'daily';
+const frames = {};
+const TITLES = { daily: 'Daily Inspection', night: 'Night Shift' };
+const LOCAL = !/^https?:$/.test(location.protocol);
+
+function frame(app) {
+  if (!frames[app]) {
+    const f = document.createElement('iframe');
+    f.title = app === 'daily' ? 'Daily Inspection' : 'Night Shift Plan';
+    f.src = APPS[app];
+    f.hidden = true;
+    $('frames').appendChild(f);
+    frames[app] = f;
+  }
+  return frames[app];
+}
+
+function localNotice() {
+  const file = location.pathname.split('/').pop() || 'portal.html';
+  $('frames').innerHTML = `<div style="max-width:420px;margin:14vh auto 0;padding:28px;border-radius:24px;background:var(--bg-elevated);border:1px solid var(--edge);text-align:center;line-height:1.6;box-shadow:var(--shadow-md)">
+    <div style="font-size:2.2rem">📱</div>
+    <h2 style="margin:8px 0;font-size:1.2rem">เปิดจากไฟล์ในเครื่องไม่ได้</h2>
+    <p style="margin:0 0 16px;color:var(--label-2);font-size:.94rem">หน้านี้ต้องเปิดผ่านเว็บ (https) ฟอร์ม Daily และ Night Shift ถึงจะโหลดขึ้นได้ อัปโหลดขึ้น GitHub แล้วเปิดลิงก์นี้</p>
+    <a href="https://wongnantananthaya-ai.github.io/Daily/${file}" style="color:var(--tint);font-weight:600;word-break:break-all">wongnantananthaya-ai.github.io/Daily/${file}</a>
+  </div>`;
+}
+
+function showHome() {
+  document.body.classList.add('at-home');
+  $('home').hidden = false;
+  closeMenu();
+  document.title = 'Inspection · Daily & Night Shift';
+  refreshMe();
+  setTimeout(() => document.querySelector('.shift-card')?.focus({ preventScroll: true }), 60);
+}
+
+function leaveHome() {
+  document.body.classList.remove('at-home');
+  $('home').hidden = true;
+}
+
+function show(app) {
+  current = app;
+  ls.set('shell_tab', app);
+  document.querySelectorAll('.side [data-app]').forEach(b => {
+    b.dataset.app === app ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current');
+  });
+  $('appTitle').textContent = TITLES[app];
+  document.title = TITLES[app];
+  closeMenu();
+  if (LOCAL) return localNotice();
+  frame(app).hidden = false;
+  Object.entries(frames).forEach(([k, f]) => { if (k !== app) f.hidden = true; });
+}
+
+document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => {
+  leaveHome();
+  show(b.dataset.go);
+}));
+$('goHome').addEventListener('click', showHome);
+document.querySelectorAll('.side [data-app]').forEach(b => b.addEventListener('click', () => show(b.dataset.app)));
+
+function refreshMe() {
+  const d = dailySession(), n = nightSession();
+  const name = (d && d.name) || (n && n.name) || '-';
+  const initials = Array.from(name).filter(ch => /[ก-ฮA-Za-z0-9]/.test(ch)).slice(0, 2).join('') || '?';
+  const role = d && d.admin ? 'Admin' : 'ผู้ตรวจ';
+
+  $('meName').textContent = name;
+  $('meAv').textContent = initials;
+  $('meRole').textContent = role;
+  $('hmName').textContent = name;
+  $('hmAv').textContent = initials;
+  $('hmRole').textContent = role;
+
+  const dq = (ls.json('di_sync_queue') || []).length;
+  const nq = ((ls.json('nsp') || {}).q || []).length;
+  $('cntDaily').hidden = !dq; $('cntDaily').textContent = dq;
+  $('cntNight').hidden = !nq; $('cntNight').textContent = nq;
+  $('hmCntDaily').hidden = !dq; $('hmCntDaily').textContent = dq + ' รอส่ง';
+  $('hmCntNight').hidden = !nq; $('hmCntNight').textContent = nq + ' รอส่ง';
+
+  const totalPending = dq + nq;
+  $('syncSummary').textContent = totalPending > 0
+    ? `มี ${totalPending} รายการรอส่งเข้า Google Sheet`
+    : 'พร้อมใช้งาน · ข้อมูลซิงก์ล่าสุดแล้ว';
+}
+setInterval(refreshMe, 3000);
+
+/* ==========================================================================
+   Auth Flow
+   ========================================================================== */
+function openApps() {
+  $('login').classList.add('is-leaving');
+  setTimeout(() => {
+    $('login').hidden = true;
+    $('login').classList.remove('is-leaving');
+  }, reducedMotion() ? 0 : 220);
+  document.body.classList.remove('locked');
+  Object.values(frames).forEach(f => f.remove());
+  for (const k in frames) delete frames[k];
+  refreshMe();
+  showHome();
+}
+
+function signOutAll() {
+  document.body.classList.add('locked');
+  closeMenu();
+  leaveHome();
+  const d = dailySession();
+  if (d) post(DAILY_API, { action: 'logout', token: d.token }).catch(() => {});
+  ls.set('di_user', null);
+  const ns = ls.json('nsp');
+  if (ns && ns.user) { delete ns.user; ls.set('nsp', JSON.stringify(ns)); }
+  Object.values(frames).forEach(f => f.remove());
+  for (const k in frames) delete frames[k];
+  $('pass').value = '';
+  $('err').textContent = '';
+  $('login').hidden = false;
+  setTimeout(() => $('user').focus(), 60);
+}
+
+$('hmOut').addEventListener('click', () => { if (confirm('ออกจากระบบทั้ง Daily และ Night Shift?')) signOutAll(); });
+$('logout').addEventListener('click', () => { if (confirm('ออกจากระบบทั้ง Daily และ Night Shift?')) signOutAll(); });
+addEventListener('message', e => { if (e.origin === location.origin && e.data && e.data.type === 'shell-logout') signOutAll(); });
+
+// Password visibility toggle
+$('togglePass').addEventListener('click', () => {
+  const isPass = $('pass').type === 'password';
+  $('pass').type = isPass ? 'text' : 'password';
+  $('togglePass').setAttribute('aria-label', isPass ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน');
+});
+
+$('user').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('pass').focus(); } });
+['user', 'pass'].forEach(id => $(id).addEventListener('input', () => { $('err').textContent = ''; }));
+
+$('form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const user = $('user').value.trim(), pass = $('pass').value;
+  if (!user || !pass) {
+    $('err').textContent = 'กรอกชื่อผู้ใช้และรหัสผ่านให้ครบถ้วน';
+    (!user ? $('user') : $('pass')).focus();
+    return;
+  }
+  $('go').disabled = true;
+  $('go').querySelector('span').textContent = 'กำลังเข้าสู่ระบบ…';
+  let j;
+  try { j = await post(DAILY_API, { action: 'login', user: user.toLowerCase(), pass }); }
+  catch { j = { ok: false, error: 'เชื่อมต่อไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่' }; }
+  $('go').disabled = false;
+  $('go').querySelector('span').textContent = 'เข้าสู่ระบบ';
+
+  if (!j.ok) {
+    $('err').textContent = j.error || 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
+    $('pass').value = '';
+    $('pass').focus();
+    return;
+  }
+  if (ls.get('di_last_user') !== j.user) {
+    ls.set('daily_inspection_records_v1', null);
+    ls.set('di_sync_queue', null);
+  }
+  ls.set('di_last_user', j.user);
+  const s = { user: j.user, name: j.name, token: j.token, admin: !!j.admin };
+  ls.set('di_user', JSON.stringify(s));
+  const ns = ls.json('nsp') || {};
+  ns.user = s;
+  ls.set('nsp', JSON.stringify(ns));
+  openApps();
+});
+
+if (dailySession() || nightSession()) openApps();
+else { document.body.classList.add('locked'); setTimeout(() => $('user').focus(), 60); }
+</script>
+</body>
+</html>
