@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F2F2F7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Daily">
+<title>Daily · Night Shift</title>
+<style>
+/* Shell: one login, two apps (Daily Inspection + Night Shift Plan) in tabs.
+   Both apps live in same-origin iframes; the shell signs in to both back ends and leaves each app's session in localStorage. */
+:root{--bg:#F2F2F7;--card:#fff;--label:#000;--label2:rgba(60,60,67,.62);--sep:rgba(60,60,67,.29);--tint:#007AFF;--red:#D70015;
+  --bar:rgba(249,249,249,.94);color-scheme:light}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Leelawadee UI","Noto Sans Thai",sans-serif;color:var(--label);-webkit-font-smoothing:antialiased}
+/* layout: top bar (phone) / fixed side menu (computer) + the selected app */
+:root{--side:256px;--top:52px;--brand:#D7263D;--brand2:#FF5A5F;--navy:#1E2B4A}
+.topbar{position:fixed;top:0;left:0;right:0;height:calc(var(--top) + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);
+  display:flex;align-items:center;gap:6px;padding-left:6px;background:var(--bar);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid var(--sep);z-index:12}
+.topbar b{font-size:1rem;font-weight:600}
+.iconbtn{width:44px;height:44px;border:0;background:none;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--navy);cursor:pointer}
+.iconbtn:active{background:rgba(0,0,0,.06)}
+.iconbtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.frames{position:fixed;top:calc(var(--top) + env(safe-area-inset-top));left:0;right:0;bottom:0}
+.frames iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg)}
+.frames iframe[hidden]{display:none}
+/* side menu */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.32);opacity:0;pointer-events:none;transition:opacity .25s;z-index:13}
+.side{position:fixed;top:0;bottom:0;left:0;width:var(--side);max-width:84vw;background:linear-gradient(180deg,#FFFFFF,#F7F8FB);z-index:14;
+  transform:translateX(-102%);transition:transform .28s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;
+  padding:calc(10px + env(safe-area-inset-top)) 12px calc(14px + env(safe-area-inset-bottom));box-shadow:4px 0 24px rgba(30,43,74,.12);border-radius:0 22px 22px 0}
+body.menu-open .side{transform:none}
+body.menu-open .scrim{opacity:1;pointer-events:auto}
+.side .iconbtn{margin:0 0 14px 2px}
+.sec{display:flex;align-items:center;gap:8px;margin:6px 10px 8px;font-size:.82rem;font-weight:700;color:var(--brand)}
+.sec i{width:12px;height:12px;border-radius:3px;background:var(--brand);display:block}
+.item{position:relative;display:flex;align-items:center;gap:14px;width:100%;min-height:50px;border:0;background:none;border-radius:16px;padding:0 14px;margin-bottom:4px;
+  font:inherit;font-size:1.02rem;color:#3A4256;cursor:pointer;text-align:left}
+.item svg{width:24px;height:24px;flex:none;fill:none;stroke:var(--brand);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.item:hover{background:rgba(215,38,61,.06)}
+.item[aria-current="page"]{background:linear-gradient(90deg,var(--brand),var(--brand2));color:#fff;font-weight:700;box-shadow:0 6px 16px rgba(215,38,61,.28)}
+.item[aria-current="page"] svg{stroke:#fff}
+.item .cnt{position:absolute;left:30px;top:8px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#fff;color:var(--brand);font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.item:not([aria-current="page"]) .cnt{background:var(--brand);color:#fff}
+.item .cnt[hidden]{display:none}
+.item small{display:block;font-size:.75rem;font-weight:500;opacity:.75}
+.hr{height:.5px;background:var(--sep);margin:12px 6px}
+.me{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 8px 0;border-top:.5px solid var(--sep)}
+.me .av{width:38px;height:38px;border-radius:50%;background:#EEF1F6;color:var(--navy);font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.me div{flex:1;min-width:0}
+.me b{display:block;font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.me small{color:var(--label2);font-size:.78rem}
+.out{border:0;background:none;color:var(--brand);font:inherit;font-weight:600;font-size:.88rem;cursor:pointer;padding:8px}
+/* computer: menu stays open on the left */
+@media (min-width:900px){
+  .topbar{display:none}
+  .side{transform:none;border-radius:0;box-shadow:none;border-right:.5px solid var(--sep);max-width:none}
+  .side .iconbtn{display:none}
+  .scrim{display:none}
+  .frames{top:0;left:var(--side)}
+  .sec{margin-top:18px}
+}
+body.locked .topbar,body.locked .side,body.locked .scrim{display:none}
+/* login */
+.login{position:fixed;inset:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px 16px calc(24px + env(safe-area-inset-bottom));overflow:auto}
+.login[hidden]{display:none}
+.card{width:100%;max-width:380px;text-align:center}
+.icons{display:flex;justify-content:center;gap:14px;margin-bottom:18px}
+.icons span{width:68px;height:68px;border-radius:16px;box-shadow:0 4px 14px rgba(30,43,74,.16);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.icons img{width:100%;height:100%}
+.icons .ns{background:#0d1117;color:#f5b301}
+.icons .ns svg{width:36px;height:36px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0}
+.sub{margin:6px 0 26px;color:var(--label2);font-size:.92rem}
+.grp{background:var(--card);border-radius:14px;overflow:hidden;text-align:left;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.f{display:flex;align-items:center;min-height:52px;padding:0 16px;gap:12px}
+.f+.f{border-top:.5px solid var(--sep)}
+.f span{width:72px;flex:none}
+.f input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:1rem;color:var(--label);height:50px;outline:none}
+.err{min-height:1.4em;margin:10px 4px 6px;color:var(--red);font-size:.9rem;text-align:left}
+.btn{width:100%;min-height:52px;border:0;border-radius:14px;background:var(--tint);color:#fff;font:inherit;font-size:1.05rem;font-weight:700;cursor:pointer}
+.btn:disabled{opacity:.6}
+.note{margin:16px 4px 0;color:var(--label2);font-size:.8rem;line-height:1.5}
+</style>
+</head>
+<body>
+
+<div class="login" id="login">
+  <form class="card" id="form" novalidate>
+    <div class="icons" aria-hidden="true">
+      <span id="dIcon"></span>
+      <span class="ns"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/><path d="M16.5 3.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6zM20 8.5l.4.9.9.4-.9.4-.4.9-.4-.9-.9-.4.9-.4z"/></svg></span>
+    </div>
+    <h1>Daily · Night Shift</h1>
+    <p class="sub">ตรวจเช็ครายวัน และงานกะดึก ในแอปเดียว</p>
+    <div class="grp">
+      <label class="f"><span>ผู้ใช้</span><input id="user" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ชื่อผู้ใช้" enterkeyhint="next"></label>
+      <label class="f"><span>รหัสผ่าน</span><input id="pass" type="password" autocomplete="current-password" placeholder="รหัสผ่าน" enterkeyhint="go"></label>
+    </div>
+    <p class="err" id="err" role="alert"></p>
+    <button class="btn" id="go">เข้าสู่ระบบ</button>
+    <p class="note">ใช้ผู้ใช้และรหัสเดียวกันทั้ง 2 แอป</p>
+  </form>
+</div>
+
+<header class="topbar">
+  <button type="button" class="iconbtn" id="menuOpen" aria-label="เปิดเมนู" aria-controls="side" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <b id="appTitle">Daily Inspection</b>
+</header>
+<div class="scrim" id="scrim"></div>
+<nav class="side" id="side" aria-label="เมนู">
+  <button type="button" class="iconbtn" id="menuClose" aria-label="ปิดเมนู"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <div class="sec"><i></i>งานตรวจเช็ค</div>
+  <button type="button" class="item" data-app="daily">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4.5h12v16H6z"/><path d="M9 3h6v3H9z"/><path d="M9 11l1.5 1.5L13.5 9.5M9 16l1.5 1.5 3-3"/></svg>
+    <span>Daily Inspection<small>ตรวจเช็คเครื่องรายวัน</small></span><span class="cnt" id="cntDaily" hidden></span>
+  </button>
+  <button type="button" class="item" data-app="night">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/><path d="M17 3.5v3M15.5 5h3"/></svg>
+    <span>Night Shift<small>งานกะดึก 20:00–08:00</small></span><span class="cnt" id="cntNight" hidden></span>
+  </button>
+  <div class="me">
+    <span class="av" id="meAv">?</span>
+    <div><b id="meName">-</b><small id="meRole">ผู้ตรวจ</small></div>
+    <button type="button" class="out" id="logout">ออกจากระบบ</button>
+  </div>
+</nav>
+
+<div class="frames" id="frames"></div>
+
+<script>
+/* where the two apps and their Apps Script back ends are */
+const APPS = { daily: 'daily_inspection_mobile.html', night: 'index.html' };
+const DAILY_API = 'https://script.google.com/macros/s/AKfycbxuM2GmQGbDG7tLM0uQiqsEvHcqeEQ8M93e6qsIn06fAmSB8MUMGz7mh-nRX8ZOUc6H9Q/exec';
+const NIGHT_API = 'https://script.google.com/macros/s/AKfycbx05pyEOhgjosSItAcNvZPb2_s-KirMPiPeG8mx8H7VHVc0Di1UZRJL0BAT0UuDb5WV/exec';
+const $ = id => document.getElementById(id);
+const ls = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} },
+  json(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch { return null; } },
+};
+const post = async (url, body) => {
+  const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
+  return r.json();
+};
+
+/* signed in = at least one of the two apps has a session */
+const dailySession = () => { const s = ls.json('di_user'); return s && s.token ? s : null; };
+const nightSession = () => (ls.json('nsp') || {}).user || null;
+
+let current = ls.get('shell_tab') === 'night' ? 'night' : 'daily';
+const frames = {};
+function frame(app) {
+  if (!frames[app]) {
+    const f = document.createElement('iframe');
+    f.title = app === 'daily' ? 'Daily Inspection' : 'Night Shift Plan';
+    f.src = APPS[app];
+    f.hidden = true;
+    $('frames').appendChild(f);
+    frames[app] = f;
+  }
+  return frames[app];
+}
+const TITLES = { daily: 'Daily Inspection', night: 'Night Shift' };
+/* opened as a local file / preview snapshot: the two apps can't load inside — say how to open it instead of a blank page */
+const LOCAL = !/^https?:$/.test(location.protocol);
+function localNotice() {
+  $('frames').innerHTML = `<div style="max-width:420px;margin:15vh auto 0;padding:24px;text-align:center;color:#3A4256;line-height:1.6">
+    <div style="font-size:2.2rem">📱</div><h2 style="margin:8px 0;font-size:1.2rem">เปิดจากไฟล์ในเครื่องไม่ได้</h2>
+    <p style="margin:0 0 16px;color:var(--label2)">หน้านี้ต้องเปิดผ่านเว็บ ฟอร์ม Daily และ Night Shift ถึงจะขึ้น อัปโหลดขึ้น GitHub แล้วเปิดลิงก์นี้</p>
+    <a href="https://wongnantananthaya-ai.github.io/Daily/app.html" style="color:var(--tint);font-weight:600;word-break:break-all">wongnantananthaya-ai.github.io/Daily/app.html</a></div>`;
+}
+function show(app) {
+  current = app; ls.set('shell_tab', app);
+  if (LOCAL) { document.querySelectorAll('.side [data-app]').forEach(b => b.dataset.app === app ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current')); $('appTitle').textContent = TITLES[app]; closeMenu(); return localNotice(); }
+  frame(app).hidden = false;
+  Object.entries(frames).forEach(([k, f]) => { if (k !== app) f.hidden = true; });
+  document.querySelectorAll('.side [data-app]').forEach(b => b.dataset.app === app ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
+  $('appTitle').textContent = TITLES[app]; document.title = TITLES[app];
+  closeMenu();
+}
+document.querySelectorAll('.side [data-app]').forEach(b => b.addEventListener('click', () => show(b.dataset.app)));
+
+/* side menu (phone: slides in; computer: always shown) */
+function openMenu() { document.body.classList.add('menu-open'); $('menuOpen').setAttribute('aria-expanded', 'true'); setTimeout(() => document.querySelector('.side [aria-current]')?.focus(), 50); }
+function closeMenu() { document.body.classList.remove('menu-open'); $('menuOpen').setAttribute('aria-expanded', 'false'); }
+$('menuOpen').addEventListener('click', openMenu);
+$('menuClose').addEventListener('click', closeMenu);
+$('scrim').addEventListener('click', closeMenu);
+addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+/* who is signed in + items still waiting to be sent, per app */
+function refreshMe() {
+  const d = dailySession(), n = nightSession(), name = (d && d.name) || (n && n.name) || '-';
+  $('meName').textContent = name;
+  $('meAv').textContent = Array.from(name).filter(ch => /[ก-ฮA-Za-z0-9]/.test(ch)).slice(0, 2).join('') || '?';
+  $('meRole').textContent = d && d.admin ? 'admin' : 'ผู้ตรวจ';
+  const dq = (ls.json('di_sync_queue') || []).length, nq = ((ls.json('nsp') || {}).q || []).length;
+  $('cntDaily').hidden = !dq; $('cntDaily').textContent = dq;
+  $('cntNight').hidden = !nq; $('cntNight').textContent = nq;
+}
+setInterval(refreshMe, 3000);
+$('logout').addEventListener('click', () => { if (confirm('ออกจากระบบทั้ง Daily และ Night Shift?')) signOutAll(); });
+
+function openApps() {
+  $('login').hidden = true; document.body.classList.remove('locked');
+  Object.values(frames).forEach(f => f.remove()); for (const k in frames) delete frames[k];   // fresh load with the new sessions
+  refreshMe(); show(current);
+}
+function signOutAll() {
+  document.body.classList.add('locked'); closeMenu();
+  const d = dailySession(); if (d) post(DAILY_API, { action: 'logout', token: d.token }).catch(() => {});
+  ls.set('di_user', null);
+  const ns = ls.json('nsp'); if (ns && ns.user) { delete ns.user; ls.set('nsp', JSON.stringify(ns)); }
+  Object.values(frames).forEach(f => f.remove()); for (const k in frames) delete frames[k];
+  $('pass').value = ''; $('err').textContent = ''; $('login').hidden = false; setTimeout(() => $('user').focus(), 60);
+}
+// either app asks to log out → log out of both
+addEventListener('message', e => { if (e.origin === location.origin && e.data && e.data.type === 'shell-logout') signOutAll(); });
+
+$('user').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('pass').focus(); } });
+['user', 'pass'].forEach(id => $(id).addEventListener('input', () => { $('err').textContent = ''; }));
+$('form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const user = $('user').value.trim(), pass = $('pass').value;
+  if (!user || !pass) { $('err').textContent = 'กรอกชื่อผู้ใช้และรหัสผ่าน'; (!user ? $('user') : $('pass')).focus(); return; }
+  $('go').disabled = true; $('go').textContent = 'กำลังเข้าสู่ระบบ…';
+  // sign in to both back ends at once; each app works on its own if the other refuses
+  const [d, n] = await Promise.allSettled([
+    post(DAILY_API, { action: 'login', user: user.toLowerCase(), pass }),
+    post(NIGHT_API, { action: 'login', name: user, pin: pass }),
+  ]);
+  const dOk = d.status === 'fulfilled' && d.value && d.value.ok, nOk = n.status === 'fulfilled' && n.value && n.value.ok;
+  if (dOk) {
+    const j = d.value;
+    if (ls.get('di_last_user') !== j.user) { ls.set('daily_inspection_records_v1', null); ls.set('di_sync_queue', null); }
+    ls.set('di_last_user', j.user);
+    ls.set('di_user', JSON.stringify({ user: j.user, name: j.name, token: j.token, admin: !!j.admin }));
+  }
+  if (nOk) {
+    const ns = ls.json('nsp') || {}; ns.user = { name: n.value.name || user, pin: pass }; ls.set('nsp', JSON.stringify(ns));
+  }
+  $('go').disabled = false; $('go').textContent = 'เข้าสู่ระบบ';
+  if (!dOk && !nOk) {
+    const msg = (d.status === 'fulfilled' && d.value && d.value.error) || (n.status === 'fulfilled' && n.value && n.value.error) || 'เชื่อมต่อไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่';
+    $('err').textContent = msg; $('pass').value = ''; $('pass').focus(); return;
+  }
+  if (!dOk) current = 'night'; else if (!nOk && current === 'night') current = 'daily';
+  openApps();
+});
+
+// Daily app icon (same artwork the Daily page builds for itself)
+(function () {
+  const img = new Image(); img.alt = '';
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><rect width="1024" height="1024" fill="#F4F6FA"/><g transform="translate(85 -14) scale(.75)"><rect x="190" y="200" width="470" height="610" rx="64" fill="#fff" stroke="#1E2B4A" stroke-width="44"/><rect x="318" y="148" width="214" height="108" rx="34" fill="#1E2B4A"/><g fill="none" stroke="#1E2B4A" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"><path d="M268 370l40 40 78-82"/><path d="M268 512l40 40 78-82"/><path d="M268 654l40 40 78-82"/></g><rect x="472" y="474" width="404" height="390" rx="66" fill="#fff" stroke="#1E2B4A" stroke-width="40"/><path d="M512 494h324a20 20 0 0 1 20 20v64H492v-64a20 20 0 0 1 20-20z" fill="#FF3B30"/><circle cx="770" cy="762" r="66" fill="#FF3B30"/><path d="M738 762l24 24 44-46" fill="none" stroke="#fff" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/></g><text x="512" y="905" text-anchor="middle" font-family="-apple-system,Segoe UI,Arial,sans-serif" font-size="220" font-weight="800" fill="#1E2B4A">Daily</text></svg>');
+  $('dIcon').appendChild(img);
+})();
+
+if (dailySession() || nightSession()) openApps();
+else { document.body.classList.add('locked'); setTimeout(() => $('user').focus(), 60); }
+</script>
+</body>
+</html>

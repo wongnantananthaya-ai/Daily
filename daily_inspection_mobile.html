@@ -454,6 +454,32 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
 @keyframes phl{50%{opacity:.55}}
 .lg-btn:disabled{opacity:.6}
+/* admin: ผู้ตรวจ */
+#teamBtn[hidden],#tmBack[hidden]{display:none}
+.tm-seg{display:flex;background:var(--fill);border-radius:10px;padding:2px;margin:2px 0 14px}
+.tm-seg button{flex:1;border:0;background:none;font:inherit;font-size:.88rem;padding:7px 0;border-radius:8px;color:var(--label);cursor:pointer}
+.tm-seg button[aria-pressed="true"]{background:var(--card);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.tm-kpi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.tm-kpi div{background:var(--card);border-radius:12px;padding:10px 12px;font-size:.8rem;color:var(--label2)}
+.tm-kpi b{display:block;font-size:1.35rem;color:var(--label);margin-top:2px}
+.tm-kpi .bad b{color:var(--red-t)}
+.tm-list{background:var(--card);border-radius:14px;overflow:hidden}
+.tm-row{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;font:inherit;text-align:left;padding:12px 12px 12px 14px;cursor:pointer;color:var(--label)}
+.tm-row+.tm-row{border-top:.5px solid var(--sep)}
+.tm-row:active{background:var(--fill2)}
+.tm-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;flex:none}
+.tm-main{flex:1;min-width:0}
+.tm-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.tm-top b{font-size:1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tm-top small,.tm-main>small{color:var(--label2);font-size:.78rem}
+.tm-bar{display:flex;height:6px;border-radius:3px;overflow:hidden;background:var(--fill);margin:6px 0 4px}
+.tm-bar i{display:block;height:100%}
+.tm-row svg.i{width:1rem;height:1rem;color:var(--label3);flex:none}
+.tm-rec{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;border:0;background:none;font:inherit;text-align:left;padding:12px 14px;cursor:pointer;color:var(--label)}
+.tm-rec+.tm-rec{border-top:.5px solid var(--sep)}
+.tm-rec small{display:block;color:var(--label2);font-size:.78rem;margin-top:2px}
+.tm-empty{text-align:center;color:var(--label2);padding:40px 16px;font-size:.92rem}
+.tm-hint{color:var(--label2);font-size:.8rem;margin:10px 4px 0}
 .sydot{position:absolute;top:9px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 2px var(--card)}
 .sy-help{margin:2px 2px 16px;color:var(--label2);font-size:.92rem;line-height:1.55}
 .sy-l[hidden],.sy-in[hidden],.sy-pri[hidden]{display:none}
@@ -696,6 +722,7 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
   <symbol id="i-camera" viewBox="0 0 24 24"><path style="fill:var(--duo,none)" d="M3.5 8.5a2 2 0 0 1 2-2h2.2l1.5-2h5.6l1.5 2h2.2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/></symbol>
   <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
   <symbol id="i-doc" viewBox="0 0 24 24"><path style="fill:var(--duo,none)" d="M6 3.5h8l4 4v13H6z"/><path d="M14 3.5v4h4"/><path d="M9 13h6M9 16.5h4"/></symbol>
+  <symbol id="i-team" viewBox="0 0 24 24"><circle style="fill:var(--duo,none)" cx="9" cy="8" r="3.5"/><path d="M2.5 19.5c.6-3.4 3.3-5.5 6.5-5.5s5.9 2.1 6.5 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.1c2.6.1 4.5 1.9 5 4.4"/></symbol>
   <symbol id="i-cloud" viewBox="0 0 24 24"><path style="fill:var(--duo,none)" d="M7 18.5a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 17.9 9.6 4.5 4.5 0 0 1 17.5 18.5z"/><path d="M12 15.5v-5M9.8 12.6 12 10.4l2.2 2.2"/></symbol>
 </svg>
 
@@ -724,6 +751,9 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
       </button>
       <span class="nav-title" id="navTitle" aria-hidden="true"></span>
       <span style="display:flex;align-items:center">
+      <button class="tbtn" id="teamBtn" type="button" aria-label="ผู้ตรวจ (admin)" hidden>
+        <svg class="i duo" style="width:1.5rem;height:1.5rem;stroke-width:1.8"><use href="#i-team"/></svg>
+      </button>
       <button class="tbtn" id="openHistoryBtn" type="button" aria-label="ประวัติการตรวจ">
         <svg class="i duo" style="width:1.45rem;height:1.45rem;stroke-width:1.8"><use href="#i-clock"/></svg><span class="count" id="historyCount" data-n="0">0</span>
       </button>
@@ -844,6 +874,18 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
       <button class="tbtn" id="closeHistoryBtn" type="button" style="font-weight:600;padding:0 8px">เสร็จ</button>
     </div>
     <div class="sheet-b" id="historyList"></div>
+  </div>
+</div>
+
+<div class="dim" id="teamDim" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="tmTitle">
+    <div class="grab"></div>
+    <div class="sheet-h">
+      <button class="tbtn" id="tmBack" type="button" aria-label="กลับไปรายชื่อผู้ตรวจ" hidden style="padding:0 4px"><svg class="i" style="width:1.3rem;height:1.3rem"><use href="#i-back"/></svg></button>
+      <h3 id="tmTitle">ผู้ตรวจ</h3>
+      <button class="tbtn" id="tmClose" type="button" style="font-weight:600;padding:0 8px">เสร็จ</button>
+    </div>
+    <div class="sheet-b" id="tmBody"></div>
   </div>
 </div>
 
@@ -1382,6 +1424,7 @@ function fromServer(s, id) {
 function refreshViews() {
   updateHistoryCount(); fillNoList();
   if ($('historyModal').classList.contains('open')) renderHistory();
+  if ($('teamDim').classList.contains('open')) renderTeam();
   if (!$('monthView').hidden) { try { fillMonthNos(); renderPaper(); } catch {} }
 }
 
@@ -2273,6 +2316,7 @@ function applyUser() {
   const name = session ? session.name : draftInspector;
   if (!editingId) { formValues.inspector = name; $('inspectorInput').value = name; }
   $('inspectorInput').readOnly = !!session;   // the inspector is whoever is logged in
+  $('teamBtn').hidden = !session?.admin;       // "ผู้ตรวจ" page is for admins only
   $('userBtn').setAttribute('aria-label', session ? `ผู้ใช้: ${session.name} (แตะเพื่อออกจากระบบ)` : 'ผู้ใช้');
 }
 function showLogin(msg) {
@@ -2323,9 +2367,79 @@ $('userBtn').addEventListener('click', () => {
       const tok = session?.token; if (tok) postSheet({ action: 'logout', token: tok }).catch(() => {});
       session = null; try { localStorage.removeItem(SESSION_KEY); } catch {}
       store.set(store.get().filter(r => r.demo)); setSyncQ([]); refreshViews();   // this account's data leaves the device
+      if (window.parent !== window) { window.parent.postMessage({ type: 'shell-logout' }, '*'); return; }   // inside app.html: log out of both apps
       resetForm(); applyUser(); $('lgUser').value = ''; showLogin();
     }, true);
 });
+/* ---------- admin: "ผู้ตรวจ" — work per inspector (count, abnormal, last activity), tap a name for their records ---------- */
+const TM = { range: 'month', person: null };
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+function tmInRange(r) {
+  const t = localToday();
+  if (TM.range === 'today') return r.date === t;
+  if (TM.range === 'week') {   // Monday → today
+    const now = new Date(+t.slice(0, 4), +t.slice(5, 7) - 1, +t.slice(8, 10)), mon = new Date(now);
+    mon.setDate(now.getDate() - (now.getDay() + 6) % 7);
+    return r.date >= ymd(mon) && r.date <= t;
+  }
+  return (r.date || '').slice(0, 7) === t.slice(0, 7);
+}
+const TM_TINTS = [['#E6F1FB', '#0C447C'], ['#E1F5EE', '#085041'], ['#FAEEDA', '#854F0B'], ['#EEEDFE', '#3C3489'], ['#FBEAF0', '#72243E'], ['#EAF3DE', '#27500A']];
+function tmAvatar(name) {
+  let h = 0; for (const ch of name) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  const [bg, fg] = TM_TINTS[h % TM_TINTS.length];
+  const ini = Array.from(name).filter(ch => /[ก-ฮA-Za-z0-9]/.test(ch)).slice(0, 2).join('') || '?';
+  return `<span class="tm-av" style="background:${bg};color:${fg}" aria-hidden="true">${esc(ini)}</span>`;
+}
+function tmWhen(date) {
+  const t = localToday(), y = new Date(Date.now() - 864e5);
+  if (date === t) return 'วันนี้';
+  if (date === ymd(y)) return 'เมื่อวาน';
+  return thDate(date);
+}
+function renderTeam() {
+  const all = store.get().filter(r => r.date && tmInRange(r));
+  const seg = `<div class="tm-seg" role="group" aria-label="ช่วงเวลา">${[['month', 'เดือนนี้'], ['week', 'สัปดาห์นี้'], ['today', 'วันนี้']]
+    .map(([k, l]) => `<button type="button" data-tm-range="${k}" aria-pressed="${TM.range === k}">${l}</button>`).join('')}</div>`;
+  $('tmBack').hidden = !TM.person;
+  if (TM.person) {   // one inspector's records
+    const recs = all.filter(r => (r.data.inspector || 'ไม่ระบุ').trim() === TM.person).sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+    $('tmTitle').textContent = TM.person;
+    $('tmBody').innerHTML = seg + (recs.length ? `<div class="tm-list">${recs.map(r => {
+      const s = recStatus(r), bad = abnormalIds(r.type, r.data).map(id => fieldOf(r.type, id)?.f.label).filter(Boolean);
+      return `<button type="button" class="tm-rec" data-tm-rec="${r.id}"><span><b>${thDate(r.date)}</b> · ${r.type} NO. ${esc(normNo(r.machineNo))}${bad.length ? `<small>${esc(bad.join(', '))}</small>` : ''}</span>
+        <span class="badge ${s === 'ng' ? 'warn' : s === 'st' ? 'stop' : 'done'}">${s === 'ng' ? 'ผิดปกติ' : s === 'st' ? 'Stop' : 'ปกติ'}</span></button>`;
+    }).join('')}</div><p class="tm-hint">แตะรายการเพื่อดูรายละเอียด</p>` : '<div class="tm-empty">ไม่มีการตรวจในช่วงนี้</div>');
+    return;
+  }
+  $('tmTitle').textContent = 'ผู้ตรวจ';
+  const by = new Map();
+  all.forEach(r => {
+    const n = (r.data.inspector || 'ไม่ระบุ').trim(), s = recStatus(r);
+    const g = by.get(n) || { n, total: 0, ok: 0, ng: 0, st: 0, last: '' };
+    g.total++; g[s === 'ng' ? 'ng' : s === 'st' ? 'st' : 'ok']++; if (r.date > g.last) g.last = r.date;
+    by.set(n, g);
+  });
+  const people = [...by.values()].sort((a, b) => b.total - a.total || a.n.localeCompare(b.n, 'th'));
+  const ng = all.filter(r => recStatus(r) === 'ng').length;
+  const kpi = `<div class="tm-kpi"><div>ผู้ตรวจ<b>${people.length}</b></div><div>การตรวจ<b>${all.length}</b></div><div class="${ng ? 'bad' : ''}">ผิดปกติ<b>${ng}</b></div></div>`;
+  $('tmBody').innerHTML = seg + kpi + (people.length ? `<div class="tm-list">${people.map(g => {
+    const pc = k => (g[k] / g.total * 100).toFixed(1) + '%';
+    return `<button type="button" class="tm-row" data-tm-person="${esc(g.n)}">${tmAvatar(g.n)}<span class="tm-main">
+      <span class="tm-top"><b>${esc(g.n)}</b><small>ล่าสุด ${tmWhen(g.last)}</small></span>
+      <span class="tm-bar" aria-hidden="true"><i style="width:${pc('ok')};background:var(--green)"></i><i style="width:${pc('ng')};background:var(--red)"></i><i style="width:${pc('st')};background:var(--orange)"></i></span>
+      <small>ตรวจ ${g.total} ครั้ง · ผิดปกติ ${g.ng}${g.st ? ` · Stop ${g.st}` : ''}</small></span>${icon('chev')}</button>`;
+  }).join('')}</div><p class="tm-hint">แตะชื่อเพื่อดูประวัติการตรวจของคนนั้น</p>` : '<div class="tm-empty">ยังไม่มีการตรวจในช่วงนี้</div>');
+}
+$('teamBtn').addEventListener('click', () => { TM.person = null; renderTeam(); openDim('teamDim'); $('tmClose').focus(); pullSync(); });
+$('tmClose').addEventListener('click', () => closeDim('teamDim'));
+$('tmBack').addEventListener('click', () => { TM.person = null; renderTeam(); $('tmBody').scrollTop = 0; });
+$('tmBody').addEventListener('click', e => {
+  const rg = e.target.closest('[data-tm-range]'); if (rg) { TM.range = rg.dataset.tmRange; renderTeam(); return; }
+  const p = e.target.closest('[data-tm-person]'); if (p) { TM.person = p.dataset.tmPerson; renderTeam(); $('tmBody').scrollTop = 0; return; }
+  const rc = e.target.closest('[data-tm-rec]'); if (rc) viewRecord(+rc.dataset.tmRec);
+});
+
 applyUser();
 if (!session) showLogin();
 /* ---- sample data: open the page with ?demo=1 to add 10 days for all 3 machines (NO. 1); ?demo=0 removes it ----
