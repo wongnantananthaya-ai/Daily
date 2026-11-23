@@ -435,6 +435,34 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .paper table.rt td.insp{font-size:12.5px;color:#000}
 .paper table.rt td.note{font-size:11px;font-weight:400;color:#000;line-height:1.35;text-align:left;padding:3px 5px}
 .paper table.rt td.note.bad{color:#D70015!important;font-weight:600!important}
+.login{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px 16px calc(24px + env(safe-area-inset-bottom));overflow:auto}
+.login[hidden]{display:none}
+.lg-card{width:100%;max-width:380px;text-align:center}
+.lg-icon{width:84px;height:84px;border-radius:19px;box-shadow:0 4px 14px rgba(30,43,74,.16);margin:0 auto 18px;display:block}
+.lg-card h1{font-size:1.75rem;font-weight:700;letter-spacing:-.02em;margin:0}
+.lg-sub{margin:6px 0 28px;color:var(--label2);font-size:.92rem}
+.lg-grp{background:var(--card);border-radius:14px;overflow:hidden;text-align:left;box-shadow:var(--shadow)}
+.lg-f{display:flex;align-items:center;min-height:52px;padding:0 16px;gap:12px}
+.lg-f+.lg-f{border-top:.5px solid var(--sep)}
+.lg-f span{width:72px;flex:none;font-size:.98rem}
+.lg-f input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:1rem;color:var(--label);height:50px;outline:none}
+.lg-err{min-height:1.4em;margin:10px 4px 6px;color:var(--red-t);font-size:.9rem;text-align:left}
+.lg-btn{width:100%;min-height:52px;border:0;border-radius:14px;background:var(--tint);color:#fff;font:inherit;font-size:1.05rem;font-weight:700;cursor:pointer}
+.lg-btn:active{transform:scale(.98)}
+.lg-note{margin:18px 0 0;color:var(--label2);font-size:.85rem}
+#inspectorInput[readonly]{color:var(--label);cursor:default}
+.sydot{position:absolute;top:9px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 2px var(--card)}
+.sy-help{margin:2px 2px 16px;color:var(--label2);font-size:.92rem;line-height:1.55}
+.sy-l{display:block;font-size:.85rem;color:var(--label2);margin:0 2px 6px}
+.sy-in{width:100%;min-height:46px;border:1px solid var(--field-b);border-radius:12px;background:var(--card);padding:0 12px;font:inherit;font-size:.92rem;color:var(--label)}
+.sy-in:focus{outline:none;border-color:var(--tint);box-shadow:0 0 0 3px rgba(0,122,255,.15)}
+.sy-pri{width:100%;min-height:50px;margin-top:12px;border:0;border-radius:14px;background:var(--tint);color:#fff;font:inherit;font-weight:700;font-size:1rem;cursor:pointer}
+.sy-pri:disabled{opacity:.5}
+.sy-info{margin:14px 0;padding:12px 14px;border-radius:12px;background:var(--card);font-size:.9rem;line-height:1.6;color:var(--label);word-break:break-word}
+.sy-info .ok{color:var(--ok-t);font-weight:700}.sy-info .bad{color:var(--red-t);font-weight:700}.sy-info .wait{color:var(--orange-t);font-weight:700}
+.sy-info small{color:var(--label2);font-size:.82rem}
+.sy-sec{width:100%;min-height:46px;margin-top:8px;border:0;border-radius:12px;background:var(--card);color:var(--tint);font:inherit;font-weight:600;font-size:.95rem;cursor:pointer}
+.sy-sec.danger{color:var(--red-t)}
 .camfloat{position:absolute;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:#E8F1FF;color:#0A5BD3;display:grid;place-items:center;cursor:pointer;box-shadow:0 1px 3px rgba(10,91,211,.25)}
 .camfloat svg.i{width:18px;height:18px;stroke-width:1.9;--duo:rgba(10,91,211,.2)}
 .cambtn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:100%;min-height:44px;border:0;border-radius:8px;background:#E8F1FF;color:#0A5BD3;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer}
@@ -664,7 +692,23 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
   <symbol id="i-camera" viewBox="0 0 24 24"><path style="fill:var(--duo,none)" d="M3.5 8.5a2 2 0 0 1 2-2h2.2l1.5-2h5.6l1.5 2h2.2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/></symbol>
   <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
   <symbol id="i-doc" viewBox="0 0 24 24"><path style="fill:var(--duo,none)" d="M6 3.5h8l4 4v13H6z"/><path d="M14 3.5v4h4"/><path d="M9 13h6M9 16.5h4"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path style="fill:var(--duo,none)" d="M7 18.5a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 17.9 9.6 4.5 4.5 0 0 1 17.5 18.5z"/><path d="M12 15.5v-5M9.8 12.6 12 10.4l2.2 2.2"/></symbol>
 </svg>
+
+<div class="login" id="login" hidden>
+  <form class="lg-card" id="lgForm" novalidate>
+    <img class="lg-icon" id="lgIcon" alt="" width="84" height="84">
+    <h1>Daily Inspection</h1>
+    <p class="lg-sub">ใบตรวจเช็ครายวัน · CE97F1005Q</p>
+    <div class="lg-grp">
+      <label class="lg-f"><span>ผู้ใช้</span><input id="lgUser" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ชื่อผู้ใช้" enterkeyhint="next"></label>
+      <label class="lg-f"><span>รหัสผ่าน</span><input id="lgPass" type="password" autocomplete="current-password" placeholder="รหัสผ่าน" enterkeyhint="go"></label>
+    </div>
+    <p class="lg-err" id="lgErr" role="alert"></p>
+    <button type="submit" class="lg-btn">เข้าสู่ระบบ</button>
+    <p class="lg-note">บัญชีทดสอบ: ผู้ใช้ <b>test</b> · รหัส <b>1234</b></p>
+  </form>
+</div>
 
 <div class="shell">
   <header class="nav" id="nav">
@@ -673,9 +717,14 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
         <svg class="i duo" style="width:1.45rem;height:1.45rem;stroke-width:1.8"><use href="#i-sheet"/></svg>
       </button>
       <span class="nav-title" id="navTitle" aria-hidden="true"></span>
+      <span style="display:flex;align-items:center">
+      <button class="tbtn" id="userBtn" type="button" aria-label="ผู้ใช้ (แตะเพื่อออกจากระบบ)">
+        <svg class="i duo" style="width:1.4rem;height:1.4rem;stroke-width:1.8"><use href="#i-person"/></svg>
+      </button>
       <button class="tbtn" id="openHistoryBtn" type="button" aria-label="ประวัติการตรวจ">
         <svg class="i duo" style="width:1.45rem;height:1.45rem;stroke-width:1.8"><use href="#i-clock"/></svg><span class="count" id="historyCount" data-n="0">0</span>
       </button>
+      </span>
     </div>
   </header>
 
@@ -785,6 +834,7 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
     <div class="grab"></div>
     <div class="sheet-h">
       <h3 id="hTitle">ประวัติการตรวจเช็ค</h3>
+      <button class="tbtn" id="openSyncBtn" type="button" aria-label="เชื่อม Google Sheet" style="position:relative"><svg class="i duo" style="width:1.35rem;height:1.35rem"><use href="#i-cloud"/></svg><span class="sydot" id="syncDot" hidden></span></button>
       <button class="tbtn" id="exportCsvBtn" type="button" aria-label="ส่งออก CSV"><svg class="i" style="width:1.3rem;height:1.3rem"><use href="#i-share"/></svg></button>
       <button class="tbtn" id="closeHistoryBtn" type="button" style="font-weight:600;padding:0 8px">เสร็จ</button>
     </div>
@@ -797,6 +847,22 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
     <div class="grab"></div>
     <div class="sheet-h"><h3 id="rdTitle">รายละเอียดการตรวจ</h3><button class="tbtn" id="rdClose" type="button" style="font-weight:600;padding:0 8px">เสร็จ</button></div>
     <div class="sheet-b" id="rdBody"></div>
+  </div>
+</div>
+
+<div class="dim" id="syncDim" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="syTitle">
+    <div class="grab"></div>
+    <div class="sheet-h"><h3 id="syTitle">Google Sheet</h3><button class="tbtn" id="syClose" type="button" style="font-weight:600;padding:0 8px">เสร็จ</button></div>
+    <div class="sheet-b">
+      <p class="sy-help">วางลิงก์ Web app จาก Apps Script (ลงท้ายด้วย /exec) แล้วทุกครั้งที่กดบันทึก แก้ไข หรือลบ ข้อมูลจะถูกส่งเข้า Google Sheet ให้อัตโนมัติ ถ้าไม่มีเน็ต จะส่งให้ทีหลังเอง</p>
+      <label class="sy-l" for="syUrl">ลิงก์ Web app</label>
+      <input id="syUrl" class="sy-in" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://script.google.com/macros/s/…/exec">
+      <button type="button" id="sySave" class="sy-pri">บันทึกและทดสอบ</button>
+      <div class="sy-info" id="syInfo" role="status"></div>
+      <button type="button" id="syAll" class="sy-sec">ส่งข้อมูลทั้งหมดในเครื่องขึ้น Sheet</button>
+      <button type="button" id="syOff" class="sy-sec danger">ยกเลิกการเชื่อม</button>
+    </div>
   </div>
 </div>
 
@@ -1135,6 +1201,7 @@ function doSave() {
 function commitSave(replace) {
   const date = $('inspectDate').value, no = normNo($('machineNo').value);
   let records = store.get();
+  const editedOld = editingId ? records.find(r => r.id === editingId) : null;
   if (replace) records = records.filter(r => !(r.type === currentType && normNo(r.machineNo) === no && r.date === date));
   if (editingId) records = records.filter(r => r.id !== editingId);   // edited record may have moved to a new date/no
   const data = { ...formValues }, bad = abnormalIds(currentType, formValues);
@@ -1142,12 +1209,15 @@ function commitSave(replace) {
   records.unshift({ id: Date.now(), savedAt: new Date().toLocaleString('th-TH'), type: currentType, machineName: FORMS[currentType].name,
     machineNo: no, date, status: $('machineStatus').value, data });
   if (!store.set(records)) { showToast('บันทึกไม่สำเร็จ ที่เก็บในเครื่องเต็มหรือถูกปิด ลองลบรูปบางรูป', true); return; }
+  if (editedOld && recKey(editedOld) !== recKey(records[0])) queueSync({ op: 'delete', key: recKey(editedOld) });   // edit moved it to another day / NO.
+  queueSync({ op: 'upsert', key: recKey(records[0]), id: records[0].id });
   rememberNo(); fillNoList();
   try { localStorage.setItem('di_inspector', formValues.inspector.trim()); } catch {}
   drafts.set(drafts.get().filter(d => d.id !== loadedDraftId && !(d.type === currentType && d.machineNo === no && d.date === date)));  // draft is done
   const wasEditing = !!editingId; editingId = null; loadedDraftId = null;
   setToday();   // next inspection starts on today again
-  formValues = { inspector: formValues.inspector }; tried = false; initOpenState(currentType); renderForm();
+  formValues = { inspector: session ? session.name : formValues.inspector }; tried = false; initOpenState(currentType);
+  $('inspectorInput').value = formValues.inspector; renderForm();
   updateHistoryCount(); window.scrollTo({ top: 0, behavior: 'smooth' }); haptic([10, 40, 10]);
   showToast(wasEditing ? 'บันทึกการแก้ไขแล้ว' : replace ? 'แทนที่บันทึกของวันนี้แล้ว' : 'บันทึกลงใบรายเดือนแล้ว');
 }
@@ -1215,9 +1285,100 @@ function deleteRecord(id) {
   const r = store.get().find(x => x.id === id); if (!r) return;
   // delete right away (no confirm) — the swipe + red button is already a deliberate action
   if (!store.set(store.get().filter(x => x.id !== id))) { showToast('ลบไม่สำเร็จ', true); return; }
+  queueSync({ op: 'delete', key: recKey(r) });
   if (editingId === id) resetForm();
   swOpen = null; closeDim('recDim'); renderHistory(); updateHistoryCount(); fillNoList(); haptic([10, 40, 10]); showToast('ลบแล้ว');
 }
+
+/* ---------- Google Sheet sync: each save / edit / delete is queued, then POSTed to the Apps Script web app ----------
+   The queue lives in localStorage, so work done offline is sent on the next chance (online, app reopened). */
+const SY = { url: 'di_sheet_url', q: 'di_sync_queue', last: 'di_sync_last' };
+const lsGet = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
+const lsSet = (k, v) => { try { v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} };
+const recKey = r => `${r.type}-${normNo(r.machineNo)}-${r.date}`;   // one record per machine per day = the row's Record ID in the Sheet
+const syncQ = () => { try { return JSON.parse(lsGet(SY.q, '[]')); } catch { return []; } };
+const setSyncQ = q => { lsSet(SY.q, JSON.stringify(q)); updateSyncDot(); };
+let syncBusy = false, syncErr = '', syncWarned = false;
+function queueSync(op) {
+  if (!lsGet(SY.url, '')) return;
+  setSyncQ([...syncQ().filter(x => x.key !== op.key), { ...op, t: Date.now() + Math.random() }]);   // newest action per record wins
+  flushSync();
+}
+function syncPayload(r) {
+  const st = recStatus(r), bad = abnormalIds(r.type, r.data);
+  const row = { date: r.date, type: r.type, no: normNo(r.machineNo), status: r.status || '', inspector: r.data.inspector || '',
+    result: st === 'ng' ? 'ผิดปกติ' : st === 'st' ? 'Stop' : 'ปกติ', issues: bad.length,
+    analysis: r.data.analysis || '', remark: r.data.remark || '', saved: r.savedAt || '', id: recKey(r) };
+  FORMS[r.type].sections.forEach(s => (s.fields || []).forEach(f => {
+    const v = r.data[f.id]; if (filled(v)) row[f.id] = s.type === 'numeric' && v !== '' && !isNaN(+v) ? +v : v;
+  }));
+  const issues = bad.map(id => { const m = fieldOf(r.type, id), it = (r.data.issues || {})[id] || {};
+    return { field: id, label: m.f.label, value: row[id] ?? r.data[id], spec: m.f.spec, note: it.note || '', photos: it.photos || [] }; });
+  return { action: 'upsert', key: row.id, row, issues };
+}
+async function postSheet(body, url = lsGet(SY.url, '')) {
+  let res;
+  try { res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) }); }
+  catch { throw new Error('เชื่อมต่อไม่ได้ (ไม่มีอินเทอร์เน็ต หรือลิงก์ไม่ถูกต้อง)'); }
+  let j; try { j = await res.json(); } catch { throw new Error('Sheet ตอบกลับไม่ถูกต้อง ตรวจลิงก์และการตั้งค่า Deploy (Who has access = Anyone)'); }
+  if (!j.ok) throw new Error(j.error || 'Sheet แจ้งข้อผิดพลาด');
+  return j;
+}
+async function flushSync() {
+  if (syncBusy || !lsGet(SY.url, '') || navigator.onLine === false) return;
+  syncBusy = true; renderSyncInfo();
+  const seen = new Set();
+  try {
+    for (let op; (op = syncQ()[0]) && !seen.has(op.t);) {
+      seen.add(op.t);
+      if (op.op === 'delete') await postSheet({ action: 'delete', key: op.key });
+      else { const r = store.get().find(x => x.id === op.id); if (r) await postSheet(syncPayload(r)); }
+      setSyncQ(syncQ().filter(x => x.t !== op.t));
+      lsSet(SY.last, new Date().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }));
+    }
+    syncErr = ''; syncWarned = false;
+  } catch (e) {
+    syncErr = e.message || String(e);
+    if (!syncWarned) { syncWarned = true; showToast('ยังส่งเข้า Google Sheet ไม่ได้ จะลองใหม่อัตโนมัติ', true); }
+  } finally { syncBusy = false; updateSyncDot(); renderSyncInfo(); }
+}
+function updateSyncDot() { const d = $('syncDot'); if (d) d.hidden = !(lsGet(SY.url, '') && syncQ().length); }
+function renderSyncInfo(msg) {
+  const url = lsGet(SY.url, ''), n = syncQ().length, last = lsGet(SY.last, '');
+  $('syAll').hidden = $('syOff').hidden = !url;
+  $('syInfo').innerHTML = msg || (!url ? 'ยังไม่ได้เชื่อม ข้อมูลเก็บอยู่ในเครื่องนี้เท่านั้น'
+    : (syncBusy ? `<span class="wait">กำลังส่ง…</span>${n ? ` เหลือ ${n} รายการ` : ''}`
+      : syncErr ? `<span class="bad">ส่งไม่สำเร็จ</span> · ${esc(syncErr)}${n ? `<br>รอส่ง ${n} รายการ` : ''}`
+      : n ? `<span class="wait">รอส่ง ${n} รายการ</span>` : '<span class="ok">เชื่อมแล้ว</span> ข้อมูลส่งเข้า Sheet ครบ')
+      + (last ? `<br><small>ส่งล่าสุด ${esc(last)}</small>` : ''));
+}
+$('openSyncBtn').addEventListener('click', () => { $('syUrl').value = lsGet(SY.url, ''); renderSyncInfo(); openDim('syncDim'); });
+$('syClose').addEventListener('click', () => closeDim('syncDim'));
+$('sySave').addEventListener('click', async () => {
+  const url = $('syUrl').value.trim();
+  if (!/^https:\/\/script\.google\.com\/.+\/exec$/.test(url)) {
+    renderSyncInfo('<span class="bad">ลิงก์ไม่ถูกต้อง</span> ต้องขึ้นต้นด้วย https://script.google.com/ และลงท้ายด้วย /exec'); $('syUrl').focus(); return;
+  }
+  $('sySave').disabled = true; renderSyncInfo('<span class="wait">กำลังทดสอบการเชื่อม…</span>');
+  try {
+    const j = await postSheet({ action: 'ping' }, url);
+    lsSet(SY.url, url); syncErr = ''; syncWarned = false;
+    showToast(`เชื่อมกับ "${j.sheet || 'Google Sheet'}" แล้ว`); renderSyncInfo(); updateSyncDot(); flushSync();
+  } catch (e) { renderSyncInfo(`<span class="bad">เชื่อมไม่สำเร็จ</span> · ${esc(e.message)}`); }
+  finally { $('sySave').disabled = false; }
+});
+$('syAll').addEventListener('click', () => {
+  const recs = store.get(); if (!recs.length) { showToast('ยังไม่มีข้อมูลในเครื่อง', true); return; }
+  const keep = syncQ().filter(x => x.op === 'delete');
+  setSyncQ([...keep, ...recs.slice().reverse().map((r, i) => ({ op: 'upsert', key: recKey(r), id: r.id, t: Date.now() + i }))]);
+  showToast(`กำลังส่ง ${recs.length} รายการเข้า Sheet`); flushSync();
+});
+$('syOff').addEventListener('click', () => {
+  lsSet(SY.url, null); setSyncQ([]); syncErr = ''; $('syUrl').value = ''; renderSyncInfo(); showToast('ยกเลิกการเชื่อมแล้ว ข้อมูลใน Sheet ยังอยู่ครบ');
+});
+window.addEventListener('online', flushSync);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') flushSync(); });
+updateSyncDot(); setTimeout(flushSync, 1500);   // after the rest of the script has loaded
 /* swipe-to-reveal actions on history rows (iOS style: swipe left) */
 const SW_W = 160;
 let swOpen = null, swDrag = null, swJustDragged = false;
@@ -1260,7 +1421,8 @@ function editRecord(id) {
   guardThen('แก้ไขบันทึกนี้?', 'แก้ไข', () => { loadInto(r); editingId = r.id; loadedDraftId = null; renderForm(); window.scrollTo({ top: 0, behavior: 'smooth' }); showToast('กำลังแก้ไข กดบันทึกเมื่อเสร็จ'); });
 }
 function resetForm() {
-  editingId = null; loadedDraftId = null; formValues = { inspector: formValues.inspector }; tried = false;
+  editingId = null; loadedDraftId = null; formValues = { inspector: session ? session.name : formValues.inspector }; tried = false;
+  $('inspectorInput').value = formValues.inspector;
   setToday(); recallNo(); initOpenState(currentType); renderForm();
 }
 function draftBanner() {
@@ -2000,7 +2162,45 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('wz').h
 /* large title collapse */
 new IntersectionObserver(([en]) => $('nav').classList.toggle('scrolled', !en.isIntersecting), { rootMargin: '-44px 0px 0px 0px' }).observe($('largeTitle'));
 
-formValues.inspector = draftInspector; $('inspectorInput').value = draftInspector;
+/* ---------- login (TEST version) ----------
+   Accounts live in this file for now, so anyone who opens the source can read them.
+   Before real use, move the user list to the Google Sheet and check passwords there. */
+const USERS = [{ user: 'test', pass: '1234', name: 'Test' }];
+const SESSION_KEY = 'di_user';
+let session = (() => { try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch { return null; } })();
+if (session && !USERS.some(u => u.user === session.user)) session = null;   // account removed from the list
+function applyUser() {
+  const name = session ? session.name : draftInspector;
+  if (!editingId) { formValues.inspector = name; $('inspectorInput').value = name; }
+  $('inspectorInput').readOnly = !!session;   // the inspector is whoever is logged in
+  $('userBtn').setAttribute('aria-label', session ? `ผู้ใช้: ${session.name} (แตะเพื่อออกจากระบบ)` : 'ผู้ใช้');
+}
+function showLogin() {
+  $('lgIcon').src = document.querySelector('link[rel="apple-touch-icon"]')?.href || document.querySelector('link[rel="icon"]')?.href || '';
+  $('login').hidden = false; document.body.style.overflow = 'hidden';
+  setTimeout(() => $('lgUser').focus(), 60);
+}
+$('lgUser').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('lgPass').focus(); } });
+['lgUser', 'lgPass'].forEach(id => $(id).addEventListener('input', () => { $('lgErr').textContent = ''; }));
+$('lgForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const u = $('lgUser').value.trim().toLowerCase(), p = $('lgPass').value;
+  if (!u || !p) { $('lgErr').textContent = 'กรอกชื่อผู้ใช้และรหัสผ่าน'; (!u ? $('lgUser') : $('lgPass')).focus(); return; }
+  const acc = USERS.find(x => x.user === u && x.pass === p);
+  if (!acc) { $('lgErr').textContent = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง'; $('lgPass').value = ''; $('lgPass').focus(); haptic([30, 60, 30]); return; }
+  session = { user: acc.user, name: acc.name };
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify(session)); } catch {}
+  $('login').hidden = true; document.body.style.overflow = ''; $('lgPass').value = ''; $('lgErr').textContent = '';
+  applyUser(); renderForm(); showToast(`เข้าสู่ระบบแล้ว · ${acc.name}`);
+});
+$('userBtn').addEventListener('click', () => {
+  askConfirm(`ออกจากระบบ${session ? ` ${session.name}` : ''}?`, 'ข้อมูลที่บันทึกแล้วยังอยู่ครบ ข้อมูลที่กรอกค้างไว้จะหาย', 'ออกจากระบบ', () => {
+    session = null; try { localStorage.removeItem(SESSION_KEY); } catch {}
+    resetForm(); applyUser(); $('lgUser').value = ''; showLogin();
+  }, true);
+});
+applyUser();
+if (!session) showLogin();
 /* ---- sample data: open the page with ?demo=1 to add 10 days for all 3 machines (NO. 1); ?demo=0 removes it ----
    Sample records are tagged demo:true and never overwrite a real record on the same machine/day. */
 function demoRecords() {
