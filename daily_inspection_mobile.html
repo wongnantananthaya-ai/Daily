@@ -713,7 +713,6 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
     </div>
     <p class="lg-err" id="lgErr" role="alert"></p>
     <button type="submit" class="lg-btn" id="lgBtn">เข้าสู่ระบบ</button>
-    <p class="lg-note">บัญชีทดสอบ: ผู้ใช้ <b>test</b> · รหัส <b>1234</b></p>
   </form>
 </div>
 
@@ -725,11 +724,11 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
       </button>
       <span class="nav-title" id="navTitle" aria-hidden="true"></span>
       <span style="display:flex;align-items:center">
-      <button class="tbtn" id="userBtn" type="button" aria-label="ผู้ใช้ (แตะเพื่อออกจากระบบ)">
-        <svg class="i duo" style="width:1.4rem;height:1.4rem;stroke-width:1.8"><use href="#i-person"/></svg>
-      </button>
       <button class="tbtn" id="openHistoryBtn" type="button" aria-label="ประวัติการตรวจ">
         <svg class="i duo" style="width:1.45rem;height:1.45rem;stroke-width:1.8"><use href="#i-clock"/></svg><span class="count" id="historyCount" data-n="0">0</span>
+      </button>
+      <button class="tbtn" id="userBtn" type="button" aria-label="ผู้ใช้ (แตะเพื่อออกจากระบบ)">
+        <svg class="i duo" style="width:1.4rem;height:1.4rem;stroke-width:1.8"><use href="#i-person"/></svg>
       </button>
       </span>
     </div>
@@ -841,7 +840,6 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
     <div class="grab"></div>
     <div class="sheet-h">
       <h3 id="hTitle">ประวัติการตรวจเช็ค</h3>
-      <button class="tbtn" id="openSyncBtn" type="button" aria-label="เชื่อม Google Sheet" style="position:relative"><svg class="i duo" style="width:1.35rem;height:1.35rem"><use href="#i-cloud"/></svg><span class="sydot" id="syncDot" hidden></span></button>
       <button class="tbtn" id="exportCsvBtn" type="button" aria-label="ส่งออก CSV"><svg class="i" style="width:1.3rem;height:1.3rem"><use href="#i-share"/></svg></button>
       <button class="tbtn" id="closeHistoryBtn" type="button" style="font-weight:600;padding:0 8px">เสร็จ</button>
     </div>
@@ -1451,7 +1449,7 @@ function renderSyncInfo(msg) {
       + (session ? `<br><small>ผู้ใช้: ${esc(session.name)}</small>` : '')
       + (last ? `<br><small>ส่งล่าสุด ${esc(last)}</small>` : ''));
 }
-$('openSyncBtn').addEventListener('click', () => {
+$('openSyncBtn')?.addEventListener('click', () => {   // button removed from the History header; sync runs on its own
   $('syUrl').value = sheetUrl();
   [$('syUrl'), $('sySave'), document.querySelector('label[for="syUrl"]')].forEach(el => { el.hidden = !!SHEET_URL_DEFAULT; });   // link is built in
   renderSyncInfo(); openDim('syncDim');
