@@ -7,6 +7,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Daily">
 <title>Daily · Night Shift</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* Shell: one login, two apps (Daily Inspection + Night Shift Plan) in tabs.
    Both apps live in same-origin iframes; the shell signs in to both back ends and leaves each app's session in localStorage. */
@@ -62,6 +64,81 @@ body.menu-open .scrim{opacity:1;pointer-events:auto}
   .sec{margin-top:18px}
 }
 body.locked .topbar,body.locked .side,body.locked .scrim{display:none}
+
+/* ===== Inspection selection page ===== */
+:root{--red:#B3122E;--red-d:#8E0D24;--navy:#1B2A4A;--navy2:#2F4B8A;--soft:#F4F5F8;--ink:#141A26;--ink2:#5D6474}
+.home{position:fixed;inset:0;z-index:15;display:grid;grid-template-columns:104px 1fr;background:var(--soft);
+  font-family:Inter,"Noto Sans Thai","Leelawadee UI",system-ui,sans-serif;color:var(--ink)}
+.home[hidden]{display:none}
+body.at-home .topbar,body.at-home .side,body.at-home .scrim,body.at-home .frames{display:none}
+/* rail */
+.hm-rail{position:relative;overflow:hidden;background:linear-gradient(180deg,#C3163A 0%,var(--red) 45%,var(--red-d) 100%);
+  display:flex;flex-direction:column;align-items:center;padding:calc(28px + env(safe-area-inset-top)) 0 calc(24px + env(safe-area-inset-bottom))}
+.hm-rail::before,.hm-rail::after{content:"";position:absolute;left:-40%;width:180%;height:140px;background:rgba(255,255,255,.06);transform:rotate(-28deg)}
+.hm-rail::before{top:42%}.hm-rail::after{top:62%;height:60px;background:rgba(0,0,0,.08)}
+.hm-logo{position:relative;width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center}
+.hm-logo svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.hm-dots{position:relative;display:flex;flex-direction:column;gap:9px;margin-top:22px}
+.hm-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.38)}
+.hm-dots i.on{background:#fff;height:18px;border-radius:3px}
+.hm-out{position:relative;margin-top:auto;width:44px;height:44px;border-radius:12px;border:0;background:rgba(255,255,255,.12);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.hm-out:hover{background:rgba(255,255,255,.22)}
+.hm-out svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+/* main */
+.hm-main{position:relative;overflow:auto;padding:clamp(28px,6vh,64px) clamp(20px,6vw,88px) 200px;
+  background:radial-gradient(120% 70% at 100% 0%,#fff 0%,#fff 40%,transparent 70%),var(--soft)}
+.hm-main::before{content:"";position:absolute;right:-120px;top:-60px;width:420px;height:420px;border-radius:48px;transform:rotate(32deg);
+  background:linear-gradient(135deg,rgba(179,18,46,.06),rgba(27,42,74,.05));pointer-events:none}
+.hm-user{position:absolute;top:calc(22px + env(safe-area-inset-top));right:clamp(20px,4vw,48px);display:flex;align-items:center;gap:10px;font-size:.85rem}
+.hm-user b{display:block;font-weight:600}.hm-user small{color:var(--ink2);font-family:"Noto Sans Thai",Inter,sans-serif}
+.hm-av{width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid #E3E6EC;color:var(--red);font-weight:700;display:flex;align-items:center;justify-content:center;font-family:"Noto Sans Thai",Inter,sans-serif}
+.home h1{position:relative;margin:clamp(36px,7vh,72px) 0 0;font-size:clamp(2.4rem,5vw,3.4rem);font-weight:800;letter-spacing:-.035em;line-height:1.05;display:inline-block}
+.home h1::after{content:"";display:block;width:64px;height:3px;border-radius:2px;background:var(--red);margin-top:14px}
+.hm-sub{position:relative;margin:16px 0 clamp(28px,5vh,44px);color:var(--ink2);font-size:1.05rem}
+.hm-cards{position:relative;display:grid;gap:22px;max-width:760px}
+.hm-card{position:relative;overflow:hidden;display:flex;align-items:center;gap:22px;width:100%;min-height:132px;padding:22px 24px 26px;border-radius:22px;border:1px solid #E7E9EE;background:#fff;
+  box-shadow:0 1px 2px rgba(20,26,38,.04),0 10px 30px -12px rgba(20,26,38,.14);font:inherit;color:inherit;text-align:left;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease}
+.hm-card::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px}
+.hm-card.daily::after{background:linear-gradient(90deg,var(--red),#E2453F 60%,rgba(226,69,63,0))}
+.hm-card.night::after{background:linear-gradient(90deg,var(--navy),var(--navy2) 60%,rgba(47,75,138,0))}
+.hm-card:hover{transform:translateY(-2px);box-shadow:0 1px 2px rgba(20,26,38,.05),0 18px 40px -14px rgba(20,26,38,.22)}
+.hm-card:active{transform:translateY(0) scale(.99)}
+.hm-card:focus-visible{outline:3px solid rgba(47,75,138,.35);outline-offset:3px}
+.hm-art{width:88px;height:88px;border-radius:20px;flex:none;display:flex;align-items:center;justify-content:center}
+.hm-card.daily .hm-art{background:#FCEDEF}.hm-card.night .hm-art{background:#EAEFF8}
+.hm-art svg{width:74px;height:74px}
+.hm-txt{flex:1;min-width:0}
+.hm-txt b{display:block;font-size:clamp(1.2rem,2.4vw,1.45rem);font-weight:700;letter-spacing:-.015em}
+.hm-txt small{display:block;margin-top:4px;color:var(--ink2);font-size:.95rem}
+.hm-txt em{display:block;margin-top:6px;font-style:normal;font-size:.8rem;color:#8A90A0;font-family:"Noto Sans Thai",Inter,sans-serif}
+.hm-go{width:52px;height:52px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;transition:transform .2s ease}
+.hm-card.daily .hm-go{background:var(--red);box-shadow:0 8px 18px -6px rgba(179,18,46,.55)}
+.hm-card.night .hm-go{background:var(--navy);box-shadow:0 8px 18px -6px rgba(27,42,74,.55)}
+.hm-card:hover .hm-go{transform:translateX(3px)}
+.hm-go svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.hm-cnt{position:absolute;top:12px;left:92px;box-shadow:0 0 0 2px #fff;min-width:20px;height:20px;padding:0 6px;border-radius:10px;font-size:.72rem;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center}
+.hm-cnt[hidden]{display:none}
+.hm-card.daily .hm-cnt{background:var(--red)}.hm-card.night .hm-cnt{background:var(--navy)}
+.hm-sky{position:fixed;left:104px;right:0;bottom:62px;width:calc(100% - 104px);height:110px;pointer-events:none;opacity:.9}
+.hm-wave{position:fixed;left:104px;right:0;bottom:0;width:calc(100% - 104px);height:80px;pointer-events:none}
+/* phone: rail becomes a slim top bar, cards stack tighter */
+@media (max-width:720px){
+  .home{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+  .hm-rail{flex-direction:row;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;gap:14px}
+  .hm-rail::before{top:-40px;left:30%;width:60%;height:120px}.hm-rail::after{display:none}
+  .hm-logo{width:42px;height:42px;border-radius:12px}.hm-logo svg{width:24px;height:24px}
+  .hm-dots{flex-direction:row;margin:0}.hm-dots i.on{width:18px;height:6px}
+  .hm-out{margin:0 0 0 auto;width:40px;height:40px}
+  .hm-main{padding:20px 16px 170px}
+  .hm-user{position:static;margin-bottom:4px}
+  .home h1{margin-top:14px}
+  .hm-card{gap:14px;padding:16px 16px 20px;min-height:112px;border-radius:18px}
+  .hm-art{width:64px;height:64px;border-radius:16px}.hm-art svg{width:54px;height:54px}
+  .hm-go{width:44px;height:44px}
+  .hm-cnt{top:8px;left:66px}
+  .hm-sky,.hm-wave{left:0;width:100%}
+  .hm-sky{height:80px;bottom:48px}.hm-wave{height:60px}
+}
 /* login */
 .login{position:fixed;inset:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px 16px calc(24px + env(safe-area-inset-bottom));overflow:auto}
 .login[hidden]{display:none}
@@ -104,6 +181,52 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0}
   </form>
 </div>
 
+<!-- Inspection selection (home after sign-in) -->
+<section class="home" id="home" hidden aria-labelledby="hmTitle">
+  <aside class="hm-rail">
+    <div class="hm-logo" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M7 4.5h10a1.5 1.5 0 0 1 1.5 1.5v13.5A1.5 1.5 0 0 1 17 21H7a1.5 1.5 0 0 1-1.5-1.5V6A1.5 1.5 0 0 1 7 4.5z"/><path d="M9 3h6v3H9z"/><path d="M9 13l2 2 4-4.5"/></svg>
+    </div>
+    <div class="hm-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+    <button type="button" class="hm-out" id="hmOut" aria-label="ออกจากระบบ">
+      <svg viewBox="0 0 24 24"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l-4-4 4-4M6 12h10"/></svg>
+    </button>
+  </aside>
+  <main class="hm-main">
+    <div class="hm-user"><span class="hm-av" id="hmAv">?</span><span><b id="hmName">-</b><small id="hmRole">ผู้ตรวจ</small></span></div>
+    <h1 id="hmTitle">Inspection</h1>
+    <p class="hm-sub">Please select the type of inspection</p>
+    <div class="hm-cards">
+      <button type="button" class="hm-card daily" data-go="daily">
+        <span class="hm-art" aria-hidden="true">
+          <svg viewBox="0 0 96 96"><rect x="14" y="22" width="54" height="52" rx="9" fill="#fff" stroke="#B3122E" stroke-width="3.5"/><path d="M14 38h54" stroke="#B3122E" stroke-width="3.5"/><path d="M14 31a9 9 0 0 1 9-9h36a9 9 0 0 1 9 9v7H14z" fill="#B3122E"/><path d="M28 16v12M54 16v12" stroke="#7C0C20" stroke-width="4" stroke-linecap="round"/><g fill="#F3C9CF"><rect x="23" y="46" width="9" height="7" rx="2"/><rect x="37" y="46" width="9" height="7" rx="2"/><rect x="23" y="59" width="9" height="7" rx="2"/></g><circle cx="70" cy="64" r="13" fill="#fff" stroke="#E2453F" stroke-width="3.5"/><g stroke="#E2453F" stroke-width="3" stroke-linecap="round"><path d="M70 43v5M70 80v5M49 64h5M86 64h5M55 49l3.5 3.5M81.5 75.5L85 79M85 49l-3.5 3.5M58.5 75.5L55 79"/></g></svg>
+        </span>
+        <span class="hm-txt"><b>Daily Inspection</b><small>For daily work inspection</small><em>ตรวจเช็คเครื่องรายวัน</em></span>
+        <span class="hm-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+        <span class="hm-cnt" id="hmCntDaily" hidden></span>
+      </button>
+      <button type="button" class="hm-card night" data-go="night">
+        <span class="hm-art" aria-hidden="true">
+          <svg viewBox="0 0 96 96"><rect x="14" y="22" width="54" height="52" rx="9" fill="#fff" stroke="#1B2A4A" stroke-width="3.5"/><path d="M14 38h54" stroke="#1B2A4A" stroke-width="3.5"/><path d="M14 31a9 9 0 0 1 9-9h36a9 9 0 0 1 9 9v7H14z" fill="#1B2A4A"/><path d="M28 16v12M54 16v12" stroke="#0F1A33" stroke-width="4" stroke-linecap="round"/><g fill="#CDD6E8"><rect x="23" y="46" width="9" height="7" rx="2"/><rect x="37" y="46" width="9" height="7" rx="2"/><rect x="23" y="59" width="9" height="7" rx="2"/></g><path d="M84 70a15 15 0 1 1-17-21 12 12 0 0 0 17 21z" fill="#fff" stroke="#2F4B8A" stroke-width="3.5" stroke-linejoin="round"/><path d="M80 42l1.4 3 3 1.4-3 1.4-1.4 3-1.4-3-3-1.4 3-1.4zM89 55l.9 1.9 1.9.9-1.9.9-.9 1.9-.9-1.9-1.9-.9 1.9-.9z" fill="#2F4B8A"/></svg>
+        </span>
+        <span class="hm-txt"><b>Night Shift</b><small>For night shift inspection</small><em>งานกะดึก 20:00–08:00</em></span>
+        <span class="hm-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+        <span class="hm-cnt" id="hmCntNight" hidden></span>
+      </button>
+    </div>
+    <!-- industrial skyline + wave footer -->
+    <svg class="hm-sky" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <path fill="#E6E9EF" d="M0 120V86h60V60h22v26h40V70h18V40h12v30h30V58h50v28h36V30h10V18h8v12h10v56h46V64h60v22h30V50h16v-8h10v8h16v44h48V74h70v12h40V44h14V26h8v18h14v42h56V66h44v20h40V56h22v30h48V78h40v-6h30v14h50v34z"/>
+      <path fill="#D9DDE5" d="M0 120V100h90V88h70v12h120V92h90v8h140V90h110v10h160V94h120v6h100v-8h110v8h90v20z"/>
+    </svg>
+    <svg class="hm-wave" viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true">
+      <path fill="#ECEEF2" d="M0 40C200 10 380 70 600 46s420-36 600-6v50H0z"/>
+      <path fill="#fff" d="M0 58C220 34 420 84 640 62s380-30 560-8v36H0z"/>
+      <path fill="#B3122E" d="M0 74C240 56 440 92 660 76s360-20 540-6v20H0z"/>
+    </svg>
+  </main>
+</section>
+
 <header class="topbar">
   <button type="button" class="iconbtn" id="menuOpen" aria-label="เปิดเมนู" aria-controls="side" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
   <b id="appTitle">Daily Inspection</b>
@@ -111,6 +234,10 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0}
 <div class="scrim" id="scrim"></div>
 <nav class="side" id="side" aria-label="เมนู">
   <button type="button" class="iconbtn" id="menuClose" aria-label="ปิดเมนู"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <button type="button" class="item" id="goHome">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7"/><path d="M6 9.5V20h12V9.5"/></svg>
+    <span>หน้าแรก<small>เลือกประเภทการตรวจ</small></span>
+  </button>
   <div class="sec"><i></i>งานตรวจเช็ค</div>
   <button type="button" class="item" data-app="daily">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4.5h12v16H6z"/><path d="M9 3h6v3H9z"/><path d="M9 11l1.5 1.5L13.5 9.5M9 16l1.5 1.5 3-3"/></svg>
@@ -132,8 +259,8 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0}
 <script>
 /* where the two apps and their Apps Script back ends are */
 const APPS = { daily: 'daily_inspection_mobile.html', night: 'index.html' };
+// both apps now use the same Apps Script (Daily's): one account list, one Google Sheet
 const DAILY_API = 'https://script.google.com/macros/s/AKfycbxuM2GmQGbDG7tLM0uQiqsEvHcqeEQ8M93e6qsIn06fAmSB8MUMGz7mh-nRX8ZOUc6H9Q/exec';
-const NIGHT_API = 'https://script.google.com/macros/s/AKfycbx05pyEOhgjosSItAcNvZPb2_s-KirMPiPeG8mx8H7VHVc0Di1UZRJL0BAT0UuDb5WV/exec';
 const $ = id => document.getElementById(id);
 const ls = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
@@ -147,7 +274,7 @@ const post = async (url, body) => {
 
 /* signed in = at least one of the two apps has a session */
 const dailySession = () => { const s = ls.json('di_user'); return s && s.token ? s : null; };
-const nightSession = () => (ls.json('nsp') || {}).user || null;
+const nightSession = () => { const u = (ls.json('nsp') || {}).user; return u && u.token ? u : null; };
 
 let current = ls.get('shell_tab') === 'night' ? 'night' : 'daily';
 const frames = {};
@@ -171,6 +298,16 @@ function localNotice() {
     <p style="margin:0 0 16px;color:var(--label2)">หน้านี้ต้องเปิดผ่านเว็บ ฟอร์ม Daily และ Night Shift ถึงจะขึ้น อัปโหลดขึ้น GitHub แล้วเปิดลิงก์นี้</p>
     <a href="https://wongnantananthaya-ai.github.io/Daily/app.html" style="color:var(--tint);font-weight:600;word-break:break-all">wongnantananthaya-ai.github.io/Daily/app.html</a></div>`;
 }
+/* home = Inspection selection page; picking a card opens that app (it stays loaded, so coming back is instant) */
+function showHome() {
+  document.body.classList.add('at-home'); $('home').hidden = false; closeMenu();
+  document.title = 'Inspection'; refreshMe();
+  setTimeout(() => document.querySelector('.hm-card')?.focus({ preventScroll: true }), 60);
+}
+function leaveHome() { document.body.classList.remove('at-home'); $('home').hidden = true; }
+document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => { leaveHome(); show(b.dataset.go); }));
+$('goHome').addEventListener('click', showHome);
+$('hmOut').addEventListener('click', () => { if (confirm('ออกจากระบบทั้ง Daily และ Night Shift?')) signOutAll(); });
 function show(app) {
   current = app; ls.set('shell_tab', app);
   if (LOCAL) { document.querySelectorAll('.side [data-app]').forEach(b => b.dataset.app === app ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current')); $('appTitle').textContent = TITLES[app]; closeMenu(); return localNotice(); }
@@ -199,6 +336,9 @@ function refreshMe() {
   const dq = (ls.json('di_sync_queue') || []).length, nq = ((ls.json('nsp') || {}).q || []).length;
   $('cntDaily').hidden = !dq; $('cntDaily').textContent = dq;
   $('cntNight').hidden = !nq; $('cntNight').textContent = nq;
+  $('hmName').textContent = name; $('hmAv').textContent = $('meAv').textContent; $('hmRole').textContent = $('meRole').textContent;
+  $('hmCntDaily').hidden = !dq; $('hmCntDaily').textContent = dq; $('hmCntDaily').title = dq + ' รายการรอส่งเข้า Sheet';
+  $('hmCntNight').hidden = !nq; $('hmCntNight').textContent = nq; $('hmCntNight').title = nq + ' รายการรอส่งเข้า Sheet';
 }
 setInterval(refreshMe, 3000);
 $('logout').addEventListener('click', () => { if (confirm('ออกจากระบบทั้ง Daily และ Night Shift?')) signOutAll(); });
@@ -206,10 +346,10 @@ $('logout').addEventListener('click', () => { if (confirm('ออกจากร
 function openApps() {
   $('login').hidden = true; document.body.classList.remove('locked');
   Object.values(frames).forEach(f => f.remove()); for (const k in frames) delete frames[k];   // fresh load with the new sessions
-  refreshMe(); show(current);
+  refreshMe(); showHome();   // after sign-in: choose Daily or Night Shift
 }
 function signOutAll() {
-  document.body.classList.add('locked'); closeMenu();
+  document.body.classList.add('locked'); closeMenu(); leaveHome();
   const d = dailySession(); if (d) post(DAILY_API, { action: 'logout', token: d.token }).catch(() => {});
   ls.set('di_user', null);
   const ns = ls.json('nsp'); if (ns && ns.user) { delete ns.user; ls.set('nsp', JSON.stringify(ns)); }
@@ -226,27 +366,17 @@ $('form').addEventListener('submit', async e => {
   const user = $('user').value.trim(), pass = $('pass').value;
   if (!user || !pass) { $('err').textContent = 'กรอกชื่อผู้ใช้และรหัสผ่าน'; (!user ? $('user') : $('pass')).focus(); return; }
   $('go').disabled = true; $('go').textContent = 'กำลังเข้าสู่ระบบ…';
-  // sign in to both back ends at once; each app works on its own if the other refuses
-  const [d, n] = await Promise.allSettled([
-    post(DAILY_API, { action: 'login', user: user.toLowerCase(), pass }),
-    post(NIGHT_API, { action: 'login', name: user, pin: pass }),
-  ]);
-  const dOk = d.status === 'fulfilled' && d.value && d.value.ok, nOk = n.status === 'fulfilled' && n.value && n.value.ok;
-  if (dOk) {
-    const j = d.value;
-    if (ls.get('di_last_user') !== j.user) { ls.set('daily_inspection_records_v1', null); ls.set('di_sync_queue', null); }
-    ls.set('di_last_user', j.user);
-    ls.set('di_user', JSON.stringify({ user: j.user, name: j.name, token: j.token, admin: !!j.admin }));
-  }
-  if (nOk) {
-    const ns = ls.json('nsp') || {}; ns.user = { name: n.value.name || user, pin: pass }; ls.set('nsp', JSON.stringify(ns));
-  }
+  // one sign-in, one token: shared by Daily ("di_user") and Night Shift ("nsp".user)
+  let j;
+  try { j = await post(DAILY_API, { action: 'login', user: user.toLowerCase(), pass }); }
+  catch { j = { ok: false, error: 'เชื่อมต่อไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่' }; }
   $('go').disabled = false; $('go').textContent = 'เข้าสู่ระบบ';
-  if (!dOk && !nOk) {
-    const msg = (d.status === 'fulfilled' && d.value && d.value.error) || (n.status === 'fulfilled' && n.value && n.value.error) || 'เชื่อมต่อไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่';
-    $('err').textContent = msg; $('pass').value = ''; $('pass').focus(); return;
-  }
-  if (!dOk) current = 'night'; else if (!nOk && current === 'night') current = 'daily';
+  if (!j.ok) { $('err').textContent = j.error || 'เข้าสู่ระบบไม่ได้'; $('pass').value = ''; $('pass').focus(); return; }
+  if (ls.get('di_last_user') !== j.user) { ls.set('daily_inspection_records_v1', null); ls.set('di_sync_queue', null); }
+  ls.set('di_last_user', j.user);
+  const s = { user: j.user, name: j.name, token: j.token, admin: !!j.admin };
+  ls.set('di_user', JSON.stringify(s));
+  const ns = ls.json('nsp') || {}; ns.user = s; ls.set('nsp', JSON.stringify(ns));
   openApps();
 });
 
