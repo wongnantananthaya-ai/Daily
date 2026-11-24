@@ -2,11 +2,20 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<style>html{touch-action:manipulation}</style>
+<script>/* no page zoom: pinch, double-tap, Ctrl+wheel, Ctrl +/-/0 (Daily's monthly-sheet viewer keeps its own zoom) */
+(function(){var own=function(e){return e.target&&e.target.closest&&e.target.closest('.viewer,.ls')},stop=function(e){e.preventDefault()};
+document.addEventListener('gesturestart',stop,{passive:false});document.addEventListener('gesturechange',stop,{passive:false});
+document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1&&!own(e))e.preventDefault()},{passive:false});
+addEventListener('wheel',function(e){if(e.ctrlKey&&!own(e))e.preventDefault()},{passive:false});
+addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&/^(\+|=|-|_|0)$/.test(e.key))e.preventDefault()});})();</script>
 <title>Night Shift Plan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- icons and fonts load without holding up the page (it draws first with the device's fonts) -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="preconnect" href="https://script.google.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" media="print" onload="this.media='all'">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 /* Direction "Night round": calm, instrument-precise. Dark is the default look (shift is 20:00-08:00); light for daytime.
    Colour logic: amber = the one action / where you are now; green = checked normal; red = abnormal; everything else neutral.
