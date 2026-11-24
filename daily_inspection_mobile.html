@@ -650,6 +650,42 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
 @media (hover:none){.lb-nav{display:none}}
 .mbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;border:0;border-radius:12px;background:var(--card);color:var(--tint);font-weight:600;margin:0 0 16px;cursor:pointer}
 .mbtn:active{opacity:.6}
+/* ===== Size per device =====
+   phone (<768): one column, as designed.
+   iPad (768–1023): same column, wider and a step larger; the question screen becomes a centred card.
+   computer (≥1024): two columns — machine info on the left (stays in view), "ตรวจ" + answers on the right. */
+@media (min-width:768px){
+  html{font-size:18px}
+  .shell{max-width:720px}
+  .bar-in{max-width:688px}
+  .head,main{padding-left:20px;padding-right:20px}
+  .nav{padding-left:20px;padding-right:20px}
+  .seg button{min-height:40px;font-size:.88rem}
+  .field{width:11rem}
+  .checkbtn{min-height:96px}
+  .wz{background:rgba(0,0,0,.32);display:flex;align-items:center;justify-content:center;padding:24px}
+  .wz[hidden]{display:none}
+  .wz-in{width:100%;max-width:720px;height:min(100%,900px);margin:0;background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 24px 60px -20px rgba(0,0,0,.35);padding:0}
+  .wz-body{padding:28px 32px 12px}
+  .wz-top,.wz-ctx{padding-left:32px;padding-right:32px;margin-left:0;margin-right:0}
+  .wz-bar{margin:0 32px}
+  .wz-input{width:6.5em}
+}
+@media (min-width:1400px){html{font-size:19px}}
+@media (min-width:1024px){
+  .shell{max-width:1120px}
+  .bar-in{max-width:1072px}
+  .head,main,.nav{padding-left:24px;padding-right:24px}
+  .seg{max-width:520px}
+  main{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:28px;align-items:start}
+  main>.sec{position:sticky;top:64px;margin-top:0!important}
+  #formContainer{min-width:0;padding-top:27px}   /* lines up with the "ข้อมูลเครื่อง" card */
+  .field{width:12rem}
+  .checkbtn{min-height:120px}
+  .checkbtn .cb-t{font-size:1.7rem}
+  .wz-in{max-width:780px}
+  .wz-chip.big{min-height:76px}
+}
 @media print{
   @page{size:A4 landscape;margin:7mm}
   html,body{background:#fff!important;overflow:visible!important;width:100%!important;height:auto!important}
