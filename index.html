@@ -702,7 +702,17 @@ const slotOf=time=>{const h=parseInt((time.match(/\d{1,2}/)||[])[0]);return isNa
 // db.rec = local copy of every form/date; db.q = changes not yet saved to the Sheet.
 let db; try{db=JSON.parse(localStorage.getItem('nsp'))||{}}catch(e){db={}}
 db.rec=db.rec||{};db.q=db.q||[];
-const save=()=>{try{localStorage.setItem('nsp',JSON.stringify(db))}catch(e){alert('บันทึกไม่ได้: '+e.message)}badge()};
+// Keep only the most recent nights on this device (older ones come back from the Sheet when opened) —
+// the copy stays small, so saving stays quick and never fills the phone's storage. Nights with unsent changes are kept.
+const KEEP_NIGHTS=45;
+function pruneRec(){const ds=[...new Set(Object.keys(db.rec).map(k=>k.split('|')[1]).filter(Boolean))].sort();
+  if(ds.length<=KEEP_NIGHTS)return;const cut=ds[ds.length-KEEP_NIGHTS],keep=new Set(db.q.map(x=>x.date)),cur=document.getElementById('date')?.value;
+  for(const k of Object.keys(db.rec)){const d=k.split('|')[1];if(d<cut&&!keep.has(d)&&d!==cur)delete db.rec[k]}}
+// Saving to the device runs just after a tap (not during it), so the cell changes at once; saveNow = right away.
+let saveT=0;
+const saveNow=()=>{clearTimeout(saveT);saveT=0;pruneRec();try{localStorage.setItem('nsp',JSON.stringify(db))}catch(e){alert('บันทึกไม่ได้: '+e.message)}};
+const save=()=>{badge();clearTimeout(saveT);saveT=setTimeout(saveNow,250)};
+addEventListener('pagehide',saveNow);document.addEventListener('visibilitychange',()=>{if(document.hidden&&saveT)saveNow()});
 // Same Google Sheet + Apps Script as Daily Inspection: one account (the "ผู้ใช้" tab), data in the "กะดึก" tab.
 const API='https://script.google.com/macros/s/AKfycbxuM2GmQGbDG7tLM0uQiqsEvHcqeEQ8M93e6qsIn06fAmSB8MUMGz7mh-nRX8ZOUc6H9Q/exec';
 const post=async body=>{
@@ -712,7 +722,7 @@ const post=async body=>{
 };
 // one session for both apps: Daily keeps it in "di_user", Night Shift in db.user
 function shareSession(u){try{u?localStorage.setItem('di_user',JSON.stringify({user:u.user,name:u.name,token:u.token,admin:!!u.admin})):localStorage.removeItem('di_user')}catch(e){}}
-function signedOut(msg){if(!db.user)return;delete db.user;shareSession(null);save();
+function signedOut(msg){if(!db.user)return;delete db.user;shareSession(null);saveNow();
   if(window.parent!==window){window.parent.postMessage({type:'shell-logout'},'*');return}
   render();const s=document.getElementById('status');if(s&&msg)s.textContent=msg}
 if(db.user&&!db.user.token)delete db.user;   // old name+PIN login from the separate Night Shift sheet
@@ -1114,11 +1124,11 @@ function renderData(){
   const dl=(name,text,type)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();URL.revokeObjectURL(a.href)};
   $('view').onclick=async e=>{const k=e.target.dataset.csv;
     if(e.target.closest('#back')){tab='tasks';return render()}
-    if(e.target.id==='logout'&&confirm('ออกจากระบบ? ข้อมูลที่ยังไม่ส่งจะยังอยู่ในเครื่อง')){const tok=db.user?.token;if(tok)post({action:'logout'}).catch(()=>{});delete db.user;shareSession(null);tab='tasks';save();
+    if(e.target.id==='logout'&&confirm('ออกจากระบบ? ข้อมูลที่ยังไม่ส่งจะยังอยู่ในเครื่อง')){const tok=db.user?.token;if(tok)post({action:'logout'}).catch(()=>{});delete db.user;shareSession(null);tab='tasks';saveNow();
       if(window.parent!==window){window.parent.postMessage({type:'shell-logout'},'*');return} // inside app.html: log out of both apps
       return render()}if(k)dl(`night-shift-${k}.csv`,csv(k),'text/csv');if(e.target.id==='bk')dl('night-shift-backup.json',JSON.stringify(db),'application/json');
     if(e.target.id==='resend'){const msg=await flush();renderData();$('status').textContent=msg||'ส่งครบแล้ว'}};
-  $('imp').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());if(!d.rec)throw Error('ไฟล์ไม่ใช่ backup');Object.assign(db.rec,d.rec);save();alert('นำเข้าแล้ว')}catch(err){alert('นำเข้าไม่ได้: '+err.message)}};
+  $('imp').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());if(!d.rec)throw Error('ไฟล์ไม่ใช่ backup');Object.assign(db.rec,d.rec);saveNow();alert('นำเข้าแล้ว')}catch(err){alert('นำเข้าไม่ได้: '+err.message)}};
 }
 
 function renderLogin(){
@@ -1150,7 +1160,7 @@ function renderLogin(){
   if(eye){eye.onclick=()=>{const p=$('lpin');const isP=p.type==='password';p.type=isP?'text':'password';eye.innerHTML=`<i class="ti ti-eye-${isP?'off':''}"></i>`}}
   $('login').onsubmit=async e=>{e.preventDefault();$('status').textContent='กำลังตรวจสอบ...';
     try{const j=await post({action:'login',user:$('lname').value.trim().toLowerCase(),pass:$('lpin').value});
-      db.user={user:j.user,name:j.name,token:j.token,admin:!!j.admin};shareSession(db.user);save();render()}
+      db.user={user:j.user,name:j.name,token:j.token,admin:!!j.admin};shareSession(db.user);saveNow();render()}
     catch(err){delete db.user;$('status').textContent='เข้าไม่ได้: '+err.message}};
 }
 
