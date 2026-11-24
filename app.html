@@ -203,6 +203,28 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0 0 26px}
 .cal-f{display:flex;justify-content:space-between;margin-top:6px;border-top:.5px solid #E5E5EA;padding-top:6px}
 .cal-f button{min-height:44px;padding:0 14px;border:0;background:none;font:inherit;font-size:1rem;font-weight:600;color:#1C1C1E;cursor:pointer;border-radius:10px}
 .cal-f button:active{background:#F2F2F7}
+/* admin view (design A): KPI row + people table + detail sheet */
+.adm-pill{display:inline-block;margin-left:8px;vertical-align:middle;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:999px;background:#EEF1F6;color:#1C2B5A;letter-spacing:0}
+.adm-kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:4px 0 12px}
+.adm-kpi div{border:.5px solid #E5E5EA;border-radius:14px;padding:10px 12px;background:#fff}
+.adm-kpi small{display:block;color:#8E8E93;font-size:.72rem;font-weight:600}
+.adm-kpi b{font-size:1.45rem;font-weight:700}.adm-kpi b i{font-style:normal;font-size:.75rem;font-weight:500;color:#8E8E93}
+.adm-tbl{border:.5px solid #E5E5EA;border-radius:16px;overflow:hidden;background:#fff}
+.adm-row{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,2fr) minmax(0,1.3fr) 54px 44px;align-items:center;gap:8px;padding:10px 12px;border-top:.5px solid #F0F0F2;width:100%;border-left:0;border-right:0;border-bottom:0;background:none;font:inherit;text-align:left;color:#000}
+.adm-h{border-top:0;font-size:.72rem;font-weight:600;color:#8E8E93;padding-top:8px;padding-bottom:8px}
+button.adm-row{cursor:pointer;min-height:56px}button.adm-row:hover{background:#F7F7FA}
+.adm-row.off{opacity:.5}
+.adm-who{display:flex;align-items:center;gap:8px;min-width:0}.adm-who b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adm-av{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:.72rem;font-weight:700;background:#EEF1F6;color:#1C2B5A}
+.adm-chips{display:flex;flex-wrap:wrap;gap:3px}
+.adm-ns{font-size:.85rem}.adm-ns .hm-prog{margin:4px 0 0;height:4px}
+.adm-t{font-size:.78rem;color:#8E8E93}.adm-go{color:#007AFF;font-weight:600;font-size:.85rem;text-align:right}
+.adm-det{max-width:460px;max-height:86vh;overflow:auto}
+.ad-sec{margin:12px 2px 6px;font-size:.78rem;font-weight:600;color:#8E8E93}
+.ad-it{border:.5px solid #E5E5EA;border-radius:12px;padding:10px 12px;margin-bottom:6px}
+.ad-it b{font-weight:600}.ad-it small{display:block;color:#6E6E73;font-size:.78rem;margin-top:2px}.ad-it .bad{color:#D70015}
+.ad-open{display:block;width:100%;min-height:44px;margin-top:6px;border:0;border-radius:12px;background:#F2F2F7;font:inherit;font-weight:600;cursor:pointer}
+@media (max-width:560px){.adm-kpi{grid-template-columns:repeat(2,minmax(0,1fr))}.adm-row{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) 44px}.adm-row>:nth-child(3),.adm-row>:nth-child(4){display:none}}
 /* iOS-style alert (replaces the browser's own confirm box) */
 .al{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.32);animation:alFade .2s ease}
 .al[hidden]{display:none}
@@ -288,6 +310,14 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0 0 26px}
         <button type="button" class="hm-b navy" data-open="night">กรอก</button>
       </div>
     </article>
+    <!-- admin: who filled what on the chosen day (view only — admins can't fill) -->
+    <div id="admBox" hidden>
+      <div class="adm-kpi" id="admKpi"></div>
+      <div class="adm-tbl" role="table" aria-label="ผู้ตรวจและงานที่กรอก">
+        <div class="adm-row adm-h" role="row"><span role="columnheader">ผู้ตรวจ</span><span role="columnheader">Daily (เครื่อง)</span><span role="columnheader">Night Shift</span><span role="columnheader">ล่าสุด</span><span></span></div>
+        <div id="admRows"></div>
+      </div>
+    </div>
     <p class="hm-foot" id="hmFoot"></p>
   </div>
 </section>
@@ -333,6 +363,14 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0 0 26px}
   </div>
 </div>
 
+<!-- admin: one person's work on the chosen day -->
+<div class="cal" id="admDet" hidden role="dialog" aria-modal="true" aria-labelledby="adT">
+  <div class="cal-box adm-det">
+    <div class="cal-h"><b id="adT"></b><button type="button" class="hm-ib" id="adX" aria-label="ปิด"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div id="adBody"></div>
+  </div>
+</div>
+
 <div class="al" id="alOut" hidden role="alertdialog" aria-modal="true" aria-labelledby="alT">
   <div class="al-box">
     <h2 id="alT">ออกจากระบบ</h2>
@@ -344,7 +382,7 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0 0 26px}
 <script>
 /* where the two apps and their Apps Script back ends are */
 // ?v= makes the browser load the new file after each upload (bump it whenever index.html / daily_inspection_mobile.html change)
-const V = '20261124i';
+const V = '20261124j';
 const APPS = { daily: 'daily_inspection_mobile.html?v=' + V, night: 'index.html?v=' + V };
 // both apps now use the same Apps Script (Daily's): one account list, one Google Sheet
 const DAILY_API = 'https://script.google.com/macros/s/AKfycbxuM2GmQGbDG7tLM0uQiqsEvHcqeEQ8M93e6qsIn06fAmSB8MUMGz7mh-nRX8ZOUc6H9Q/exec';
@@ -451,14 +489,105 @@ function hmRender() {
     $('hmNBar').style.width = total ? Math.round(done / total * 100) + '%' : '0';
     $('hmNChips').innerHTML = Object.keys(st).length ? forms.join('') : `<span class="hm-empty">${ns > nightOf(t) ? 'ยังไม่ถึงคืนนี้' : 'ยังไม่มีการกรอกคืนนี้'}</span>`;
   }
+  // admin: the two app cards (with "กรอก") make way for the who-filled-what view
+  const adm = isAdmin();
+  document.querySelectorAll('.hm-card').forEach(c => { c.hidden = adm; });
+  $('admBox').hidden = !adm;
+  $('hmTitle').innerHTML = adm ? 'ผู้ดูแล<span class="adm-pill">ดูอย่างเดียว</span>' : 'Inspection';
+  if (adm) admRender();
   const d = dailySession() || nightSession();
-  $('hmFoot').textContent = d ? `${d.name}${d.admin ? ' · admin (เห็นข้อมูลทุกคน)' : ' · เห็นข้อมูลที่ตัวเองกรอก'}` : '';
+  $('hmFoot').textContent = d ? `${d.name}${d.admin ? ' · admin (เห็นข้อมูลทุกคน · กรอกไม่ได้)' : ' · เห็นข้อมูลที่ตัวเองกรอก'}` : '';
 }
+/* ---------- admin: who filled what (view only) ---------- */
+const isAdmin = () => !!((dailySession() || nightSession() || {}).admin);
+const DAILY_N = { ACP: 'Air Compressor', AD: 'Air Dryer', CT: 'Cooling Tower' };
+async function hmLoadUsers() {
+  const s = dailySession() || nightSession();
+  try { const j = await post(DAILY_API, { action: 'users', token: s.token }); if (j && j.ok) HM.users = j.users || []; } catch {}
+  if (!$('home').hidden) hmRender();
+}
+// everything one person did on the chosen day / night
+function admWork(p) {
+  const sel = HM.sel, ns = nightOf(sel), st = HM.night[ns] || {};
+  const mine = r => r.user ? r.user === p.user : r.inspector === p.name;
+  const daily = (HM.daily || []).filter(r => r.date === sel && mine(r)).sort((a, b) => (a.type + a.no).localeCompare(b.type + b.no));
+  let tasks = 0, last = '';
+  const forms = {};
+  Object.entries(st).forEach(([form, fs]) => Object.entries(fs).forEach(([id, x]) => {
+    if (x.by !== p.name || x.v === '') return;
+    if (form === 'tasks') { if (/^t\d+$/.test(id) && x.v === '✓') tasks++; }
+    else forms[form] = (forms[form] || 0) + 1;
+    if (x.at && x.at > last) last = x.at;
+  }));
+  daily.forEach(r => { const m = /(\d{2})\/(\d{2})\/(\d{4}) (\d{2}:\d{2})/.exec(r.saved); if (m) { const t = `${m[3]}-${m[2]}-${m[1]} ${m[4]}`; if (t > last) last = t; } });
+  return { daily, tasks, forms, last, any: daily.length || tasks || Object.keys(forms).length };
+}
+const admChip = r => `<span class="hm-chip ${r.result === 'ผิดปกติ' ? 'ng' : r.result === 'Stop' ? 'st' : 'ok'}">${esc(r.type)} ${esc(r.no)} ${r.result === 'ผิดปกติ' ? '!' : r.result === 'Stop' ? 'Stop' : '✓'}</span>`;
+function admRender() {
+  const sel = HM.sel, ns = nightOf(sel), st = HM.night[ns], total = (typeof TASKS !== 'undefined' && TASKS[pd(ns).getDay()] || []).length;
+  // people = active non-admin users, plus anyone who filled but isn't in the list
+  const people = (HM.users || []).filter(u => u.active && !u.admin).map(u => ({ user: u.user, name: u.name }));
+  const known = new Set(people.map(p => p.user));
+  (HM.daily || []).filter(r => r.date === sel && r.user && !known.has(r.user)).forEach(r => { known.add(r.user); people.push({ user: r.user, name: r.inspector || r.user }); });
+  const rows = people.map(p => ({ p, w: admWork(p) })).sort((a, b) => (b.w.any ? 1 : 0) - (a.w.any ? 1 : 0) || (b.w.last > a.w.last ? 1 : -1));
+  const dayRecs = (HM.daily || []).filter(r => r.date === sel);
+  const done = st ? Object.keys(st.tasks || {}).filter(k => /^t\d+$/.test(k) && st.tasks[k].v === '✓').length : 0;
+  const bad = dayRecs.filter(r => r.result === 'ผิดปกติ').length;
+  $('admKpi').innerHTML = `<div><small>ผู้ตรวจที่กรอก</small><b>${rows.filter(x => x.w.any).length}<i> / ${people.length} คน</i></b></div>
+    <div><small>Daily ตรวจแล้ว</small><b>${dayRecs.length}<i> เครื่อง</i></b></div>
+    <div><small>ผิดปกติ</small><b style="color:${bad ? 'var(--red-ink)' : '#000'}">${bad}</b></div>
+    <div><small>กะดึก</small><b>${st ? done : '–'}<i> / ${total || '–'} งาน</i></b></div>`;
+  $('admRows').innerHTML = !HM.users ? '<div class="adm-row"><span class="hm-empty">กำลังโหลด…</span></div>'
+    : !rows.length ? '<div class="adm-row"><span class="hm-empty">ยังไม่มีผู้ตรวจในแท็บผู้ใช้</span></div>'
+    : rows.map(({ p, w }) => {
+      const ini = Array.from(p.name).filter(ch => /[ก-ฮA-Za-z0-9]/.test(ch)).slice(0, 2).join('') || '?';
+      const nf = Object.values(w.forms).reduce((a, b) => a + b, 0);
+      return `<button type="button" class="adm-row ${w.any ? '' : 'off'}" data-adm="${esc(p.user)}" ${w.any ? '' : 'disabled'}>
+        <span class="adm-who"><span class="adm-av">${esc(ini)}</span><b>${esc(p.name)}</b></span>
+        <span class="adm-chips">${w.daily.length ? w.daily.map(admChip).join('') : `<span class="hm-empty">${w.any ? '–' : 'ยังไม่กรอก'}</span>`}</span>
+        <span class="adm-ns">${w.tasks || nf ? `${w.tasks}${total ? '/' + total : ''} งาน${nf ? ` · ${nf} ช่อง` : ''}<div class="hm-prog"><i style="width:${total ? Math.round(w.tasks / total * 100) : 0}%"></i></div>` : '<span class="hm-empty">–</span>'}</span>
+        <span class="adm-t">${w.last ? w.last.slice(11) : '–'}</span><span class="adm-go">${w.any ? 'ดู ›' : ''}</span></button>`;
+    }).join('');
+}
+// detail sheet for one person
+const FORM_N = { sub1: 'Sub 1', sub2: 'Sub 2', adrain: 'Auto drain', light: 'Light' };
+function admOpen(user) {
+  const p = (HM.users || []).find(u => u.user === user) || { user, name: ((HM.daily || []).find(r => r.user === user) || {}).inspector || user };
+  const w = admWork(p), sel = HM.sel, ns = nightOf(sel), nd = pd(ns), total = (typeof TASKS !== 'undefined' && TASKS[nd.getDay()] || []).length;
+  $('adT').textContent = `${p.name} · ${thShort(sel)}`;
+  let h = `<div class="ad-sec">Daily Inspection · ${w.daily.length} เครื่อง</div>`;
+  h += w.daily.length ? w.daily.map(r => `<div class="ad-it"><b>${esc(DAILY_N[r.type] || r.type)} NO. ${esc(r.no)}</b> ${admChip(r)}
+      <small>${r.status && r.status !== 'Running' ? esc(r.status) + ' · ' : ''}บันทึก ${esc(r.saved || '–')}</small>
+      ${r.issues.length ? `<small class="bad">ผิดปกติ: ${r.issues.map(esc).join(' · ')}</small>` : ''}</div>`).join('')
+    + `<button type="button" class="ad-open" data-adopen="daily">เปิดดูใน Daily (อ่านอย่างเดียว)</button>`
+    : '<div class="ad-it"><small>ไม่ได้ตรวจ Daily วันนี้</small></div>';
+  h += `<div class="ad-sec">Night Shift · คืน ${nd.getDate()} ${TH_MS[nd.getMonth()]} 20:00–08:00</div>`;
+  const nf = Object.entries(w.forms);
+  h += w.tasks || nf.length ? `<div class="ad-it"><b>งานคืนนี้ ${w.tasks}${total ? '/' + total : ''}</b>
+      ${nf.length ? `<small>เช็คชีต: ${nf.map(([k, n]) => `${FORM_N[k] || k} ${n} ช่อง`).join(' · ')}</small>` : ''}
+      <small>ล่าสุด ${esc(w.last ? w.last.slice(11) : '–')}</small></div>
+      <button type="button" class="ad-open" data-adopen="night">เปิดดูกะดึกคืนนี้ (อ่านอย่างเดียว)</button>`
+    : '<div class="ad-it"><small>ไม่ได้กรอกกะดึกคืนนี้</small></div>';
+  $('adBody').innerHTML = h; $('admDet').hidden = false;
+}
+$('admRows').addEventListener('click', e => { const b = e.target.closest('[data-adm]'); if (b) admOpen(b.dataset.adm); });
+$('adX').addEventListener('click', () => { $('admDet').hidden = true; });
+$('admDet').addEventListener('click', e => {
+  if (e.target === $('admDet')) { $('admDet').hidden = true; return; }
+  const o = e.target.closest('[data-adopen]'); if (!o) return;
+  const app = o.dataset.adopen, d = app === 'night' ? nightOf(HM.sel) : HM.sel;
+  $('admDet').hidden = true; leaveHome(); show(app);
+  callApp(app, w => w.shellOpenDate && w.shellOpenDate(d, app === 'daily'));
+});
+addEventListener('keydown', e => { if (e.key === 'Escape' && !$('admDet').hidden) $('admDet').hidden = true; });
+
 async function hmLoadDaily() {
   const s = dailySession();
   try {
     const j = s ? await post(DAILY_API, { action: 'list', token: s.token }) : null;
-    if (j && j.ok) HM.daily = (j.records || []).map(r => ({ date: String(r.date), type: r.type, no: String(r.no), result: r.result || '' }));
+    if (j && j.ok) HM.daily = (j.records || []).map(r => ({ date: String(r.date), type: r.type, no: String(r.no), result: r.result || '',
+      inspector: String(r.inspector || ''), user: String(r.user || '').toLowerCase(), saved: String(r.saved || ''), status: String(r.status || ''),
+      issues: (r.issueList || []).map(i => i.label) }));
     else if (j && j.auth === false) return signOutAll();
   } catch {}
   if (!HM.daily) HM.daily = (ls.json('daily_inspection_records_v1') || []).map(r => ({ date: r.date, type: r.type, no: String(r.machineNo || ''), result: '' }));
@@ -490,6 +619,7 @@ function showHome() {
   if (!HM.sel) HM.sel = todayStr();
   // show the last numbers straight away, then refresh them in the background (no "กำลังโหลด…" on every visit)
   refreshMe(); hmRender(); hmLoadDaily(); hmLoadNight(nightOf(HM.sel));
+  if (isAdmin()) hmLoadUsers();
   preloadApps();
 }
 // load both apps hidden in the background once the home page has its data, so opening Daily / Night Shift is instant
@@ -586,7 +716,7 @@ $('logout').addEventListener('click', askLogout);
 function openApps() {
   $('login').hidden = true; document.body.classList.remove('locked');
   Object.values(frames).forEach(f => f.remove()); for (const k in frames) delete frames[k];   // fresh load with the new sessions
-  preloaded = false; HM.daily = null; HM.night = {};   // another account may have signed in: don't show the previous one's numbers
+  preloaded = false; HM.daily = null; HM.night = {}; HM.users = null;   // another account may have signed in: don't show the previous one's numbers
   refreshMe(); showHome();   // after sign-in: choose Daily or Night Shift
 }
 function signOutAll() {

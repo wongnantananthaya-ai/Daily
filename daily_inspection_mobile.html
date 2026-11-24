@@ -666,6 +666,10 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
 .dsync.wait{background:color-mix(in srgb,var(--tint) 11%,transparent);color:var(--tint)}
 .dsync.off{background:color-mix(in srgb,var(--red) 12%,transparent);color:var(--red-t)}
 .embed #userBtn{display:none}
+/* admin = view only */
+.ro .bar,.ro .sw-acts,.ro [data-wz],.ro [data-wzat]{display:none!important}
+.ro .shell{padding-bottom:calc(env(safe-area-inset-bottom) + 24px)}
+.ro main .grp input,.ro main .grp select{pointer-events:none}
 /* ===== Size per device =====
    phone (<768): one column, as designed.
    iPad (768–1023): same column, wider and a step larger; the question screen becomes a centred card.
@@ -1137,7 +1141,9 @@ function renderForm() {
   const fs = schema.sections.flatMap(s => s.fields || []), nFilled = fs.filter(f => filled(formValues[f.id])).length;
   const nBad = abnormalIds(currentType, formValues).length;
   let html = draftBanner() + (isStopped() ? `<div class="banner" role="note">${icon('warn')}<span>เครื่องอยู่ในสถานะ <b>M/C Stop</b> ข้ามช่องที่ต้องวัดขณะเดินเครื่องได้ แล้วกดบันทึกได้เลย</span></div>` : '');
-  html += `<button type="button" class="checkbtn" data-wz><span class="cb-t">ตรวจ</span>
+  // admin: view only — no "ตรวจ" button, a note pointing to the history instead
+  if (session?.admin) html += `<div class="banner info" role="note">${icon('team')}<span>บัญชี <b>admin</b> ดูได้อย่างเดียว · ดูใบตรวจของทุกคนได้ที่ปุ่มนาฬิกา (ประวัติ) ด้านบน</span></div>`;
+  else html += `<button type="button" class="checkbtn" data-wz><span class="cb-t">ตรวจ</span>
     <span class="cb-s">${isStopped() ? 'เครื่องหยุด · เพิ่มหมายเหตุได้' : nFilled ? `ตรวจแล้ว ${nFilled}/${fs.length} ข้อ${nBad ? ` · ผิดปกติ ${nBad}` : ''} · กดเพื่อตรวจต่อ` : `${fs.length} ข้อ · ตอบทีละข้อ`}</span></button>`;
   // computer: list of topics to check, each with its own count; click = jump straight to that topic (hidden on phones)
   html += `<div class="sec ovw"><div class="sec-h"><h2>หัวข้อที่ต้องตรวจ</h2><small class="sec-n">${nFilled}/${fs.length} ข้อ</small></div><div class="grp">${
@@ -2420,6 +2426,7 @@ function applyUser() {
   if (!editingId) { formValues.inspector = name; $('inspectorInput').value = name; }
   $('inspectorInput').readOnly = !!session;   // the inspector is whoever is logged in
   $('teamBtn').hidden = !session?.admin;       // "ผู้ตรวจ" page is for admins only
+  document.documentElement.classList.toggle('ro', !!session?.admin);   // admin = view only (no save bar, no edit/delete)
   $('userBtn').setAttribute('aria-label', session ? `ผู้ใช้: ${session.name} (แตะเพื่อออกจากระบบ)` : 'ผู้ใช้');
   updateDSync();
 }

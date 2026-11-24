@@ -547,6 +547,10 @@ th .freq{display:table;margin-top:4px}
 #sync.sst.off{color:var(--ng);background:var(--ngbg)!important}
 #sync.sst i{font-size:15px}
 .embed #themeToggle,.embed #who{display:none}
+/* admin = view only: everything can be looked at, nothing can be ticked or typed */
+.ro #view::before{content:"บัญชี admin ดูได้อย่างเดียว · ติ๊ก/กรอกไม่ได้";display:block;margin:0 0 var(--s3);padding:10px 14px;border-radius:var(--r);background:color-mix(in srgb,var(--acc) 10%,var(--card));color:var(--acc-ink);font-size:14px;font-weight:600}
+.ro .tl .rd,.ro .cks button,.ro .rmk,.ro #view textarea,.ro #view input:not([type=date]),.ro #view .tog,.ro #view .c3c,.ro .photos .addph,.ro .phx,.ro [data-ck]{pointer-events:none}
+.ro .photos .addph,.ro .phx,.ro #confirm,.ro .bar .primary:not(#nextslot){display:none!important}
 .embed #sync{margin-left:auto}
 @media (max-width:480px){#hrow{flex-wrap:wrap;row-gap:6px}#hrow input[type=date]{width:150px}#who{display:none}#menuBtn{margin-left:auto}#sync,.embed #sync{order:10;margin-left:0}.dateth{font-size:13px}#hrow label.meta{font-size:0}#hrow input[type=date]{font-size:14px}}
 header{background:color-mix(in srgb,var(--bg) 82%,transparent);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-bottom:.5px solid var(--line)}
@@ -738,7 +742,8 @@ const isTick=(form,id)=>form==='tasks'&&/^t\d/.test(id); // tasks: t* = tick, n*
 const toServer=(form,id,v)=>isTick(form,id)?(v?'✓':''):v;
 const fromServer=(form,id,v)=>isTick(form,id)?v==='✓':v;
 let flushT=null,flushing=null,curRefresh=null,lastSync=0;
-function put(form,id,v){const date=$('date').value,r=rec(form);if(r[id]===v)return;
+function put(form,id,v){if(db.user?.admin)return;   // admin = view only: nothing is changed or sent
+  const date=$('date').value,r=rec(form);if(r[id]===v)return;
   r[id]=v;(r._who=r._who||{})[id]=db.user?.name;r._at=new Date().toLocaleString('th-TH');
   db.q=db.q.filter(x=>!(x.form===form&&x.date===date&&x.id===id));db.q.push({form,date,id,v:toServer(form,id,v)});
   save();clearTimeout(flushT);flushT=setTimeout(flush,1500)}
@@ -1130,6 +1135,7 @@ function renderLogin(){
 
 function render(){
   const loggedIn=!!db.user;
+  document.documentElement.classList.toggle('ro',!!db.user?.admin);   // admin = view only
   $('who').textContent=loggedIn?db.user.name:'';
   $('hrow').hidden=!loggedIn;
   document.querySelector('header').hidden=!loggedIn;
