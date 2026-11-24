@@ -382,7 +382,7 @@ button.adm-row{cursor:pointer;min-height:56px}button.adm-row:hover{background:#F
 <script>
 /* where the two apps and their Apps Script back ends are */
 // ?v= makes the browser load the new file after each upload (bump it whenever index.html / daily_inspection_mobile.html change)
-const V = '20261124j';
+const V = '20261124m';
 const APPS = { daily: 'daily_inspection_mobile.html?v=' + V, night: 'index.html?v=' + V };
 // both apps now use the same Apps Script (Daily's): one account list, one Google Sheet
 const DAILY_API = 'https://script.google.com/macros/s/AKfycbxuM2GmQGbDG7tLM0uQiqsEvHcqeEQ8M93e6qsIn06fAmSB8MUMGz7mh-nRX8ZOUc6H9Q/exec';
@@ -493,10 +493,10 @@ function hmRender() {
   const adm = isAdmin();
   document.querySelectorAll('.hm-card').forEach(c => { c.hidden = adm; });
   $('admBox').hidden = !adm;
-  $('hmTitle').innerHTML = adm ? 'ผู้ดูแล<span class="adm-pill">ดูอย่างเดียว</span>' : 'Inspection';
+  $('hmTitle').textContent = adm ? 'ผู้ดูแล' : 'Inspection';
   if (adm) admRender();
   const d = dailySession() || nightSession();
-  $('hmFoot').textContent = d ? `${d.name}${d.admin ? ' · admin (เห็นข้อมูลทุกคน · กรอกไม่ได้)' : ' · เห็นข้อมูลที่ตัวเองกรอก'}` : '';
+  $('hmFoot').textContent = d ? `${d.name}${d.admin ? ' · admin (เห็นข้อมูลทุกคน · แก้ได้เฉพาะที่กรอกแล้ว)' : ' · เห็นข้อมูลที่ตัวเองกรอก'}` : '';
 }
 /* ---------- admin: who filled what (view only) ---------- */
 const isAdmin = () => !!((dailySession() || nightSession() || {}).admin);
@@ -559,14 +559,14 @@ function admOpen(user) {
   h += w.daily.length ? w.daily.map(r => `<div class="ad-it"><b>${esc(DAILY_N[r.type] || r.type)} NO. ${esc(r.no)}</b> ${admChip(r)}
       <small>${r.status && r.status !== 'Running' ? esc(r.status) + ' · ' : ''}บันทึก ${esc(r.saved || '–')}</small>
       ${r.issues.length ? `<small class="bad">ผิดปกติ: ${r.issues.map(esc).join(' · ')}</small>` : ''}</div>`).join('')
-    + `<button type="button" class="ad-open" data-adopen="daily">เปิดดูใน Daily (อ่านอย่างเดียว)</button>`
+    + `<button type="button" class="ad-open" data-adopen="daily">เปิดดู / แก้ใน Daily</button>`
     : '<div class="ad-it"><small>ไม่ได้ตรวจ Daily วันนี้</small></div>';
   h += `<div class="ad-sec">Night Shift · คืน ${nd.getDate()} ${TH_MS[nd.getMonth()]} 20:00–08:00</div>`;
   const nf = Object.entries(w.forms);
   h += w.tasks || nf.length ? `<div class="ad-it"><b>งานคืนนี้ ${w.tasks}${total ? '/' + total : ''}</b>
       ${nf.length ? `<small>เช็คชีต: ${nf.map(([k, n]) => `${FORM_N[k] || k} ${n} ช่อง`).join(' · ')}</small>` : ''}
       <small>ล่าสุด ${esc(w.last ? w.last.slice(11) : '–')}</small></div>
-      <button type="button" class="ad-open" data-adopen="night">เปิดดูกะดึกคืนนี้ (อ่านอย่างเดียว)</button>`
+      <button type="button" class="ad-open" data-adopen="night">เปิดดู / แก้กะดึกคืนนี้</button>`
     : '<div class="ad-it"><small>ไม่ได้กรอกกะดึกคืนนี้</small></div>';
   $('adBody').innerHTML = h; $('admDet').hidden = false;
 }

@@ -667,7 +667,8 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
 .dsync.off{background:color-mix(in srgb,var(--red) 12%,transparent);color:var(--red-t)}
 .embed #userBtn{display:none}
 /* admin = view only */
-.ro .bar,.ro .sw-acts,.ro [data-wz],.ro [data-wzat]{display:none!important}
+.ro .bar,.ro [data-wz],.ro [data-wzat]{display:none!important}
+.admed #typeSeg,.admed #machineNo,.admed #inspectDate{pointer-events:none;opacity:.55}
 .ro .shell{padding-bottom:calc(env(safe-area-inset-bottom) + 24px)}
 .ro main .grp input,.ro main .grp select{pointer-events:none}
 /* ===== Size per device =====
@@ -1088,7 +1089,8 @@ function updateDateHint() {
   // Thai date under "วันที่" (the field shows the browser's format, e.g. 11/24/2026)
   const TW = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสฯ', 'ศุกร์', 'เสาร์'], TM = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
   const d = /^\d{4}-\d{2}-\d{2}$/.test(v) ? new Date(+v.slice(0, 4), +v.slice(5, 7) - 1, +v.slice(8, 10)) : null;
-  const th = d ? `${TW[d.getDay()]} ${d.getDate()} ${TM[d.getMonth()]} ${d.getFullYear() + 543}` : '';
+  // the date box already shows the date (in Thai on iPhone) — the line under "วันที่" only adds the weekday
+  const th = d ? `วัน${['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'][d.getDay()]}` : '';
   h.className = 'datehint' + (d && v !== t ? ' other' : '');
   h.textContent = th + (v === t ? ' · วันนี้' : '');
 }
@@ -1141,8 +1143,10 @@ function renderForm() {
   const fs = schema.sections.flatMap(s => s.fields || []), nFilled = fs.filter(f => filled(formValues[f.id])).length;
   const nBad = abnormalIds(currentType, formValues).length;
   let html = draftBanner() + (isStopped() ? `<div class="banner" role="note">${icon('warn')}<span>เครื่องอยู่ในสถานะ <b>M/C Stop</b> ข้ามช่องที่ต้องวัดขณะเดินเครื่องได้ แล้วกดบันทึกได้เลย</span></div>` : '');
-  // admin: view only — no "ตรวจ" button, a note pointing to the history instead
-  if (session?.admin) html += `<div class="banner info" role="note">${icon('team')}<span>บัญชี <b>admin</b> ดูได้อย่างเดียว · ดูใบตรวจของทุกคนได้ที่ปุ่มนาฬิกา (ประวัติ) ด้านบน</span></div>`;
+  // admin: no new inspections — open a saved one from the history (clock button) to view or edit it
+  document.documentElement.classList.toggle('ro', !!session?.admin && !editingId);
+  document.documentElement.classList.toggle('admed', !!session?.admin && !!editingId);   // admin editing: machine / date / type stay as recorded
+  if (session?.admin && !editingId) html += `<div class="banner info" role="note">${icon('team')}<span>บัญชี <b>admin</b> กรอกใบใหม่ไม่ได้ · ดู/แก้ใบที่บันทึกแล้วได้ที่ปุ่มนาฬิกา (ประวัติ) ด้านบน → ปัดแถวแล้วกด "แก้"</span></div>`;
   else html += `<button type="button" class="checkbtn" data-wz><span class="cb-t">ตรวจ</span>
     <span class="cb-s">${isStopped() ? 'เครื่องหยุด · เพิ่มหมายเหตุได้' : nFilled ? `ตรวจแล้ว ${nFilled}/${fs.length} ข้อ${nBad ? ` · ผิดปกติ ${nBad}` : ''} · กดเพื่อตรวจต่อ` : `${fs.length} ข้อ · ตอบทีละข้อ`}</span></button>`;
   // computer: list of topics to check, each with its own count; click = jump straight to that topic (hidden on phones)
@@ -2426,7 +2430,7 @@ function applyUser() {
   if (!editingId) { formValues.inspector = name; $('inspectorInput').value = name; }
   $('inspectorInput').readOnly = !!session;   // the inspector is whoever is logged in
   $('teamBtn').hidden = !session?.admin;       // "ผู้ตรวจ" page is for admins only
-  document.documentElement.classList.toggle('ro', !!session?.admin);   // admin = view only (no save bar, no edit/delete)
+  document.documentElement.classList.toggle('ro', !!session?.admin && !editingId);   // admin: view, or edit a record opened from history
   $('userBtn').setAttribute('aria-label', session ? `ผู้ใช้: ${session.name} (แตะเพื่อออกจากระบบ)` : 'ผู้ใช้');
   updateDSync();
 }

@@ -540,19 +540,24 @@ th .freq{display:table;margin-top:4px}
  --bg:#F2F2F7;--card:#fff;--raise:#F2F2F7;--fg:#000;--mute:#6E6E73;--line:#E5E5EA;--track:#E5E5EA;
  --acc:#1C2B5A;--on-acc:#fff;--acc-ink:#1C2B5A;--ok:#248A3D;--okbg:#E8F8EC;--okdot:#34C759;--ng:#D70015;--ngbg:#FFE5E3;--ngdot:#FF3B30}
 /* header: Thai date, save status in words; inside app.html no name / theme button (the shell has them) */
-.dateth{font-size:14px;font-weight:600;color:var(--fg);white-space:nowrap}
+/* one date box: the Thai date is drawn over the date field (the field's own text is hidden, so iPhone and computer look the same) */
+.dpw{position:relative;display:inline-flex;align-items:center}
+.dpw input[type=date]{color:transparent!important;width:210px}
+.dpw input[type=date]::-webkit-datetime-edit{color:transparent}
+.dateth{position:absolute;left:12px;right:34px;top:50%;transform:translateY(-50%);pointer-events:none;font-family:var(--sans);font-size:15px;font-weight:600;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #sync.sst{display:inline-flex!important;align-items:center;gap:4px;font-size:13px!important;width:auto!important;height:auto!important;background:none!important;font-family:var(--sans);font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap}
 #sync.sst.ok{color:var(--ok);background:var(--okbg)!important}
 #sync.sst.wait{color:var(--acc-ink);background:color-mix(in srgb,var(--acc) 12%,var(--card))!important}
 #sync.sst.off{color:var(--ng);background:var(--ngbg)!important}
 #sync.sst i{font-size:15px}
 .embed #themeToggle,.embed #who{display:none}
-/* admin = view only: everything can be looked at, nothing can be ticked or typed */
-.ro #view::before{content:"บัญชี admin ดูได้อย่างเดียว · ติ๊ก/กรอกไม่ได้";display:block;margin:0 0 var(--s3);padding:10px 14px;border-radius:var(--r);background:color-mix(in srgb,var(--acc) 10%,var(--card));color:var(--acc-ink);font-size:14px;font-weight:600}
-.ro .tl .rd,.ro .cks button,.ro .rmk,.ro #view textarea,.ro #view input:not([type=date]),.ro #view .tog,.ro #view .c3c,.ro .photos .addph,.ro .phx,.ro [data-ck]{pointer-events:none}
+/* admin: can change what's already filled, can't add new entries, photos or confirm the shift */
+.ro #view::before{content:"บัญชี admin · แก้ได้เฉพาะช่องที่มีคนกรอกไว้แล้ว";display:block;margin:0 0 var(--s3);padding:10px 14px;border-radius:var(--r);background:color-mix(in srgb,var(--acc) 10%,var(--card));color:var(--acc-ink);font-size:14px;font-weight:600}
 .ro .photos .addph,.ro .phx,.ro #confirm,.ro .bar .primary:not(#nextslot){display:none!important}
+#nsNote{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:50;padding:10px 16px;border-radius:999px;background:rgba(28,28,30,.92);color:#fff;font-size:14px;font-weight:600;transition:opacity .2s,transform .2s;white-space:nowrap}
+#nsNote.on{opacity:1;transform:translate(-50%,0)}
 .embed #sync{margin-left:auto}
-@media (max-width:480px){#hrow{flex-wrap:wrap;row-gap:6px}#hrow input[type=date]{width:150px}#who{display:none}#menuBtn{margin-left:auto}#sync,.embed #sync{order:10;margin-left:0}.dateth{font-size:13px}#hrow label.meta{font-size:0}#hrow input[type=date]{font-size:14px}}
+@media (max-width:480px){#hrow{flex-wrap:wrap;row-gap:6px}#hrow .dpw input[type=date]{width:170px}#who{display:none}#menuBtn{margin-left:auto}#sync,.embed #sync{order:10;margin-left:0}#hrow label.meta{font-size:0}#hrow input[type=date]{font-size:16px}.dateth{font-size:15px}}
 header{background:color-mix(in srgb,var(--bg) 82%,transparent);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-bottom:.5px solid var(--line)}
 .theme-btn{border:0;background:var(--card);border-radius:999px;min-width:36px;justify-content:center}
 .prog{height:4px;border-radius:2px}.prog i{background:var(--acc);border-radius:2px}
@@ -630,7 +635,7 @@ button.primary{border-radius:var(--r-lg)}
 <body>
 <header>
   <div class="row" id="hrow">
-    <label class="meta">กะ <input type="date" id="date"></label><span id="dateTh" class="dateth" aria-live="polite"></span>
+    <label class="meta">กะ <span class="dpw"><input type="date" id="date" aria-describedby="dateTh"><span id="dateTh" class="dateth" aria-live="polite"></span></span></label>
     <button id="themeToggle" class="theme-btn" title="สลับโหมด มืด/สว่าง" aria-label="สลับโหมด มืด/สว่าง">🌙</button>
     <span id="who"></span><span id="sync" class="meta"></span>
     <button id="menuBtn" class="theme-btn" aria-label="ข้อมูลและบัญชี" title="ข้อมูลและบัญชี" style="position:relative"><i class="ti ti-dots" aria-hidden="true"></i><span id="pending"></span></button>
@@ -742,8 +747,12 @@ const isTick=(form,id)=>form==='tasks'&&/^t\d/.test(id); // tasks: t* = tick, n*
 const toServer=(form,id,v)=>isTick(form,id)?(v?'✓':''):v;
 const fromServer=(form,id,v)=>isTick(form,id)?v==='✓':v;
 let flushT=null,flushing=null,curRefresh=null,lastSync=0;
-function put(form,id,v){if(db.user?.admin)return;   // admin = view only: nothing is changed or sent
-  const date=$('date').value,r=rec(form);if(r[id]===v)return;
+// short message at the bottom of the screen
+function note(msg){let el=document.getElementById('nsNote');if(!el){el=document.createElement('div');el.id='nsNote';el.setAttribute('role','status');document.body.appendChild(el)}
+  el.textContent=msg;el.classList.add('on');clearTimeout(note.t);note.t=setTimeout(()=>el.classList.remove('on'),2600)}
+function put(form,id,v){const date=$('date').value,r=rec(form);if(r[id]===v)return;
+  // admin: only fields someone already filled can be changed (no new entries)
+  if(db.user?.admin&&!(id in r)){if(!put.quiet)note('admin แก้ได้เฉพาะช่องที่มีคนกรอกไว้แล้ว');return}
   r[id]=v;(r._who=r._who||{})[id]=db.user?.name;r._at=new Date().toLocaleString('th-TH');
   db.q=db.q.filter(x=>!(x.form===form&&x.date===date&&x.id===id));db.q.push({form,date,id,v:toServer(form,id,v)});
   save();clearTimeout(flushT);flushT=setTimeout(flush,1500)}
@@ -991,7 +1000,8 @@ async function addPhotos(files){const st=$('phst'),date=$('date').value;let n=0;
 // Tasks helpers & views
 function formState(k,date=$('date').value){const fr=db.rec[k+'|'+date]||{},fs=FORMS[k][1].flatMap(g=>g.f);
   const blank=fs.filter(f=>value(f,fr)==='').length,bad=fs.filter(f=>isBad(f,value(f,fr))).length;return {blank,bad,ok:!blank&&!bad}}
-function deriveTasks(){const day=new Date($('date').value+'T12:00').getDay(),list=TASKS[day],r=rec('tasks');
+function deriveTasks(){put.quiet=true;try{return deriveTasks0()}finally{put.quiet=false}}   // automatic ticks: no admin message
+function deriveTasks0(){const day=new Date($('date').value+'T12:00').getDay(),list=TASKS[day],r=rec('tasks');
   list.forEach((t,i)=>{const ks=linksOf(t.name,t.time);
     // Done = every field of its sheets is filled. NG still counts as done (the check was made); the red NG button shows it.
     if(ks.length){const ok=ks.every(k=>!formState(k).blank);
