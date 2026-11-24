@@ -628,7 +628,13 @@ button.primary{border-radius:var(--r-lg)}
  .sd-it .ic{border-radius:7px}
  .sd-it .st.todo{background:color-mix(in srgb,var(--acc) 12%,var(--card));color:var(--acc-ink)}
  .sd-keys{border:0;background:var(--card);border-radius:var(--r-lg)}
- main{max-width:900px}
+ main{max-width:1040px;margin:0 auto!important}   /* centred in the space right of the panel */
+ .tl-head .n,.tl-head+.prog{display:none}           /* tonight's total is already at the top of the left panel */
+ .sd-keys{padding:0;border:0;background:none}
+ .sd-keys summary{cursor:pointer;list-style:none;padding:10px var(--s3);border-radius:var(--r-lg);background:var(--card);color:var(--mute);font-size:13px;font-weight:600}
+ .sd-keys summary::-webkit-details-marker{display:none}
+ .sd-keys[open]{background:var(--card);border-radius:var(--r-lg);padding:0 var(--s3) var(--s3)}
+ .sd-keys[open] summary{padding-left:0;padding-right:0}
  .bar:has(#nextslot){display:block}
  .bar .acts{justify-content:flex-end}
  .bar .acts .sec,.bar .acts .primary{flex:none;min-width:200px;padding:0 var(--s5)}
@@ -1190,7 +1196,8 @@ function renderSide(){syncLabel();dateLabel();const el=$('side');if(!el)return;i
     return `<button class="sd-it ${tab===k?'on':''} ${on?'':'off'}" data-sform="${k}"><span class="ic"><i class="ti ${SHEET_IC[k]||'ti-clipboard'}" aria-hidden="true"></i></span>
       <span class="nm">${esc(title)}${on?'':'<small>ไม่มีในคืนนี้</small>'}</span>${st}</button>`}).join('')+`</div></div>`;
   h+=`<div class="sd-list"><button class="sd-it ${tab==='data'?'on':''}" data-sdata><span class="ic"><i class="ti ti-database" aria-hidden="true"></i></span><span class="nm">ข้อมูลและบัญชี</span><span></span></button></div>`;
-  h+=`<div class="sd-keys"><b>คีย์ลัดในเช็คชีต</b><br><kbd>Tab</kbd> ช่องถัดไป<br><kbd>G</kbd> ปกติ · <kbd>N</kbd> ผิดปกติ<br><kbd>Del</kbd> ล้างช่อง<br><kbd>Enter</kbd> ในช่องตัวเลข = บันทึกแล้วไปช่องว่าง<br><kbd>Esc</kbd> กลับรายการงาน</div>`;
+  // shortcuts folded away (opens on click) so the left panel fits without scrolling
+  h+=`<details class="sd-keys"><summary>⌨ คีย์ลัดในเช็คชีต</summary><kbd>Tab</kbd> ช่องถัดไป<br><kbd>G</kbd> ปกติ · <kbd>N</kbd> ผิดปกติ<br><kbd>Del</kbd> ล้างช่อง<br><kbd>Enter</kbd> ในช่องตัวเลข = บันทึกแล้วไปช่องว่าง<br><kbd>Esc</kbd> กลับรายการงาน</details>`;
   el.innerHTML=h}
 $('side').onclick=e=>{const b=e.target.closest('.sd-it');if(!b)return;
   if(b.dataset.sslot!=null){tab='tasks';slotSel=+b.dataset.sslot}
