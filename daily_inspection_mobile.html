@@ -1002,7 +1002,16 @@ const draftInspector = (() => { try { return localStorage.getItem('di_inspector'
 
 /* date: follows today automatically (also after midnight or when the app is reopened later),
    until the inspector picks another date by hand; "กลับเป็นวันนี้" returns to auto */
-let dateAuto = true;
+let dateAuto = true, shellDate = '';
+/* app.html (home page) opens this app at a chosen day: fill that day's form, or view=true to show that day's records */
+window.shellOpenDate = function (d, view) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(d || '')) return;
+  shellDate = d; $('inspectDate').value = d; dateAuto = d === localToday(); updateDateHint();
+  if (!$('wz').hidden) closeWizard();
+  document.querySelectorAll('.dim.open').forEach(x => closeDim(x.id));
+  if (view) { H.month = d.slice(0, 7); H.day = d; H.filter = 'all'; renderHistory(); openDim('historyModal'); }
+  else window.scrollTo({ top: 0 });
+};
 function setToday() { $('inspectDate').value = localToday(); dateAuto = true; updateDateHint(); }
 function updateDateHint() {
   const v = $('inspectDate').value, t = localToday(), h = $('dateHint'); if (!h) return;
@@ -1261,7 +1270,8 @@ function commitSave(replace) {
   try { localStorage.setItem('di_inspector', formValues.inspector.trim()); } catch {}
   drafts.set(drafts.get().filter(d => d.id !== loadedDraftId && !(d.type === currentType && d.machineNo === no && d.date === date)));  // draft is done
   const wasEditing = !!editingId; editingId = null; loadedDraftId = null;
-  setToday();   // next inspection starts on today again
+  if (shellDate) { $('inspectDate').value = shellDate; dateAuto = shellDate === localToday(); updateDateHint(); }   // picked on the home page: stay on that day
+  else setToday();   // next inspection starts on today again
   formValues = { inspector: session ? session.name : formValues.inspector }; tried = false; initOpenState(currentType);
   $('inspectorInput').value = formValues.inspector; renderForm();
   updateHistoryCount(); window.scrollTo({ top: 0, behavior: 'smooth' }); haptic([10, 40, 10]);

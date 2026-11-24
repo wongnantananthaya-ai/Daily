@@ -581,11 +581,20 @@ const slotOf=time=>{const h=parseInt((time.match(/\d{1,2}/)||[])[0]);return isNa
 let db; try{db=JSON.parse(localStorage.getItem('nsp'))||{}}catch(e){db={}}
 db.rec=db.rec||{};db.q=db.q||[];
 const save=()=>{try{localStorage.setItem('nsp',JSON.stringify(db))}catch(e){alert('บันทึกไม่ได้: '+e.message)}badge()};
-const API='https://script.google.com/macros/s/AKfycbx05pyEOhgjosSItAcNvZPb2_s-KirMPiPeG8mx8H7VHVc0Di1UZRJL0BAT0UuDb5WV/exec';
+// Same Google Sheet + Apps Script as Daily Inspection: one account (the "ผู้ใช้" tab), data in the "กะดึก" tab.
+const API='https://script.google.com/macros/s/AKfycbxuM2GmQGbDG7tLM0uQiqsEvHcqeEQ8M93e6qsIn06fAmSB8MUMGz7mh-nRX8ZOUc6H9Q/exec';
 const post=async body=>{
-  const j=await (await fetch(API,{method:'POST',body:JSON.stringify({...body,name:db.user?.name,pin:db.user?.pin})})).json();
+  const j=await (await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...body,token:db.user?.token})})).json();
+  if(j.auth===false){signedOut(j.error);throw Error(j.error||'กรุณาเข้าสู่ระบบใหม่')}
   if(!j.ok)throw Error(j.error);return j;
 };
+// one session for both apps: Daily keeps it in "di_user", Night Shift in db.user
+function shareSession(u){try{u?localStorage.setItem('di_user',JSON.stringify({user:u.user,name:u.name,token:u.token,admin:!!u.admin})):localStorage.removeItem('di_user')}catch(e){}}
+function signedOut(msg){if(!db.user)return;delete db.user;shareSession(null);save();
+  if(window.parent!==window){window.parent.postMessage({type:'shell-logout'},'*');return}
+  render();const s=document.getElementById('status');if(s&&msg)s.textContent=msg}
+if(db.user&&!db.user.token)delete db.user;   // old name+PIN login from the separate Night Shift sheet
+if(!db.user){try{const d=JSON.parse(localStorage.getItem('di_user')||'null');if(d&&d.token)db.user={user:d.user,name:d.name,token:d.token,admin:!!d.admin}}catch(e){}}
 const motion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
 const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pad=n=>String(n).padStart(2,'0'), iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
@@ -594,6 +603,8 @@ let tab='tasks',grpIdx={};
 $('date').value=shiftDate();
 // autoDate: follow the current shift unless the user picked another date to review
 let autoDate=true;
+// app.html (home page) opens Night Shift at a chosen night: show / fill that night's sheet
+window.shellOpenDate=d=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(d||''))return;$('date').value=d;autoDate=d===shiftDate();slotSel=null;if(db.user){tab='tasks';returnTo=null;render();scrollTo(0,0)}};
 $('date').onchange=()=>{autoDate=$('date').value===shiftDate();slotSel=null;render()};
 function rollDate(){const now=shiftDate();if(!autoDate||$('date').value===now)return false;
   if(document.activeElement?.matches?.('textarea,input:not(#date)'))return false; // don't yank the page mid-typing
@@ -957,7 +968,7 @@ function renderData(){
   const dl=(name,text,type)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();URL.revokeObjectURL(a.href)};
   $('view').onclick=async e=>{const k=e.target.dataset.csv;
     if(e.target.closest('#back')){tab='tasks';return render()}
-    if(e.target.id==='logout'&&confirm('ออกจากระบบ? ข้อมูลที่ยังไม่ส่งจะยังอยู่ในเครื่อง')){delete db.user;tab='tasks';save();
+    if(e.target.id==='logout'&&confirm('ออกจากระบบ? ข้อมูลที่ยังไม่ส่งจะยังอยู่ในเครื่อง')){const tok=db.user?.token;if(tok)post({action:'logout'}).catch(()=>{});delete db.user;shareSession(null);tab='tasks';save();
       if(window.parent!==window){window.parent.postMessage({type:'shell-logout'},'*');return} // inside app.html: log out of both apps
       return render()}if(k)dl(`night-shift-${k}.csv`,csv(k),'text/csv');if(e.target.id==='bk')dl('night-shift-backup.json',JSON.stringify(db),'application/json');
     if(e.target.id==='resend'){const msg=await flush();renderData();$('status').textContent=msg||'ส่งครบแล้ว'}};
@@ -973,15 +984,15 @@ function renderLogin(){
   </div>
   <form id="login">
     <h3>เข้าสู่ระบบ</h3>
-    <p class="meta">ใช้ชื่อและ PIN 4 หลักตามที่หัวหน้าตั้งไว้ในแท็บ users ของ Google Sheet</p>
+    <p class="meta">ใช้ผู้ใช้และรหัสผ่านเดียวกับ Daily Inspection</p>
     <div class="field-grp">
-      <label for="lname">ชื่อผู้ใช้งาน</label>
-      <input id="lname" placeholder="ระบุชื่อ (เช่น test)" autocomplete="username" required style="width:100%">
+      <label for="lname">ผู้ใช้</label>
+      <input id="lname" placeholder="ชื่อผู้ใช้" autocomplete="username" autocapitalize="off" spellcheck="false" required style="width:100%">
     </div>
     <div class="field-grp">
-      <label for="lpin">รหัส PIN 4 หลัก</label>
+      <label for="lpin">รหัสผ่าน</label>
       <div class="pin-wrap">
-        <input id="lpin" placeholder="••••" type="password" inputmode="numeric" pattern="\\d{4}" maxlength="4" autocomplete="current-password" required>
+        <input id="lpin" placeholder="รหัสผ่าน" type="password" autocomplete="current-password" required>
         <button type="button" id="togglePin" class="pin-eye" aria-label="แสดง/ซ่อนรหัส PIN"><i class="ti ti-eye"></i></button>
       </div>
     </div>
@@ -992,8 +1003,8 @@ function renderLogin(){
   const eye=$('togglePin');
   if(eye){eye.onclick=()=>{const p=$('lpin');const isP=p.type==='password';p.type=isP?'text':'password';eye.innerHTML=`<i class="ti ti-eye-${isP?'off':''}"></i>`}}
   $('login').onsubmit=async e=>{e.preventDefault();$('status').textContent='กำลังตรวจสอบ...';
-    db.user={name:$('lname').value.trim(),pin:$('lpin').value};
-    try{const j=await post({action:'login'});db.user.name=j.name;save();render()}
+    try{const j=await post({action:'login',user:$('lname').value.trim().toLowerCase(),pass:$('lpin').value});
+      db.user={user:j.user,name:j.name,token:j.token,admin:!!j.admin};shareSession(db.user);save();render()}
     catch(err){delete db.user;$('status').textContent='เข้าไม่ได้: '+err.message}};
 }
 

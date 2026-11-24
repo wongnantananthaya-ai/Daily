@@ -66,80 +66,61 @@ body.menu-open .scrim{opacity:1;pointer-events:auto}
 }
 body.locked .topbar,body.locked .side,body.locked .scrim{display:none}
 
-/* ===== Inspection selection page ===== */
-:root{--red:#B3122E;--red-d:#8E0D24;--navy:#1B2A4A;--navy2:#2F4B8A;--soft:#F4F5F8;--ink:#141A26;--ink2:#5D6474}
-.home{position:fixed;inset:0;z-index:15;display:grid;grid-template-columns:104px 1fr;background:var(--soft);
-  font-family:Inter,"Noto Sans Thai","Leelawadee UI",system-ui,sans-serif;color:var(--ink)}
+/* ===== Home (white): date strip + day summary for Daily and Night Shift ===== */
+:root{--red:#FF3B30;--red-ink:#D70015;--navy:#1C2B5A;--navy-ink:#1C2B5A;--g1:#F2F2F7;--g2:#E5E5EA;--l2:#6E6E73;--l3:#8E8E93;--ok:#248A3D}
+.home{position:fixed;inset:0;z-index:15;background:#FFFFFF;overflow:auto;-webkit-overflow-scrolling:touch;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Noto Sans Thai","Leelawadee UI",system-ui,sans-serif;color:#000}
 .home[hidden]{display:none}
 body.at-home .topbar,body.at-home .side,body.at-home .scrim,body.at-home .frames{display:none}
-/* rail */
-.hm-rail{position:relative;overflow:hidden;background:linear-gradient(180deg,#C3163A 0%,var(--red) 45%,var(--red-d) 100%);
-  display:flex;flex-direction:column;align-items:center;padding:calc(28px + env(safe-area-inset-top)) 0 calc(24px + env(safe-area-inset-bottom))}
-.hm-rail::before,.hm-rail::after{content:"";position:absolute;left:-40%;width:180%;height:140px;background:rgba(255,255,255,.06);transform:rotate(-28deg)}
-.hm-rail::before{top:42%}.hm-rail::after{top:62%;height:60px;background:rgba(0,0,0,.08)}
-.hm-logo{position:relative;width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center}
-.hm-logo svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.hm-dots{position:relative;display:flex;flex-direction:column;gap:9px;margin-top:22px}
-.hm-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.38)}
-.hm-dots i.on{background:#fff;height:18px;border-radius:3px}
-.hm-out{position:relative;margin-top:auto;width:44px;height:44px;border-radius:12px;border:0;background:rgba(255,255,255,.12);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.hm-out:hover{background:rgba(255,255,255,.22)}
-.hm-out svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-/* main */
-.hm-main{position:relative;overflow:auto;padding:clamp(28px,6vh,64px) clamp(20px,6vw,88px) 200px;
-  background:radial-gradient(120% 70% at 100% 0%,#fff 0%,#fff 40%,transparent 70%),var(--soft)}
-.hm-main::before{content:"";position:absolute;right:-120px;top:-60px;width:420px;height:420px;border-radius:48px;transform:rotate(32deg);
-  background:linear-gradient(135deg,rgba(179,18,46,.06),rgba(27,42,74,.05));pointer-events:none}
-.hm-user{position:absolute;top:calc(22px + env(safe-area-inset-top));right:clamp(20px,4vw,48px);display:flex;align-items:center;gap:10px;font-size:.85rem}
-.hm-user b{display:block;font-weight:600}.hm-user small{color:var(--ink2);font-family:"Noto Sans Thai",Inter,sans-serif}
-.hm-av{width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid #E3E6EC;color:var(--red);font-weight:700;display:flex;align-items:center;justify-content:center;font-family:"Noto Sans Thai",Inter,sans-serif}
-.home h1{position:relative;margin:clamp(36px,7vh,72px) 0 0;font-size:clamp(2.4rem,5vw,3.4rem);font-weight:800;letter-spacing:-.035em;line-height:1.05;display:inline-block}
-.home h1::after{content:"";display:block;width:64px;height:3px;border-radius:2px;background:var(--red);margin-top:14px}
-.hm-sub{position:relative;margin:16px 0 clamp(28px,5vh,44px);color:var(--ink2);font-size:1.05rem}
-.hm-cards{position:relative;display:grid;gap:22px;max-width:760px}
-.hm-card{position:relative;overflow:hidden;display:flex;align-items:center;gap:22px;width:100%;min-height:132px;padding:22px 24px 26px;border-radius:22px;border:1px solid #E7E9EE;background:#fff;
-  box-shadow:0 1px 2px rgba(20,26,38,.04),0 10px 30px -12px rgba(20,26,38,.14);font:inherit;color:inherit;text-align:left;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease}
-.hm-card::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px}
-.hm-card.daily::after{background:linear-gradient(90deg,var(--red),#E2453F 60%,rgba(226,69,63,0))}
-.hm-card.night::after{background:linear-gradient(90deg,var(--navy),var(--navy2) 60%,rgba(47,75,138,0))}
-.hm-card:hover{transform:translateY(-2px);box-shadow:0 1px 2px rgba(20,26,38,.05),0 18px 40px -14px rgba(20,26,38,.22)}
-.hm-card:active{transform:translateY(0) scale(.99)}
-.hm-card:focus-visible{outline:3px solid rgba(47,75,138,.35);outline-offset:3px}
-.hm-art{width:88px;height:88px;border-radius:20px;flex:none;display:flex;align-items:center;justify-content:center}
-.hm-card.daily .hm-art{background:#FCEDEF}.hm-card.night .hm-art{background:#EAEFF8}
-.hm-art svg{width:74px;height:74px}
-.hm-txt{flex:1;min-width:0}
-.hm-txt b{display:block;font-size:clamp(1.2rem,2.4vw,1.45rem);font-weight:700;letter-spacing:-.015em}
-.hm-txt small{display:block;margin-top:4px;color:var(--ink2);font-size:.95rem}
-.hm-txt em{display:block;margin-top:6px;font-style:normal;font-size:.8rem;color:#8A90A0;font-family:"Noto Sans Thai",Inter,sans-serif}
-.hm-go{width:52px;height:52px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;transition:transform .2s ease}
-.hm-card.daily .hm-go{background:var(--red);box-shadow:0 8px 18px -6px rgba(179,18,46,.55)}
-.hm-card.night .hm-go{background:var(--navy);box-shadow:0 8px 18px -6px rgba(27,42,74,.55)}
-.hm-card:hover .hm-go{transform:translateX(3px)}
-.hm-go svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.hm-cnt{position:absolute;top:12px;left:92px;box-shadow:0 0 0 2px #fff;min-width:20px;height:20px;padding:0 6px;border-radius:10px;font-size:.72rem;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center}
-.hm-cnt[hidden]{display:none}
-.hm-card.daily .hm-cnt{background:var(--red)}.hm-card.night .hm-cnt{background:var(--navy)}
-.hm-sky{position:fixed;left:104px;right:0;bottom:62px;width:calc(100% - 104px);height:110px;pointer-events:none;opacity:.9}
-.hm-wave{position:fixed;left:104px;right:0;bottom:0;width:calc(100% - 104px);height:80px;pointer-events:none}
-/* phone: rail becomes a slim top bar, cards stack tighter */
-@media (max-width:720px){
-  .home{grid-template-columns:1fr;grid-template-rows:auto 1fr}
-  .hm-rail{flex-direction:row;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;gap:14px}
-  .hm-rail::before{top:-40px;left:30%;width:60%;height:120px}.hm-rail::after{display:none}
-  .hm-logo{width:42px;height:42px;border-radius:12px}.hm-logo svg{width:24px;height:24px}
-  .hm-dots{flex-direction:row;margin:0}.hm-dots i.on{width:18px;height:6px}
-  .hm-out{margin:0 0 0 auto;width:40px;height:40px}
-  .hm-main{padding:20px 16px 170px}
-  .hm-user{position:static;margin-bottom:4px}
-  .home h1{margin-top:14px}
-  .hm-card{gap:14px;padding:16px 16px 20px;min-height:112px;border-radius:18px}
-  .hm-art{width:64px;height:64px;border-radius:16px}.hm-art svg{width:54px;height:54px}
-  .hm-go{width:44px;height:44px}
-  .hm-cnt{top:8px;left:66px}
-  .hm-sky,.hm-wave{left:0;width:100%}
-  .hm-sky{height:80px;bottom:48px}.hm-wave{height:60px}
-}
+.hm-in{max-width:640px;margin:0 auto;padding:calc(16px + env(safe-area-inset-top)) 16px calc(32px + env(safe-area-inset-bottom))}
+.hm-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
+.hm-date{margin:0;color:var(--l3);font-size:.82rem;font-weight:600;text-transform:none}
+.home h1{margin:2px 0 0;font-size:2.1rem;font-weight:700;letter-spacing:-.025em;line-height:1.1}
+.hm-me{width:40px;height:40px;border-radius:50%;border:0;padding:0;background:var(--g1);cursor:pointer;flex:none}
+.hm-av{display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#3A3A3C}
+/* week */
+.hm-week{margin-bottom:16px}
+.hm-weekbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.hm-weekbar b{font-size:1.05rem;font-weight:600}
+.hm-nav{display:flex;gap:4px}
+.hm-ib{position:relative;width:44px;height:44px;border:0;border-radius:12px;background:none;color:var(--red-ink);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.hm-ib:active{background:var(--g1)}
+.hm-ib svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.hm-cal input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.hm-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.hm-day{border:0;background:none;border-radius:14px;padding:6px 0 8px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;font:inherit;color:#000;min-height:64px}
+.hm-day .w{font-size:.7rem;color:var(--l3);font-weight:600}
+.hm-day .d{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.05rem;font-weight:600}
+.hm-day.today .d{color:var(--red-ink)}
+.hm-day[aria-pressed="true"] .d{background:#000;color:#fff}
+.hm-day[aria-pressed="true"].today .d{background:var(--red)}
+.hm-day.future{opacity:.35}
+.hm-dots{display:flex;gap:3px;height:6px}
+.hm-dots i{width:6px;height:6px;border-radius:50%}
+.hm-dots .dd{background:var(--red)}.hm-dots .dn{background:var(--navy)}.hm-dots .bad{background:#FF9500}
+.hm-today{display:block;margin:6px auto 0;border:0;background:none;color:var(--red-ink);font:inherit;font-weight:600;font-size:.88rem;min-height:36px;cursor:pointer}
+.hm-today[hidden]{display:none}
+/* cards */
+.hm-card{border:.5px solid var(--g2);border-radius:20px;padding:16px;margin-bottom:12px;background:#fff;box-shadow:0 8px 24px -14px rgba(0,0,0,.22)}
+.hm-ch{display:flex;align-items:center;gap:12px}
+.hm-ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.hm-ico.red{background:var(--red)}.hm-ico.navy{background:var(--navy)}
+.hm-ico svg{width:24px;height:24px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.hm-ct{flex:1;min-width:0}.hm-ct b{display:block;font-size:1.05rem;font-weight:600}.hm-ct small{color:var(--l2);font-size:.82rem}
+.hm-stat{text-align:right;font-size:1.35rem;font-weight:700;line-height:1.1;white-space:nowrap}
+.hm-stat small{display:block;font-size:.72rem;font-weight:500;color:var(--l3)}
+.hm-prog{height:6px;border-radius:3px;background:var(--g1);overflow:hidden;margin:14px 0 0}
+.hm-prog i{display:block;height:100%;width:0;background:var(--navy);border-radius:3px;transition:width .3s ease}
+.hm-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;min-height:8px}
+.hm-chip{font-size:.78rem;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--g1);color:#3A3A3C}
+.hm-chip.ok{background:#E8F8EC;color:var(--ok)}.hm-chip.ng{background:#FFE5E3;color:var(--red-ink)}.hm-chip.st{background:#FFF1E0;color:#C93400}
+.hm-empty{color:var(--l3);font-size:.85rem}
+.hm-acts{display:flex;gap:8px;margin-top:14px}
+.hm-b{flex:1;min-height:44px;border:0;border-radius:12px;font:inherit;font-size:.95rem;font-weight:600;cursor:pointer;text-align:center;display:flex;align-items:center;justify-content:center}
+.hm-b:active{transform:scale(.98)}
+.hm-b.red{background:var(--red);color:#fff}.hm-b.navy{background:var(--navy);color:#fff}.hm-b.sec{background:var(--g1);color:#000}
+.hm-foot{text-align:center;color:var(--l3);font-size:.75rem;margin:14px 0 0}
+@media (prefers-reduced-motion:reduce){.hm-prog i{transition:none}}
 /* login */
 .login{position:fixed;inset:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px 16px calc(24px + env(safe-area-inset-bottom));overflow:auto}
 .login[hidden]{display:none}
@@ -177,50 +158,60 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0 0 26px}
   </form>
 </div>
 
-<!-- Inspection selection (home after sign-in) -->
+<!-- Home: pick a day, see what was filled (Daily + Night Shift), open either app at that day -->
 <section class="home" id="home" hidden aria-labelledby="hmTitle">
-  <aside class="hm-rail">
-    <div class="hm-logo" aria-hidden="true">
-      <svg viewBox="0 0 24 24"><path d="M7 4.5h10a1.5 1.5 0 0 1 1.5 1.5v13.5A1.5 1.5 0 0 1 17 21H7a1.5 1.5 0 0 1-1.5-1.5V6A1.5 1.5 0 0 1 7 4.5z"/><path d="M9 3h6v3H9z"/><path d="M9 13l2 2 4-4.5"/></svg>
-    </div>
-    <div class="hm-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
-    <button type="button" class="hm-out" id="hmOut" aria-label="ออกจากระบบ">
-      <svg viewBox="0 0 24 24"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l-4-4 4-4M6 12h10"/></svg>
-    </button>
-  </aside>
-  <main class="hm-main">
-    <div class="hm-user"><span class="hm-av" id="hmAv">?</span><span><b id="hmName">-</b><small id="hmRole">ผู้ตรวจ</small></span></div>
-    <h1 id="hmTitle">Inspection</h1>
-    <p class="hm-sub">Please select the type of inspection</p>
-    <div class="hm-cards">
-      <button type="button" class="hm-card daily" data-go="daily">
-        <span class="hm-art" aria-hidden="true">
-          <svg viewBox="0 0 96 96"><rect x="14" y="22" width="54" height="52" rx="9" fill="#fff" stroke="#B3122E" stroke-width="3.5"/><path d="M14 38h54" stroke="#B3122E" stroke-width="3.5"/><path d="M14 31a9 9 0 0 1 9-9h36a9 9 0 0 1 9 9v7H14z" fill="#B3122E"/><path d="M28 16v12M54 16v12" stroke="#7C0C20" stroke-width="4" stroke-linecap="round"/><g fill="#F3C9CF"><rect x="23" y="46" width="9" height="7" rx="2"/><rect x="37" y="46" width="9" height="7" rx="2"/><rect x="23" y="59" width="9" height="7" rx="2"/></g><circle cx="70" cy="64" r="13" fill="#fff" stroke="#E2453F" stroke-width="3.5"/><g stroke="#E2453F" stroke-width="3" stroke-linecap="round"><path d="M70 43v5M70 80v5M49 64h5M86 64h5M55 49l3.5 3.5M81.5 75.5L85 79M85 49l-3.5 3.5M58.5 75.5L55 79"/></g></svg>
+  <div class="hm-in">
+    <header class="hm-head">
+      <div>
+        <p class="hm-date" id="hmToday"></p>
+        <h1 id="hmTitle">Inspection</h1>
+      </div>
+      <button type="button" class="hm-me" id="hmMe" aria-label="บัญชี / ออกจากระบบ"><span class="hm-av" id="hmAv">?</span></button>
+    </header>
+
+    <!-- week strip + calendar -->
+    <div class="hm-week" role="group" aria-label="เลือกวันที่">
+      <div class="hm-weekbar">
+        <b id="hmMonth"></b>
+        <span class="hm-nav">
+          <button type="button" class="hm-ib" id="hmPrev" aria-label="สัปดาห์ก่อน"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button type="button" class="hm-ib" id="hmNext" aria-label="สัปดาห์ถัดไป"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+          <label class="hm-ib hm-cal" aria-label="เลือกจากปฏิทิน"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M8 3v4M16 3v4"/></svg><input type="date" id="hmPick"></label>
         </span>
-        <span class="hm-txt"><b>Daily Inspection</b><small>For daily work inspection</small><em>ตรวจเช็คเครื่องรายวัน</em></span>
-        <span class="hm-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
-        <span class="hm-cnt" id="hmCntDaily" hidden></span>
-      </button>
-      <button type="button" class="hm-card night" data-go="night">
-        <span class="hm-art" aria-hidden="true">
-          <svg viewBox="0 0 96 96"><rect x="14" y="22" width="54" height="52" rx="9" fill="#fff" stroke="#1B2A4A" stroke-width="3.5"/><path d="M14 38h54" stroke="#1B2A4A" stroke-width="3.5"/><path d="M14 31a9 9 0 0 1 9-9h36a9 9 0 0 1 9 9v7H14z" fill="#1B2A4A"/><path d="M28 16v12M54 16v12" stroke="#0F1A33" stroke-width="4" stroke-linecap="round"/><g fill="#CDD6E8"><rect x="23" y="46" width="9" height="7" rx="2"/><rect x="37" y="46" width="9" height="7" rx="2"/><rect x="23" y="59" width="9" height="7" rx="2"/></g><path d="M84 70a15 15 0 1 1-17-21 12 12 0 0 0 17 21z" fill="#fff" stroke="#2F4B8A" stroke-width="3.5" stroke-linejoin="round"/><path d="M80 42l1.4 3 3 1.4-3 1.4-1.4 3-1.4-3-3-1.4 3-1.4zM89 55l.9 1.9 1.9.9-1.9.9-.9 1.9-.9-1.9-1.9-.9 1.9-.9z" fill="#2F4B8A"/></svg>
-        </span>
-        <span class="hm-txt"><b>Night Shift</b><small>For night shift inspection</small><em>งานกะดึก 20:00–08:00</em></span>
-        <span class="hm-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
-        <span class="hm-cnt" id="hmCntNight" hidden></span>
-      </button>
+      </div>
+      <div class="hm-days" id="hmDays"></div>
+      <button type="button" class="hm-today" id="hmGoToday" hidden>กลับไปวันนี้</button>
     </div>
-    <!-- industrial skyline + wave footer -->
-    <svg class="hm-sky" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-      <path fill="#E6E9EF" d="M0 120V86h60V60h22v26h40V70h18V40h12v30h30V58h50v28h36V30h10V18h8v12h10v56h46V64h60v22h30V50h16v-8h10v8h16v44h48V74h70v12h40V44h14V26h8v18h14v42h56V66h44v20h40V56h22v30h48V78h40v-6h30v14h50v34z"/>
-      <path fill="#D9DDE5" d="M0 120V100h90V88h70v12h120V92h90v8h140V90h110v10h160V94h120v6h100v-8h110v8h90v20z"/>
-    </svg>
-    <svg class="hm-wave" viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true">
-      <path fill="#ECEEF2" d="M0 40C200 10 380 70 600 46s420-36 600-6v50H0z"/>
-      <path fill="#fff" d="M0 58C220 34 420 84 640 62s380-30 560-8v36H0z"/>
-      <path fill="#B3122E" d="M0 74C240 56 440 92 660 76s360-20 540-6v20H0z"/>
-    </svg>
-  </main>
+
+    <!-- Daily -->
+    <article class="hm-card" aria-labelledby="hmDT">
+      <div class="hm-ch">
+        <span class="hm-ico red"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M8 3v4M16 3v4"/><circle cx="12" cy="15" r="2.2"/></svg></span>
+        <span class="hm-ct"><b id="hmDT">Daily Inspection</b><small id="hmDSub">ตรวจเช็คเครื่องรายวัน</small></span>
+        <span class="hm-stat" id="hmDStat"></span>
+      </div>
+      <div class="hm-chips" id="hmDChips"></div>
+      <div class="hm-acts">
+        <button type="button" class="hm-b sec" data-open="daily" data-view="1">ดูข้อมูล</button>
+        <button type="button" class="hm-b red" data-open="daily">กรอก</button>
+      </div>
+    </article>
+
+    <!-- Night Shift -->
+    <article class="hm-card" aria-labelledby="hmNT">
+      <div class="hm-ch">
+        <span class="hm-ico navy"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></span>
+        <span class="hm-ct"><b id="hmNT">Night Shift</b><small id="hmNSub">งานกะดึก 20:00–08:00</small></span>
+        <span class="hm-stat" id="hmNStat"></span>
+      </div>
+      <div class="hm-prog"><i id="hmNBar"></i></div>
+      <div class="hm-chips" id="hmNChips"></div>
+      <div class="hm-acts">
+        <button type="button" class="hm-b navy" data-open="night">ดู / กรอก</button>
+      </div>
+    </article>
+    <p class="hm-foot" id="hmFoot"></p>
+  </div>
 </section>
 
 <header class="topbar">
@@ -252,12 +243,14 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0 0 26px}
 
 <div class="frames" id="frames"></div>
 
+<script src="tasks.js"></script>
 <script>
 /* where the two apps and their Apps Script back ends are */
 const APPS = { daily: 'daily_inspection_mobile.html', night: 'index.html' };
 // both apps now use the same Apps Script (Daily's): one account list, one Google Sheet
 const DAILY_API = 'https://script.google.com/macros/s/AKfycbxuM2GmQGbDG7tLM0uQiqsEvHcqeEQ8M93e6qsIn06fAmSB8MUMGz7mh-nRX8ZOUc6H9Q/exec';
 const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const ls = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
   set(k, v) { try { v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} },
@@ -280,6 +273,7 @@ function frame(app) {
     f.title = app === 'daily' ? 'Daily Inspection' : 'Night Shift Plan';
     f.src = APPS[app];
     f.hidden = true;
+    f.addEventListener('load', () => { f.dataset.ready = '1'; });
     $('frames').appendChild(f);
     frames[app] = f;
   }
@@ -294,16 +288,128 @@ function localNotice() {
     <p style="margin:0 0 16px;color:var(--label2)">หน้านี้ต้องเปิดผ่านเว็บ ฟอร์ม Daily และ Night Shift ถึงจะขึ้น อัปโหลดขึ้น GitHub แล้วเปิดลิงก์นี้</p>
     <a href="https://wongnantananthaya-ai.github.io/Daily/app.html" style="color:var(--tint);font-weight:600;word-break:break-all">wongnantananthaya-ai.github.io/Daily/app.html</a></div>`;
 }
-/* home = Inspection selection page; picking a card opens that app (it stays loaded, so coming back is instant) */
+/* ---------- home: pick a day → see what was filled (Daily + Night Shift) → open either app at that day ---------- */
+const HM = { sel: '', daily: null, night: {}, loadingNight: '' };
+const TH_W = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'], TH_WL = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+const TH_M = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+const TH_MS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const pd = s => new Date(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10));
+const addDays = (s, n) => { const d = pd(s); d.setDate(d.getDate() + n); return ymd(d); };
+const todayStr = () => ymd(new Date());
+// Night shift runs 20:00 → 08:00 next morning and is named by the evening it starts.
+// Before 08:00 "today" is still last night's shift, so the Night Shift card shows that night.
+const nightOf = d => (d === todayStr() && new Date().getHours() < 8) ? addDays(d, -1) : d;
+const thShort = s => { const d = pd(s); return `${d.getDate()} ${TH_MS[d.getMonth()]} ${d.getFullYear() + 543}`; };
+// nights that this device already has (Night Shift keeps a local copy) — for the dots on the week strip
+const localNights = () => { const s = new Set(); Object.keys(((ls.json('nsp') || {}).rec) || {}).forEach(k => { const d = k.split('|')[1]; if (d) s.add(d); }); return s; };
+
+function hmRender() {
+  const sel = HM.sel, t = todayStr(), mon = addDays(sel, -((pd(sel).getDay() + 6) % 7));
+  const today = pd(t);
+  $('hmToday').textContent = `วัน${TH_WL[today.getDay()]}ที่ ${today.getDate()} ${TH_M[today.getMonth()]} ${today.getFullYear() + 543}`;
+  $('hmMonth').textContent = `${TH_M[pd(sel).getMonth()]} ${pd(sel).getFullYear() + 543}`;
+  const dDays = new Set((HM.daily || []).map(r => r.date)), nDays = localNights();
+  Object.entries(HM.night).forEach(([d, st]) => { if (st && Object.keys(st).length) nDays.add(d); });
+  $('hmDays').innerHTML = Array.from({ length: 7 }, (_, i) => {
+    const d = addDays(mon, i), dt = pd(d);
+    return `<button type="button" class="hm-day ${d === t ? 'today' : ''} ${d > t ? 'future' : ''}" data-day="${d}" aria-pressed="${d === sel}" aria-label="${TH_WL[dt.getDay()]} ${dt.getDate()} ${TH_M[dt.getMonth()]}">
+      <span class="w">${TH_W[dt.getDay()]}</span><span class="d">${dt.getDate()}</span>
+      <span class="hm-dots">${dDays.has(d) ? '<i class="dd"></i>' : ''}${nDays.has(d) ? '<i class="dn"></i>' : ''}</span></button>`;
+  }).join('');
+  $('hmGoToday').hidden = sel === t;
+  $('hmPick').value = sel;
+
+  // ---- Daily of the selected day ----
+  $('hmDSub').textContent = 'วันที่ ' + thShort(sel);
+  if (!HM.daily) { $('hmDStat').innerHTML = ''; $('hmDChips').innerHTML = '<span class="hm-empty">กำลังโหลด…</span>'; }
+  else {
+    const recs = HM.daily.filter(r => r.date === sel).sort((a, b) => (a.type + a.no).localeCompare(b.type + b.no));
+    const bad = recs.filter(r => r.result === 'ผิดปกติ').length;
+    $('hmDStat').innerHTML = `${recs.length}<small>เครื่อง${bad ? ` · ผิดปกติ ${bad}` : ''}</small>`;
+    $('hmDStat').style.color = bad ? 'var(--red-ink)' : '#000';
+    $('hmDChips').innerHTML = recs.length
+      ? recs.map(r => `<span class="hm-chip ${r.result === 'ผิดปกติ' ? 'ng' : r.result === 'Stop' ? 'st' : 'ok'}">${esc(r.type)} ${esc(r.no)} ${r.result === 'ผิดปกติ' ? '!' : r.result === 'Stop' ? 'Stop' : '✓'}</span>`).join('')
+      : `<span class="hm-empty">${sel > t ? 'ยังไม่ถึงวันนี้' : 'ยังไม่มีการตรวจวันนี้'}</span>`;
+  }
+
+  // ---- Night Shift of the selected night ----
+  const ns = nightOf(sel), nsD = pd(ns), nsN = pd(addDays(ns, 1));
+  $('hmNSub').textContent = `${nsD.getDate()} ${TH_MS[nsD.getMonth()]} 20:00 – ${nsN.getDate()} ${TH_MS[nsN.getMonth()]} 08:00`;
+  const st = HM.night[ns];
+  if (st === undefined) { $('hmNStat').innerHTML = ''; $('hmNBar').style.width = '0'; $('hmNChips').innerHTML = '<span class="hm-empty">กำลังโหลด…</span>'; }
+  else {
+    const tasks = st.tasks || {}, list = (typeof TASKS !== 'undefined' && TASKS[pd(sel).getDay()]) || [];   // TASKS comes from tasks.js
+    const done = Object.keys(tasks).filter(k => /^t\d+$/.test(k) && tasks[k].v === '✓').length, total = list.length || done;
+    let ng = 0;
+    const forms = [['sub1', 'Sub 1'], ['sub2', 'Sub 2'], ['adrain', 'Auto drain'], ['light', 'Light']].map(([k, n]) => {
+      const vals = Object.values(st[k] || {}).map(x => x.v).filter(v => v !== '');
+      const bad = vals.filter(v => v === 'NG' || v === 'ผิดปกติ').length; ng += bad;
+      return `<span class="hm-chip ${bad ? 'ng' : vals.length ? 'ok' : ''}">${n} ${bad ? 'NG ' + bad : vals.length ? '✓' : '–'}</span>`;
+    });
+    $('hmNStat').innerHTML = total ? `${done}/${total}<small>งาน${ng ? ` · NG ${ng}` : ''}</small>` : `–<small>งาน</small>`;
+    $('hmNStat').style.color = ng ? 'var(--red-ink)' : '#000';
+    $('hmNBar').style.width = total ? Math.round(done / total * 100) + '%' : '0';
+    $('hmNChips').innerHTML = Object.keys(st).length ? forms.join('') : `<span class="hm-empty">${ns > nightOf(t) ? 'ยังไม่ถึงคืนนี้' : 'ยังไม่มีการกรอกคืนนี้'}</span>`;
+  }
+  const d = dailySession() || nightSession();
+  $('hmFoot').textContent = d ? `${d.name}${d.admin ? ' · admin (เห็นข้อมูลทุกคน)' : ' · เห็นข้อมูลที่ตัวเองกรอก'}` : '';
+}
+async function hmLoadDaily() {
+  const s = dailySession();
+  try {
+    const j = s ? await post(DAILY_API, { action: 'list', token: s.token }) : null;
+    if (j && j.ok) HM.daily = (j.records || []).map(r => ({ date: String(r.date), type: r.type, no: String(r.no), result: r.result || '' }));
+    else if (j && j.auth === false) return signOutAll();
+  } catch {}
+  if (!HM.daily) HM.daily = (ls.json('daily_inspection_records_v1') || []).map(r => ({ date: r.date, type: r.type, no: String(r.machineNo || ''), result: '' }));
+  if (!$('home').hidden) hmRender();
+}
+async function hmLoadNight(date) {
+  const s = dailySession() || nightSession();
+  HM.loadingNight = date;
+  try {
+    const j = s ? await post(DAILY_API, { action: 'get', date, token: s.token }) : null;
+    if (j && j.ok) HM.night[date] = j.state || {};
+    else if (j && j.auth === false) return signOutAll();
+  } catch {}
+  if (HM.night[date] === undefined) {   // offline: use this device's copy
+    const rec = ((ls.json('nsp') || {}).rec) || {}, st = {};
+    Object.entries(rec).forEach(([k, v]) => { const [f, d] = k.split('|'); if (d === date) st[f] = Object.fromEntries(Object.entries(v).filter(([id]) => !id.startsWith('_')).map(([id, x]) => [id, { v: x === true ? '✓' : String(x ?? '') }])); });
+    HM.night[date] = st;
+  }
+  if (!$('home').hidden && nightOf(HM.sel) === date) hmRender();
+}
+function hmSelect(d) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(d || '')) return;
+  HM.sel = d; hmRender();
+  if (HM.night[nightOf(d)] === undefined) hmLoadNight(nightOf(d));
+}
 function showHome() {
   document.body.classList.add('at-home'); $('home').hidden = false; closeMenu();
-  document.title = 'Inspection'; refreshMe();
-  setTimeout(() => document.querySelector('.hm-card')?.focus({ preventScroll: true }), 60);
+  document.title = 'Inspection';
+  if (!HM.sel) HM.sel = todayStr();
+  HM.night = {};                       // fresh numbers every time the home page is shown
+  refreshMe(); hmRender(); hmLoadDaily(); hmLoadNight(nightOf(HM.sel));
 }
 function leaveHome() { document.body.classList.remove('at-home'); $('home').hidden = true; }
-document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => { leaveHome(); show(b.dataset.go); }));
+// run something inside an app once it has loaded (same-origin iframe)
+function callApp(app, fn) {
+  const f = frame(app), run = () => { try { fn(f.contentWindow); } catch (e) {} };
+  if (f.dataset.ready) run(); else f.addEventListener('load', () => setTimeout(run, 400), { once: true });
+}
+$('hmDays').addEventListener('click', e => { const b = e.target.closest('[data-day]'); if (b) hmSelect(b.dataset.day); });
+$('hmPrev').addEventListener('click', () => hmSelect(addDays(HM.sel, -7)));
+$('hmNext').addEventListener('click', () => hmSelect(addDays(HM.sel, 7)));
+$('hmPick').addEventListener('change', e => hmSelect(e.target.value));
+$('hmGoToday').addEventListener('click', () => hmSelect(todayStr()));
+document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => {
+  const app = b.dataset.open, view = !!b.dataset.view, d = app === 'night' ? nightOf(HM.sel) : HM.sel;
+  leaveHome(); show(app);
+  callApp(app, w => w.shellOpenDate && w.shellOpenDate(d, view));   // the app opens at the chosen day
+}));
 $('goHome').addEventListener('click', showHome);
-$('hmOut').addEventListener('click', () => { if (confirm('ออกจากระบบทั้ง Daily และ Night Shift?')) signOutAll(); });
+$('hmMe').addEventListener('click', () => { const d = dailySession() || nightSession(); if (confirm(`ออกจากระบบ${d ? ' ' + d.name : ''}? (ทั้ง Daily และ Night Shift)`)) signOutAll(); });
 function show(app) {
   current = app; ls.set('shell_tab', app);
   if (LOCAL) { document.querySelectorAll('.side [data-app]').forEach(b => b.dataset.app === app ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current')); $('appTitle').textContent = TITLES[app]; closeMenu(); return localNotice(); }
@@ -332,9 +438,7 @@ function refreshMe() {
   const dq = (ls.json('di_sync_queue') || []).length, nq = ((ls.json('nsp') || {}).q || []).length;
   $('cntDaily').hidden = !dq; $('cntDaily').textContent = dq;
   $('cntNight').hidden = !nq; $('cntNight').textContent = nq;
-  $('hmName').textContent = name; $('hmAv').textContent = $('meAv').textContent; $('hmRole').textContent = $('meRole').textContent;
-  $('hmCntDaily').hidden = !dq; $('hmCntDaily').textContent = dq; $('hmCntDaily').title = dq + ' รายการรอส่งเข้า Sheet';
-  $('hmCntNight').hidden = !nq; $('hmCntNight').textContent = nq; $('hmCntNight').title = nq + ' รายการรอส่งเข้า Sheet';
+  $('hmAv').textContent = $('meAv').textContent;
 }
 setInterval(refreshMe, 3000);
 $('logout').addEventListener('click', () => { if (confirm('ออกจากระบบทั้ง Daily และ Night Shift?')) signOutAll(); });
