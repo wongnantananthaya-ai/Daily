@@ -557,6 +557,7 @@ th .freq{display:table;margin-top:4px}
 #nsNote{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:50;padding:10px 16px;border-radius:999px;background:rgba(28,28,30,.92);color:#fff;font-size:14px;font-weight:600;transition:opacity .2s,transform .2s;white-space:nowrap}
 #nsNote.on{opacity:1;transform:translate(-50%,0)}
 .embed #sync{margin-left:auto}
+@media (min-width:900px){.embed header{padding-left:64px}}   /* room for app.html's ☰ button (top-left) */
 @media (max-width:480px){#hrow{flex-wrap:wrap;row-gap:6px}#hrow .dpw input[type=date]{width:170px}#who{display:none}#menuBtn{margin-left:auto}#sync,.embed #sync{order:10;margin-left:0}#hrow label.meta{font-size:0}#hrow input[type=date]{font-size:16px}.dateth{font-size:15px}}
 header{background:color-mix(in srgb,var(--bg) 82%,transparent);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-bottom:.5px solid var(--line)}
 .theme-btn{border:0;background:var(--card);border-radius:999px;min-width:36px;justify-content:center}
@@ -613,6 +614,8 @@ button.primary{border-radius:var(--r-lg)}
 @media (min-width:1000px){
  #side{background:var(--bg);border-right:.5px solid var(--line);gap:var(--s3)}
  .sd-day b{font-size:22px;font-weight:700}
+ .sd-day b small{font-size:13px;font-weight:500;color:var(--mute)}
+ .sd-day span{display:block}
  .sd-h{font-size:13px;font-weight:400;letter-spacing:0;color:var(--mute);margin:0 var(--s3) 6px}
  .sd-list{gap:0;background:var(--card);border-radius:var(--r-lg);overflow:hidden}
  .sd-it{border:0;border-radius:0;min-height:48px;padding:6px var(--s3);position:relative}
@@ -1176,7 +1179,8 @@ function renderSide(){syncLabel();dateLabel();const el=$('side');if(!el)return;i
   const done=list.filter((_,i)=>r['t'+i]).length;
   const tonight=new Set(list.flatMap(t=>linksOf(t.name,t.time)));
   const [y,m,d]=date.split('-').map(Number);
-  let h=`<div class="sd-day"><b>${DAYS_TH[day]} ${d}/${m}</b><span>งานคืนนี้ ${done}/${list.length} ข้อ</span>
+  // the date is already in the date box at the top — this header shows tonight's progress only
+  let h=`<div class="sd-day"><span>งานคืนนี้</span><b>${done}<small> / ${list.length} ข้อ</small></b>
     <div class="prog"><i style="width:${list.length?done/list.length*100:0}%"></i></div></div>`;
   h+=`<div><div class="sd-h">ช่วงเวลา</div><div class="sd-list">`+per.map((ix,s)=>{if(!ix.length)return '';const n=ix.filter(i=>r['t'+i]).length,all=n===ix.length;
     return `<button class="sd-it ${tab==='tasks'&&slotSel===s?'on':''}" data-sslot="${s}"><span class="ic"><i class="ti ${all?'ti-check':'ti-clock'}" aria-hidden="true"></i></span>

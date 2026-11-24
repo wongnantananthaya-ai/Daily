@@ -62,13 +62,16 @@ body.menu-open .scrim{opacity:1;pointer-events:auto}
 .me b{display:block;font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .me small{color:var(--label2);font-size:.78rem}
 .out{border:0;background:none;color:var(--brand);font:inherit;font-weight:600;font-size:.88rem;cursor:pointer;padding:8px}
-/* computer: menu stays open on the left */
+/* computer: the form gets the whole screen; the app menu sits behind a ☰ button (top-left) and slides in over the page */
+.fab{display:none}
 @media (min-width:900px){
   .topbar{display:none}
-  .side{transform:none;border-radius:0;box-shadow:none;border-right:.5px solid var(--sep);max-width:none}
-  .side .iconbtn{display:none}
-  .scrim{display:none}
-  .frames{top:0;left:var(--side)}
+  .frames{top:0;left:0}
+  .fab{display:flex;position:fixed;top:8px;left:10px;z-index:12;width:40px;height:40px;border:.5px solid var(--sep);border-radius:12px;background:rgba(255,255,255,.92);
+    -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:0 2px 8px rgba(0,0,0,.08);align-items:center;justify-content:center;color:var(--navy);cursor:pointer}
+  .fab:hover{background:#fff}
+  .fab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+  body.at-home .fab,body.locked .fab,body.menu-open .fab{display:none}
   .sec{margin-top:18px}
 }
 body.locked .topbar,body.locked .side,body.locked .scrim{display:none}
@@ -326,6 +329,7 @@ button.adm-row{cursor:pointer;min-height:56px}button.adm-row:hover{background:#F
   <button type="button" class="iconbtn" id="menuOpen" aria-label="เปิดเมนู" aria-controls="side" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
   <b id="appTitle">Daily Inspection</b>
 </header>
+<button type="button" class="fab" id="menuFab" aria-label="เปิดเมนู" aria-controls="side"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
 <div class="scrim" id="scrim"></div>
 <nav class="side" id="side" aria-label="เมนู">
   <button type="button" class="iconbtn" id="menuClose" aria-label="ปิดเมนู"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
@@ -382,7 +386,7 @@ button.adm-row{cursor:pointer;min-height:56px}button.adm-row:hover{background:#F
 <script>
 /* where the two apps and their Apps Script back ends are */
 // ?v= makes the browser load the new file after each upload (bump it whenever index.html / daily_inspection_mobile.html change)
-const V = '20261124m';
+const V = '20261124n';
 const APPS = { daily: 'daily_inspection_mobile.html?v=' + V, night: 'index.html?v=' + V };
 // both apps now use the same Apps Script (Daily's): one account list, one Google Sheet
 const DAILY_API = 'https://script.google.com/macros/s/AKfycbxuM2GmQGbDG7tLM0uQiqsEvHcqeEQ8M93e6qsIn06fAmSB8MUMGz7mh-nRX8ZOUc6H9Q/exec';
@@ -695,6 +699,7 @@ document.querySelectorAll('.side [data-app]').forEach(b => b.addEventListener('c
 function openMenu() { document.body.classList.add('menu-open'); $('menuOpen').setAttribute('aria-expanded', 'true'); setTimeout(() => document.querySelector('.side [aria-current]')?.focus(), 50); }
 function closeMenu() { document.body.classList.remove('menu-open'); $('menuOpen').setAttribute('aria-expanded', 'false'); }
 $('menuOpen').addEventListener('click', openMenu);
+$('menuFab').addEventListener('click', openMenu);
 $('menuClose').addEventListener('click', closeMenu);
 $('scrim').addEventListener('click', closeMenu);
 addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
