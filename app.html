@@ -143,7 +143,16 @@ body.at-home .topbar,body.at-home .side,body.at-home .scrim,body.at-home .frames
 .hm-acts{display:flex;gap:8px;margin-top:14px}
 .hm-b{flex:1;min-height:44px;border:0;border-radius:12px;font:inherit;font-size:.95rem;font-weight:600;cursor:pointer;text-align:center;display:flex;align-items:center;justify-content:center}
 .hm-b:active{transform:scale(.98)}
-.hm-b.red{background:var(--red);color:#fff}.hm-b.navy{background:var(--navy);color:#fff}.hm-b.sec{background:var(--g1);color:#000}
+.hm-b.red{background:var(--red);color:#fff}.hm-b.navy{background:var(--navy);color:#fff}.hm-b.alt{background:var(--g1);color:#000}
+/* one style for both cards and one colour for the calendar (no red = Daily / blue = Night) */
+.hm-b.pri{background:#1C1C1E;color:#fff}
+.hm-ib{color:#1C1C1E}
+.hm-day.today .d{color:#000;box-shadow:inset 0 0 0 1.5px #1C1C1E}
+.hm-day[aria-pressed="true"] .d,.hm-day[aria-pressed="true"].today .d{background:#1C1C1E;color:#fff;box-shadow:none}
+.hm-day.future[aria-pressed="true"]{opacity:1}
+.hm-dots .dd,.hm-dots .dn{background:#8E8E93}
+.hm-today{color:#1C1C1E}
+.hm-date{color:#3A3A3C;font-size:.9rem}
 .hm-foot{text-align:center;color:var(--l3);font-size:.75rem;margin:14px 0 0}
 @media (prefers-reduced-motion:reduce){.hm-prog i{transition:none}}
 /* login */
@@ -232,8 +241,8 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0 0 26px}
       </div>
       <div class="hm-chips" id="hmDChips"></div>
       <div class="hm-acts">
-        <button type="button" class="hm-b sec" data-open="daily" data-view="1">ดูข้อมูล</button>
-        <button type="button" class="hm-b red" data-open="daily">กรอก</button>
+        <button type="button" class="hm-b alt" data-open="daily" data-view="1">ดูข้อมูล</button>
+        <button type="button" class="hm-b pri" data-open="daily">กรอก</button>
       </div>
     </article>
 
@@ -247,7 +256,8 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0 0 26px}
       <div class="hm-prog"><i id="hmNBar"></i></div>
       <div class="hm-chips" id="hmNChips"></div>
       <div class="hm-acts">
-        <button type="button" class="hm-b navy" data-open="night">ดู / กรอก</button>
+        <button type="button" class="hm-b alt" data-open="night" data-view="1">ดูข้อมูล</button>
+        <button type="button" class="hm-b pri" data-open="night">กรอก</button>
       </div>
     </article>
     <p class="hm-foot" id="hmFoot"></p>
@@ -355,8 +365,8 @@ const localNights = () => { const s = new Set(); Object.keys(((ls.json('nsp') ||
 
 function hmRender() {
   const sel = HM.sel, t = todayStr(), mon = addDays(sel, -((pd(sel).getDay() + 6) % 7));
-  const today = pd(t);
-  $('hmToday').textContent = `วัน${TH_WL[today.getDay()]}ที่ ${today.getDate()} ${TH_M[today.getMonth()]} ${today.getFullYear() + 543}`;
+  const sd = pd(sel);   // the line above the title shows the day picked on the calendar
+  $('hmToday').textContent = `วัน${TH_WL[sd.getDay()]}ที่ ${sd.getDate()} ${TH_M[sd.getMonth()]} ${sd.getFullYear() + 543}${sel === t ? ' · วันนี้' : ''}`;
   $('hmMonth').textContent = `${TH_M[pd(sel).getMonth()]} ${pd(sel).getFullYear() + 543}`;
   const dDays = new Set((HM.daily || []).map(r => r.date)), nDays = localNights();
   Object.entries(HM.night).forEach(([d, st]) => { if (st && Object.keys(st).length) nDays.add(d); });
@@ -364,7 +374,7 @@ function hmRender() {
     const d = addDays(mon, i), dt = pd(d);
     return `<button type="button" class="hm-day ${d === t ? 'today' : ''} ${d > t ? 'future' : ''}" data-day="${d}" aria-pressed="${d === sel}" aria-label="${TH_WL[dt.getDay()]} ${dt.getDate()} ${TH_M[dt.getMonth()]}">
       <span class="w">${TH_W[dt.getDay()]}</span><span class="d">${dt.getDate()}</span>
-      <span class="hm-dots">${dDays.has(d) ? '<i class="dd"></i>' : ''}${nDays.has(d) ? '<i class="dn"></i>' : ''}</span></button>`;
+      <span class="hm-dots">${dDays.has(d) || nDays.has(d) ? '<i class="dd"></i>' : ''}</span></button>`;   // one dot = something was filled that day
   }).join('');
   $('hmGoToday').hidden = sel === t;
   $('hmPick').value = sel;
