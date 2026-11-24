@@ -669,6 +669,7 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
 @media (min-width:900px){.embed .nav{padding-left:64px}}   /* room for app.html's ☰ button (top-left) */
 /* admin = view only */
 .ro .bar,.ro [data-wz],.ro [data-wzat]{display:none!important}
+.taken .bar{display:none}
 .admed #typeSeg,.admed #machineNo,.admed #inspectDate{pointer-events:none;opacity:.55}
 .ro .shell{padding-bottom:calc(env(safe-area-inset-bottom) + 24px)}
 .ro main .grp input,.ro main .grp select{pointer-events:none}
@@ -1133,6 +1134,28 @@ function badge(sec) {
   return { t: `${filled}/${total}`, c: '' };
 }
 
+/* ---- machines already checked by someone else (asked from the Sheet, per date) ---- */
+const TAKEN = {};   // date → { at, map: { 'CT-2-2026-11-24': { n, u } } }
+let takenBusy = '';
+function takenBy() {
+  const date = $('inspectDate').value, no = normNo($('machineNo').value);
+  if (!date || !no || editingId || !session) return null;
+  const t = TAKEN[date];
+  if (!t || Date.now() - t.at > 60000) takenLoad(date);   // refresh at most once a minute
+  const hit = t && t.map[`${currentType}-${no}-${date}`];
+  return hit && hit.u !== session.user && !(!hit.u && hit.n === session.name) ? hit : null;   // own record = fine
+}
+async function takenLoad(date) {
+  if (takenBusy === date || !sheetUrl() || navigator.onLine === false) return;
+  takenBusy = date;
+  try { const j = await postSheet({ action: 'taken', date }); TAKEN[date] = { at: Date.now(), map: j.taken || {} }; renderForm(); }
+  catch (e) { TAKEN[date] = TAKEN[date] || { at: Date.now(), map: {} }; }
+  finally { takenBusy = ''; }
+}
+let takenT = 0;
+$('machineNo').addEventListener('input', () => { clearTimeout(takenT); takenT = setTimeout(renderForm, 400); });
+$('inspectDate').addEventListener('change', () => renderForm());
+
 function renderForm() {
   const schema = FORMS[currentType];
   document.querySelectorAll('#typeSeg button').forEach(b => b.setAttribute('aria-selected', b.dataset.type === currentType));
@@ -1144,6 +1167,13 @@ function renderForm() {
   const fs = schema.sections.flatMap(s => s.fields || []), nFilled = fs.filter(f => filled(formValues[f.id])).length;
   const nBad = abnormalIds(currentType, formValues).length;
   let html = draftBanner() + (isStopped() ? `<div class="banner" role="note">${icon('warn')}<span>เครื่องอยู่ในสถานะ <b>M/C Stop</b> ข้ามช่องที่ต้องวัดขณะเดินเครื่องได้ แล้วกดบันทึกได้เลย</span></div>` : '');
+  // someone else already checked this machine on this day: say who, and no "ตรวจ" button (the Sheet would refuse it anyway)
+  const tk = session?.admin ? null : takenBy();
+  document.documentElement.classList.toggle('taken', !!tk);
+  if (tk) {
+    html += `<div class="banner" role="alert">${icon('warn')}<span><b>${esc(currentType)} ${esc(normNo($('machineNo').value))}</b> วันที่เลือก <b>${esc(tk.n || 'คนอื่น')}</b> ตรวจไปแล้ว · บันทึกซ้ำไม่ได้ เลือกเครื่องอื่น หรือแจ้ง admin ถ้าต้องแก้</span></div>`;
+    $('formContainer').innerHTML = html; updateOverallProgress(); return;
+  }
   // admin: no new inspections — open a saved one from the history (clock button) to view or edit it
   document.documentElement.classList.toggle('ro', !!session?.admin && !editingId);
   document.documentElement.classList.toggle('admed', !!session?.admin && !!editingId);   // admin editing: machine / date / type stay as recorded
@@ -1580,8 +1610,11 @@ async function flushSync() {
         if (!e.deny) throw e;
         // not allowed (e.g. someone else already saved this machine for this day): drop it here and say why
         setSyncQ(syncQ().filter(x => x.t !== op.t));
+        const gone = op.op === 'upsert' ? store.get().find(x => x.id === op.id) : null;
         if (op.op === 'upsert') { store.set(store.get().filter(x => x.id !== op.id)); refreshViews(); }
-        showToast(e.message, true);
+        // say plainly which inspection was not saved, and why
+        showToast(gone ? `${gone.type} ${normNo(gone.machineNo)} วันที่ ${gone.date.slice(8)}/${gone.date.slice(5, 7)} ไม่ถูกบันทึก · ${e.message}` : e.message, true);
+        if (gone) { delete TAKEN[gone.date]; renderForm(); }
         continue;
       }
       setSyncQ(syncQ().filter(x => x.t !== op.t));

@@ -627,6 +627,8 @@ button.primary{border-radius:var(--r-lg)}
  .sd-it.on .nm small,.sd-it.on .st{color:var(--on-acc)}.sd-it.on .st{background:color-mix(in srgb,var(--on-acc) 20%,transparent)}
  .sd-it .ic{border-radius:7px}
  .sd-it .st.todo{background:color-mix(in srgb,var(--acc) 12%,var(--card));color:var(--acc-ink)}
+ .sd-it.off,.sd-it:disabled{cursor:not-allowed;opacity:.45;filter:none;pointer-events:auto}
+ .sd-it:disabled:hover{background:none}
  .sd-keys{border:0;background:var(--card);border-radius:var(--r-lg)}
  main{max-width:1040px;margin:0 auto!important}   /* centred in the space right of the panel */
  .tl-head .n,.tl-head+.prog{display:none}           /* tonight's total is already at the top of the left panel */
@@ -1160,6 +1162,8 @@ function render(){
   document.querySelector('header').hidden=!loggedIn;
   if(!loggedIn)return renderLogin();
   
+  // a check sheet that isn't scheduled on this night can't be open (e.g. after changing the date) → back to the task list
+  if(FORMS[tab]){const l=TASKS[new Date($('date').value+'T12:00').getDay()]||[];if(!l.some(t=>linksOf(t.name,t.time).includes(tab))){tab='tasks';returnTo=null}}
   document.body.classList.toggle('is-form',!!FORMS[tab]);
   const view={tasks:renderTasks,data:renderData}[tab];view?view():renderForm(tab);
   badge();
@@ -1192,14 +1196,15 @@ function renderSide(){syncLabel();dateLabel();const el=$('side');if(!el)return;i
     return `<button class="sd-it ${tab==='tasks'&&slotSel===s?'on':''}" data-sslot="${s}"><span class="ic"><i class="ti ${all?'ti-check':'ti-clock'}" aria-hidden="true"></i></span>
       <span class="nm">${SLOT_N[s]}${s===nowSlot?' •':''}<small>${SLOT_T[s]}</small></span><span class="st ${all?'ok':''}">${n}/${ix.length}</span></button>`}).join('')+`</div></div>`;
   h+=`<div><div class="sd-h">เช็คชีต</div><div class="sd-list">`+Object.entries(FORMS).map(([k,[title]])=>{const x=formState(k),on=tonight.has(k);
-    const st=x.bad?`<span class="st ng">NG ${x.bad}</span>`:x.ok?`<span class="st ok">ครบ</span>`:`<span class="st ${on?'todo':''}">เหลือ ${x.blank}</span>`;
-    return `<button class="sd-it ${tab===k?'on':''} ${on?'':'off'}" data-sform="${k}"><span class="ic"><i class="ti ${SHEET_IC[k]||'ti-clipboard'}" aria-hidden="true"></i></span>
+    // not scheduled tonight: shown greyed out and can't be opened
+    const st=!on?'':x.bad?`<span class="st ng">NG ${x.bad}</span>`:x.ok?`<span class="st ok">ครบ</span>`:`<span class="st todo">เหลือ ${x.blank}</span>`;
+    return `<button class="sd-it ${tab===k?'on':''} ${on?'':'off'}" data-sform="${k}" ${on?'':'disabled aria-disabled="true" title="ไม่มีในคืนนี้"'}><span class="ic"><i class="ti ${SHEET_IC[k]||'ti-clipboard'}" aria-hidden="true"></i></span>
       <span class="nm">${esc(title)}${on?'':'<small>ไม่มีในคืนนี้</small>'}</span>${st}</button>`}).join('')+`</div></div>`;
   h+=`<div class="sd-list"><button class="sd-it ${tab==='data'?'on':''}" data-sdata><span class="ic"><i class="ti ti-database" aria-hidden="true"></i></span><span class="nm">ข้อมูลและบัญชี</span><span></span></button></div>`;
   // shortcuts folded away (opens on click) so the left panel fits without scrolling
   h+=`<details class="sd-keys"><summary>⌨ คีย์ลัดในเช็คชีต</summary><kbd>Tab</kbd> ช่องถัดไป<br><kbd>G</kbd> ปกติ · <kbd>N</kbd> ผิดปกติ<br><kbd>Del</kbd> ล้างช่อง<br><kbd>Enter</kbd> ในช่องตัวเลข = บันทึกแล้วไปช่องว่าง<br><kbd>Esc</kbd> กลับรายการงาน</details>`;
   el.innerHTML=h}
-$('side').onclick=e=>{const b=e.target.closest('.sd-it');if(!b)return;
+$('side').onclick=e=>{const b=e.target.closest('.sd-it');if(!b||b.disabled)return;
   if(b.dataset.sslot!=null){tab='tasks';slotSel=+b.dataset.sslot}
   else if(b.dataset.sform){tab=b.dataset.sform;returnTo='tasks'}
   else if(b.dataset.sdata!=null){tab='data';returnTo=null}
