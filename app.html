@@ -2,7 +2,14 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<style>html{touch-action:manipulation}</style>
+<script>/* no page zoom: pinch, double-tap, Ctrl+wheel, Ctrl +/-/0 (Daily's monthly-sheet viewer keeps its own zoom) */
+(function(){var own=function(e){return e.target&&e.target.closest&&e.target.closest('.viewer,.ls')},stop=function(e){e.preventDefault()};
+document.addEventListener('gesturestart',stop,{passive:false});document.addEventListener('gesturechange',stop,{passive:false});
+document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1&&!own(e))e.preventDefault()},{passive:false});
+addEventListener('wheel',function(e){if(e.ctrlKey&&!own(e))e.preventDefault()},{passive:false});
+addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&/^(\+|=|-|_|0)$/.test(e.key))e.preventDefault()});})();</script>
 <meta name="theme-color" content="#F2F2F7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Daily">
@@ -175,6 +182,27 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0 0 26px}
 .btn{width:100%;min-height:52px;border:0;border-radius:14px;background:var(--tint);color:#fff;font:inherit;font-size:1.05rem;font-weight:700;cursor:pointer}
 .btn:disabled{opacity:.6}
 .note{margin:16px 4px 0;color:var(--label2);font-size:.8rem;line-height:1.5}
+/* month calendar (centred card) */
+.cal{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.32);animation:alFade .2s ease}
+.cal[hidden]{display:none}
+.cal-box{width:100%;max-width:360px;background:#fff;border-radius:22px;padding:14px 14px 10px;box-shadow:0 24px 60px -16px rgba(0,0,0,.4);animation:alPop .25s cubic-bezier(.32,.72,0,1);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Noto Sans Thai","Leelawadee UI",system-ui,sans-serif;color:#000}
+.cal-h{display:flex;align-items:center;justify-content:space-between;padding:0 2px 0 8px}
+.cal-h b{font-size:1.05rem;font-weight:600}
+.cal-h span{display:flex}
+.cal-w,.cal-g{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));text-align:center}
+.cal-w{margin:6px 0 2px;font-size:.72rem;font-weight:600;color:#8E8E93}
+.cal-g button{position:relative;aspect-ratio:1;max-height:48px;border:0;background:none;font:inherit;font-size:1.02rem;font-weight:500;color:#000;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.cal-g button span{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.cal-g button.today span{box-shadow:inset 0 0 0 1.5px #1C1C1E;font-weight:700}
+.cal-g button[aria-pressed="true"] span{background:#1C1C1E;color:#fff;font-weight:700;box-shadow:none}
+.cal-g button.future{color:#C7C7CC}
+.cal-g button.has::after{content:"";position:absolute;bottom:2px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#8E8E93}
+.cal-g button:hover span{background:#F2F2F7}
+.cal-g button[aria-pressed="true"]:hover span{background:#1C1C1E}
+.cal-f{display:flex;justify-content:space-between;margin-top:6px;border-top:.5px solid #E5E5EA;padding-top:6px}
+.cal-f button{min-height:44px;padding:0 14px;border:0;background:none;font:inherit;font-size:1rem;font-weight:600;color:#1C1C1E;cursor:pointer;border-radius:10px}
+.cal-f button:active{background:#F2F2F7}
 /* iOS-style alert (replaces the browser's own confirm box) */
 .al{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.32);animation:alFade .2s ease}
 .al[hidden]{display:none}
@@ -225,7 +253,7 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0 0 26px}
         <span class="hm-nav">
           <button type="button" class="hm-ib" id="hmPrev" aria-label="สัปดาห์ก่อน"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
           <button type="button" class="hm-ib" id="hmNext" aria-label="สัปดาห์ถัดไป"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
-          <label class="hm-ib hm-cal" aria-label="เลือกจากปฏิทิน"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M8 3v4M16 3v4"/></svg><input type="date" id="hmPick"></label>
+          <button type="button" class="hm-ib" id="hmCalBtn" aria-label="เลือกจากปฏิทิน" aria-haspopup="dialog"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M8 3v4M16 3v4"/></svg></button>
         </span>
       </div>
       <div class="hm-days" id="hmDays"></div>
@@ -242,7 +270,7 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0 0 26px}
       <div class="hm-chips" id="hmDChips"></div>
       <div class="hm-acts">
         <button type="button" class="hm-b alt" data-open="daily" data-view="1">ดูข้อมูล</button>
-        <button type="button" class="hm-b pri" data-open="daily">กรอก</button>
+        <button type="button" class="hm-b red" data-open="daily">กรอก</button>
       </div>
     </article>
 
@@ -257,7 +285,7 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0 0 26px}
       <div class="hm-chips" id="hmNChips"></div>
       <div class="hm-acts">
         <button type="button" class="hm-b alt" data-open="night" data-view="1">ดูข้อมูล</button>
-        <button type="button" class="hm-b pri" data-open="night">กรอก</button>
+        <button type="button" class="hm-b navy" data-open="night">กรอก</button>
       </div>
     </article>
     <p class="hm-foot" id="hmFoot"></p>
@@ -293,6 +321,18 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0 0 26px}
 
 <div class="frames" id="frames"></div>
 
+<!-- month calendar: opens in the middle of the screen (the phone's own date picker sticks to the button and runs off the edge) -->
+<div class="cal" id="cal" hidden role="dialog" aria-modal="true" aria-labelledby="calT">
+  <div class="cal-box">
+    <div class="cal-h"><b id="calT"></b>
+      <span><button type="button" class="hm-ib" id="calPrev" aria-label="เดือนก่อน"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button type="button" class="hm-ib" id="calNext" aria-label="เดือนถัดไป"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></span></div>
+    <div class="cal-w" aria-hidden="true"><span>อา</span><span>จ</span><span>อ</span><span>พ</span><span>พฤ</span><span>ศ</span><span>ส</span></div>
+    <div class="cal-g" id="calG"></div>
+    <div class="cal-f"><button type="button" id="calToday">วันนี้</button><button type="button" id="calClose">ปิด</button></div>
+  </div>
+</div>
+
 <div class="al" id="alOut" hidden role="alertdialog" aria-modal="true" aria-labelledby="alT">
   <div class="al-box">
     <h2 id="alT">ออกจากระบบ</h2>
@@ -304,7 +344,7 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0 0 26px}
 <script>
 /* where the two apps and their Apps Script back ends are */
 // ?v= makes the browser load the new file after each upload (bump it whenever index.html / daily_inspection_mobile.html change)
-const V = '20261124d';
+const V = '20261124e';
 const APPS = { daily: 'daily_inspection_mobile.html?v=' + V, night: 'index.html?v=' + V };
 // both apps now use the same Apps Script (Daily's): one account list, one Google Sheet
 const DAILY_API = 'https://script.google.com/macros/s/AKfycbxuM2GmQGbDG7tLM0uQiqsEvHcqeEQ8M93e6qsIn06fAmSB8MUMGz7mh-nRX8ZOUc6H9Q/exec';
@@ -377,7 +417,7 @@ function hmRender() {
       <span class="hm-dots">${dDays.has(d) || nDays.has(d) ? '<i class="dd"></i>' : ''}</span></button>`;   // one dot = something was filled that day
   }).join('');
   $('hmGoToday').hidden = sel === t;
-  $('hmPick').value = sel;
+  if (!$('cal').hidden) calRender();
 
   // ---- Daily of the selected day ----
   $('hmDSub').textContent = 'วันที่ ' + thShort(sel);
@@ -460,7 +500,31 @@ function callApp(app, fn) {
 $('hmDays').addEventListener('click', e => { const b = e.target.closest('[data-day]'); if (b) hmSelect(b.dataset.day); });
 $('hmPrev').addEventListener('click', () => hmSelect(addDays(HM.sel, -7)));
 $('hmNext').addEventListener('click', () => hmSelect(addDays(HM.sel, 7)));
-$('hmPick').addEventListener('change', e => hmSelect(e.target.value));
+/* month calendar */
+const CAL = { m: '' };   // 'yyyy-mm' shown
+function calRender() {
+  const [y, m] = CAL.m.split('-').map(Number), first = new Date(y, m - 1, 1), days = new Date(y, m, 0).getDate(), t = todayStr();
+  const has = new Set((HM.daily || []).map(r => r.date)); localNights().forEach(d => has.add(d));
+  Object.entries(HM.night).forEach(([d, st]) => { if (st && Object.keys(st).length) has.add(d); });
+  $('calT').textContent = `${TH_M[m - 1]} ${y + 543}`;
+  let h = '<span></span>'.repeat(first.getDay());
+  for (let i = 1; i <= days; i++) {
+    const d = `${CAL.m}-${String(i).padStart(2, '0')}`;
+    h += `<button type="button" data-cd="${d}" class="${d === t ? 'today' : ''} ${d > t ? 'future' : ''} ${has.has(d) ? 'has' : ''}" aria-pressed="${d === HM.sel}" aria-label="${i} ${TH_M[m - 1]}${has.has(d) ? ' มีข้อมูล' : ''}"><span>${i}</span></button>`;
+  }
+  $('calG').innerHTML = h;
+}
+const calShift = n => { const [y, m] = CAL.m.split('-').map(Number), d = new Date(y, m - 1 + n, 1); CAL.m = ymd(d).slice(0, 7); calRender(); };
+function calOpen() { CAL.m = HM.sel.slice(0, 7); calRender(); $('cal').hidden = false; setTimeout(() => $('calG').querySelector('[aria-pressed="true"]')?.focus(), 30); }
+const calClose = () => { $('cal').hidden = true; $('hmCalBtn').focus(); };
+$('hmCalBtn').addEventListener('click', calOpen);
+$('calPrev').addEventListener('click', () => calShift(-1));
+$('calNext').addEventListener('click', () => calShift(1));
+$('calClose').addEventListener('click', calClose);
+$('calToday').addEventListener('click', () => { hmSelect(todayStr()); calClose(); });
+$('calG').addEventListener('click', e => { const b = e.target.closest('[data-cd]'); if (b) { hmSelect(b.dataset.cd); calClose(); } });
+$('cal').addEventListener('click', e => { if (e.target === $('cal')) calClose(); });
+addEventListener('keydown', e => { if (e.key === 'Escape' && !$('cal').hidden) calClose(); });
 $('hmGoToday').addEventListener('click', () => hmSelect(todayStr()));
 document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => {
   const app = b.dataset.open, view = !!b.dataset.view, d = app === 'night' ? nightOf(HM.sel) : HM.sel;
