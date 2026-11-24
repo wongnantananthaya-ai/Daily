@@ -519,6 +519,89 @@ th .freq{display:table;margin-top:4px}
  body:has(#hrow[hidden]) main{margin:0 auto;min-height:calc(100vh - 57px);display:flex;flex-direction:column;justify-content:center;align-items:center}
  body:has(#hrow[hidden]) .login-box{margin:0 auto;width:100%;max-width:440px}
 }
+/* ===== Apple look (design 1: split view + inset grouped list). Navy = the one tint; green = done; red = abnormal. ===== */
+:root,[data-theme="dark"]{
+ --bg:#000;--card:#1C1C1E;--raise:#2C2C2E;--fg:#fff;--mute:#98989F;--line:#38383A;--track:#3A3A3C;
+ --acc:#7D8FFF;--on-acc:#0A0F2C;--acc-ink:#A9B5FF;--ok:#30D158;--okbg:rgba(48,209,88,.16);--okdot:#30D158;--ng:#FF6961;--ngbg:rgba(255,69,58,.16);--ngdot:#FF453A;
+ --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","IBM Plex Sans Thai","Noto Sans Thai","Leelawadee UI",system-ui,sans-serif;--r:10px;--r-lg:12px}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
+ --bg:#F2F2F7;--card:#fff;--raise:#F2F2F7;--fg:#000;--mute:#6E6E73;--line:#E5E5EA;--track:#E5E5EA;
+ --acc:#1C2B5A;--on-acc:#fff;--acc-ink:#1C2B5A;--ok:#248A3D;--okbg:#E8F8EC;--okdot:#34C759;--ng:#D70015;--ngbg:#FFE5E3;--ngdot:#FF3B30}}
+[data-theme="light"]{
+ --bg:#F2F2F7;--card:#fff;--raise:#F2F2F7;--fg:#000;--mute:#6E6E73;--line:#E5E5EA;--track:#E5E5EA;
+ --acc:#1C2B5A;--on-acc:#fff;--acc-ink:#1C2B5A;--ok:#248A3D;--okbg:#E8F8EC;--okdot:#34C759;--ng:#D70015;--ngbg:#FFE5E3;--ngdot:#FF3B30}
+header{background:color-mix(in srgb,var(--bg) 82%,transparent);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-bottom:.5px solid var(--line)}
+.theme-btn{border:0;background:var(--card);border-radius:999px;min-width:36px;justify-content:center}
+.prog{height:4px;border-radius:2px}.prog i{background:var(--acc);border-radius:2px}
+.card{border:0;border-radius:var(--r-lg)}
+.card h3{font-size:13px;font-weight:400;color:var(--mute);margin:0 0 var(--s2)}
+/* page head */
+.tl-head{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s3);margin:var(--s1) 0 0}
+.tl-head .k{font-size:13px;color:var(--mute);font-family:var(--mono)}
+.tl-head h2{margin:0;font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
+.tl-head .n{text-align:right;font-size:22px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.tl-head .n small{display:block;font-size:12px;font-weight:400;color:var(--mute)}
+.tl-ng{display:flex;align-items:center;gap:6px;margin:var(--s2) 0 0;padding:var(--s2) var(--s3);border-radius:var(--r);background:var(--ngbg);color:var(--ng);font-size:14px;font-weight:600}
+/* slot tabs (phones/tablets) as a segmented control */
+.slots{display:flex;gap:2px;padding:2px;border-radius:9px;background:color-mix(in srgb,var(--mute) 18%,var(--bg));top:52px;margin:var(--s3) 0}
+.slots button{flex:1;min-height:44px;border:0;border-radius:7px;background:none;padding:4px 2px;color:var(--fg)}
+.slots button.on{background:var(--card);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.slots button.done{background:none;color:var(--ok)}.slots button.done.on{background:var(--card)}
+.slots button.now{border:0}.slots button b{font-weight:600}
+/* the task list */
+.tl{list-style:none;margin:var(--s3) 0;padding:0;background:var(--card);border-radius:var(--r-lg);overflow:hidden}
+.tl>li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px var(--s3);align-items:start;padding:var(--s3) var(--s4);position:relative}
+.tl>li+li::before{content:"";position:absolute;top:0;left:56px;right:0;border-top:.5px solid var(--line)}
+.tl .rd{width:24px;height:24px;margin-top:2px;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--mute) 70%,transparent);display:grid;place-items:center;color:#fff;font-size:14px;padding:0;min-height:0;background:none}
+.tl li.done .rd{background:var(--okdot);border-color:var(--okdot)}
+.tl .rd.part{border-color:var(--acc);background:conic-gradient(var(--acc) var(--p),transparent 0);}
+.tl button.rd{cursor:pointer}
+.tl .nm{font-size:16px;line-height:1.4;overflow-wrap:anywhere}
+.tl li.done .nm{color:var(--mute)}
+.tl .mt{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;font-size:12px;color:var(--mute);margin-top:2px}
+.tl .mt .freq{margin:0}
+.tl .lk{display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+.tl .lk button{display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:0 var(--s2) 0 var(--s3);border:0;border-radius:999px;background:color-mix(in srgb,var(--acc) 10%,var(--card));color:var(--acc-ink);font-size:13px;font-weight:600;white-space:nowrap}
+.tl .lk button.ok{background:var(--okbg);color:var(--ok)}.tl .lk button.ng{background:var(--ngbg);color:var(--ng)}
+.tl .lk button .go{display:inline;margin:0;opacity:.7}
+.tl .cks{grid-column:2/-1;display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.tl .cks button{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 var(--s3) 0 6px;border:0;border-radius:999px;background:var(--raise);color:var(--fg);font-size:13px}
+.tl .cks button .bx{width:20px;height:20px;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--mute) 70%,transparent);display:grid;place-items:center;font-size:12px;color:#fff}
+.tl .cks button.on{background:var(--okbg);color:var(--ok)}.tl .cks button.on .bx{background:var(--okdot);border-color:var(--okdot)}
+.tl .rmk{grid-column:2/-1;width:100%;min-height:32px;padding:2px 0;border:0;border-radius:0;background:none;font-size:14px;color:var(--fg)}
+.tl .rmk::placeholder{color:color-mix(in srgb,var(--mute) 70%,transparent)}
+.tl .rmk:focus{outline:0;border-bottom:1px solid var(--acc)}
+.tl .rmk:not(:placeholder-shown){color:var(--fg)}
+@media (max-width:639px){.tl>li{padding:var(--s3)}.tl>li+li::before{left:52px}.tl .lk{grid-column:2/-1;grid-row:2;align-items:flex-start}.tl .lk:empty{display:none}}
+.tl-cap{font-size:13px;color:var(--mute);margin:var(--s4) var(--s4) var(--s1)}
+/* bottom bar: secondary "ยืนยันจบกะ" + primary "ถัดไป" */
+.bar{background:color-mix(in srgb,var(--bg) 85%,transparent);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-top:.5px solid var(--line)}
+.bar .acts{display:flex;gap:var(--s2)}
+.bar .acts button{min-height:50px;border-radius:var(--r-lg);font-weight:600;font-size:16px}
+.bar .acts .sec{flex:1;border:0;background:var(--card);color:var(--fg)}
+.bar .acts .primary{flex:2;width:auto}
+button.primary{border-radius:var(--r-lg)}
+/* sidebar = inset grouped lists */
+@media (min-width:1000px){
+ #side{background:var(--bg);border-right:.5px solid var(--line);gap:var(--s3)}
+ .sd-day b{font-size:22px;font-weight:700}
+ .sd-h{font-size:13px;font-weight:400;letter-spacing:0;color:var(--mute);margin:0 var(--s3) 6px}
+ .sd-list{gap:0;background:var(--card);border-radius:var(--r-lg);overflow:hidden}
+ .sd-it{border:0;border-radius:0;min-height:48px;padding:6px var(--s3);position:relative}
+ .sd-it+.sd-it::before{content:"";position:absolute;top:0;left:48px;right:0;border-top:.5px solid var(--line)}
+ .sd-it:hover{background:var(--raise)}
+ .sd-it.on{background:var(--acc);color:var(--on-acc);border:0}
+ .sd-it.on::before,.sd-it.on+.sd-it::before{display:none}
+ .sd-it.on .ic{background:color-mix(in srgb,var(--on-acc) 20%,transparent);color:var(--on-acc)}
+ .sd-it.on .nm small,.sd-it.on .st{color:var(--on-acc)}.sd-it.on .st{background:color-mix(in srgb,var(--on-acc) 20%,transparent)}
+ .sd-it .ic{border-radius:7px}
+ .sd-it .st.todo{background:color-mix(in srgb,var(--acc) 12%,var(--card));color:var(--acc-ink)}
+ .sd-keys{border:0;background:var(--card);border-radius:var(--r-lg)}
+ main{max-width:900px}
+ .bar:has(#nextslot){display:block}
+ .bar .acts{justify-content:flex-end}
+ .bar .acts .sec,.bar .acts .primary{flex:none;min-width:200px;padding:0 var(--s5)}
+}
 </style>
 </head>
 <body>
@@ -890,40 +973,31 @@ function renderTasks(){
   const nextSlot=per.findIndex((ix,s)=>s>slotSel&&ix.length);
   const tabsHtml=`<div class="slots" role="tablist">${per.map((ix,s)=>{if(!ix.length)return '';const d=ix.filter(i=>r['t'+i]).length;
     return `<button role="tab" data-slot="${s}" aria-selected="${s===slotSel}" class="${s===slotSel?'on':d===ix.length?'done':''} ${s===nowSlot?'now':''}"><b>${SLOT_T[s]}</b><span>${SLOT_N[s]}${s===nowSlot?' •':''}</span><span>${d===ix.length?'✓ ':''}${d}/${ix.length}</span></button>`}).join('')}</div>`;
-  let h=`<div class="sum">Check sheet night · ${DAYS_TH[day]} <span class="chip">${done}/${list.length}</span>
-    <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="${list.length}" aria-valuenow="${done}"><i style="width:${list.length?done/list.length*100:0}%"></i></div>
-    ${ng?`<span class="warn" style="color:var(--ng);font-weight:600"><i class="ti ti-alert-triangle" aria-hidden="true"></i> ผิดปกติ ${ng} จุดในเช็คชีท</span>`:''}</div>
-  ${tabsHtml}${narrow?`<div class="xl-wrap fit" id="xlw"><table class="xl compact"><colgroup><col class="c1"><col></colgroup><thead><tr><th class="c-name">Maintenance check theme</th><th>Check theme / Remark</th></tr></thead><tbody>`
-  :`<div class="xl-wrap" id="xlw"><table class="xl"><thead><tr><th class="c-name">Maintenance check theme</th>${Array.from({length:W},(_,j)=>`<th>Check theme ${j+1}</th>`).join('')}<th>Remark</th></tr></thead><tbody>`}`;
-  SLOTS.forEach((name,s)=>{
-    const idx=per[s];if(!idx.length||s!==slotSel)return;
-    const d=idx.filter(i=>r['t'+i]).length;
-    for(const i of idx){const t=list[i],ks=linksOf(t.name,t.time),by=doneBy(t,i);
-      if(narrow){const ids=t.checks.length?t.checks.map((c,j)=>['t'+i+'c'+j,c]):[['t'+i,'ทำแล้ว']];
-        h+=`<tr id="task${i}"><th class="c-name ${r['t'+i]?'done':''}">${r['t'+i]?'✓ ':''}${esc(t.name)}<small class="mono">${esc(t.time||'')}</small>${freqTag(t.freq)}${by?`<small>โดย ${esc(by)}</small>`:''}</th><td${ks.length?' class="sheetcell"':''}>`;
-        h+=ks.length?sheetBtns(t.name,ks)
-          :ids.map(([id,c])=>`<div class="ckl ${r[id]?'on':''}" data-ck="${id}" role="checkbox" aria-checked="${!!r[id]}" tabindex="0"><span class="bx">${r[id]?'✓':''}</span><span>${esc(c)}</span></div>`).join('');
-        h+=`<input class="rm2" data-id="n${i}" value="${esc(r['n'+i]||'')}" placeholder="Remark" aria-label="Remark ${esc(t.name)}"></td></tr>`;continue}
-      h+=`<tr id="task${i}"><th class="c-name ${r['t'+i]?'done':''}">${r['t'+i]?'✓ ':''}${esc(t.name)}${t.time?`<small class="mono">${esc(t.time)}</small>`:''}${freqTag(t.freq)}${by?`<small>โดย ${esc(by)}</small>`:''}</th>`;
-      if(ks.length){
-        h+=`<td class="sheetcell" colspan="${W}">${sheetBtns(t.name,ks)}
-          ${t.checks.length?`<small>${t.checks.map(esc).join(' · ')}</small>`:''}</td>`;
-      }else{
-        const ids=t.checks.length?t.checks.map((c,j)=>['t'+i+'c'+j,c]):[['t'+i,'ทำแล้ว']];
-        ids.forEach(([id,c])=>h+=`<td class="ck ${r[id]?'on':''}" data-ck="${id}" role="checkbox" aria-checked="${!!r[id]}" tabindex="0"><span class="bx">${r[id]?'✓':''}</span>${esc(c)}</td>`);
-        for(let j=ids.length;j<W;j++)h+='<td></td>';
-      }
-      h+=`<td class="rm"><input data-id="n${i}" value="${esc(r['n'+i]||'')}" aria-label="Remark ${esc(t.name)}"></td></tr>`}
-  });
-  h+=`</tbody></table></div>
-  <div class="card"><h3>หมายเหตุกะ</h3><textarea data-id="_note" placeholder="บันทึกภาพรวมของกะนี้">${esc(r._note||'')}</textarea>
+  const sIx=per[slotSel]||[],sDone=sIx.filter(i=>r['t'+i]).length;
+  let h=`<div class="tl-head"><div><div class="k">${esc(SLOT_T[slotSel]||'')} · ${DAYS_TH[day]}</div><h2>${esc(SLOT_N[slotSel]||'Check sheet night')}</h2></div>
+    <div class="n">${done}/${list.length}<small>งานคืนนี้</small></div></div>
+    <div class="prog" role="progressbar" aria-label="งานคืนนี้" aria-valuemin="0" aria-valuemax="${list.length}" aria-valuenow="${done}"><i style="width:${list.length?done/list.length*100:0}%"></i></div>
+    ${ng?`<div class="tl-ng"><i class="ti ti-alert-triangle" aria-hidden="true"></i> ผิดปกติ ${ng} จุดในเช็คชีต</div>`:''}
+  ${tabsHtml}<div class="tl-cap">ช่วงนี้ ${sDone}/${sIx.length} ข้อ</div><ul class="tl" id="xlw">`;
+  for(const i of sIx){const t=list[i],ks=linksOf(t.name,t.time),by=doneBy(t,i),ok=!!r['t'+i];
+    const ids=t.checks.length?t.checks.map((c,j)=>['t'+i+'c'+j,c]):[['t'+i,'ทำแล้ว']];
+    const nOn=ids.filter(([id])=>r[id]).length, multi=!ks.length&&ids.length>1;
+    // the round mark: tap to tick a single-check task; several checks / a check sheet tick it by themselves
+    const mark=!ks.length&&!multi?`<button class="rd" data-ck="${ids[0][0]}" role="checkbox" aria-checked="${ok}" aria-label="ทำแล้ว ${esc(t.name)}">${ok?'<i class="ti ti-check" aria-hidden="true"></i>':''}</button>`
+      :ok?`<span class="rd" aria-hidden="true"><i class="ti ti-check"></i></span>`
+      :`<span class="rd ${nOn?'part':''}" style="--p:${Math.round(nOn/ids.length*100)}%" aria-hidden="true"></span>`;
+    h+=`<li id="task${i}" class="${ok?'done':''}">${mark}<div><div class="nm">${esc(t.name)}</div>
+      <div class="mt">${t.time?`<span class="mono">${esc(t.time)}</span>`:''}${freqTag(t.freq)}${(ks.length||!multi)&&t.checks.length?`<span>${t.checks.map(esc).join(' · ')}</span>`:''}${by?`<span>โดย ${esc(by)}</span>`:''}</div></div>
+      <div class="lk">${ks.length?sheetBtns(t.name,ks):''}</div>
+      ${multi?`<div class="cks">${ids.map(([id,c])=>`<button class="${r[id]?'on':''}" data-ck="${id}" role="checkbox" aria-checked="${!!r[id]}"><span class="bx">${r[id]?'✓':''}</span>${esc(c)}</button>`).join('')}</div>`:''}
+      <input class="rmk" data-id="n${i}" value="${esc(r['n'+i]||'')}" placeholder="เพิ่มหมายเหตุ" aria-label="หมายเหตุ ${esc(t.name)}"></li>`}
+  h+=`</ul>
+  <div class="tl-cap">หมายเหตุกะ</div><div class="card"><textarea data-id="_note" placeholder="บันทึกภาพรวมของกะนี้">${esc(r._note||'')}</textarea>
   <div class="photos">${photosOf(r).map(([k,p])=>`<div class="ph"><a href="https://drive.google.com/file/d/${encodeURIComponent(p.id)}/view" target="_blank" rel="noopener"><img src="https://drive.google.com/thumbnail?id=${encodeURIComponent(p.id)}&sz=w320" alt="รูปโดย ${esc(p.by||'')}" loading="lazy"></a><button class="phx" data-delph="${k}" aria-label="ลบรูป">×</button></div>`).join('')}
   <label class="btn-file addph"><i class="ti ti-camera" aria-hidden="true"></i>แนบรูป<input type="file" id="phin" accept="image/*" multiple hidden></label></div><div id="phst" class="saved" role="status"></div>
   <div class="saved">${esc(pendLabel('tasks'))}</div></div>
-  <div class="bar">${nextSlot>=0?`<button id="nextslot" class="primary">ถัดไป: ${esc(SLOTS[nextSlot])} →</button><button id="confirm" class="link" style="width:100%;min-height:44px">ยืนยันจบกะ</button>`:`<button id="confirm" class="primary">ยืนยันจบกะ</button>`}<div id="status" class="saved"></div></div>`;
-  // Keep the grid where it was (both directions) when it redraws after a tick.
-  const old=$('xlw'),sl=old?.scrollLeft||0,st=old?.scrollTop||0;
-  $('view').innerHTML=h;$('xlw').scrollLeft=sl;$('xlw').scrollTop=st;if(!narrow)axisLock($('xlw'));
+  <div class="bar"><div class="acts">${nextSlot>=0?`<button id="confirm" class="sec">ยืนยันจบกะ</button><button id="nextslot" class="primary">ถัดไป · ${esc(SLOT_N[nextSlot])} ${esc(SLOT_T[nextSlot])} ›</button>`:`<button id="confirm" class="primary">ยืนยันจบกะ</button>`}</div><div id="status" class="saved"></div></div>`;
+  $('view').innerHTML=h;
   const tick=id=>{put('tasks',id,!r[id]);renderTasks()};
   $('view').onclick=e=>{
     const b=e.target.closest('[data-open]');if(b){returnTo='tasks';tab=b.dataset.open;render();scrollTo(0,0);return}
