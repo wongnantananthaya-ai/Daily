@@ -828,13 +828,13 @@ function fieldsOf(key,date){
 }
 // "ต้องการส่งหรือไม่?" sheet (design D3): counts first, then a short list of what is missing, then the note warning.
 // Resolves true = send, false = go back and fill. Replaces the browser's confirm box, which cannot be styled.
-function sendSheet({title,sub,stats,lines,block}){return new Promise(res=>{
+function sendSheet({title,sub,stats,lines,block,okLabel,backLabel}){return new Promise(res=>{
   const prev=document.activeElement,s=document.createElement('div');s.className='ss-scrim';
   s.innerHTML=`<div class="ss" role="dialog" aria-modal="true" aria-labelledby="ssT"><div class="ss-grab"></div>
     <h3 id="ssT">${esc(title)}</h3><p class="ss-sub">${esc(sub)}</p>
     <div class="ss-stats">${stats.map(x=>`<div><b class="${x.tone}">${x.n}</b><span>${esc(x.label)}</span></div>`).join('')}</div>
     ${lines.map(l=>`<p class="ss-line ${l.tone||''}">${l.tone==='ng'?'<i class="ti ti-alert-triangle" aria-hidden="true"></i> ':''}${esc(l.text)}</p>`).join('')}
-    <div class="ss-btns">${block?`<button type="button" class="primary" data-v="0"><i class="ti ti-pencil" aria-hidden="true"></i> ไปเขียนหมายเหตุ</button>`:`<button type="button" class="primary" data-v="0">กลับไปกรอกให้ครบ</button><button type="button" class="ss-send" data-v="1">ถัดไป</button>`}</div></div>`;
+    <div class="ss-btns">${block?`<button type="button" class="primary" data-v="0"><i class="ti ti-pencil" aria-hidden="true"></i> ไปเขียนหมายเหตุ</button>`:`<button type="button" class="primary" data-v="0">${esc(backLabel||'กลับไปกรอกให้ครบ')}</button><button type="button" class="ss-send" data-v="1">${esc(okLabel||'ถัดไป')}</button>`}</div></div>`;
   const close=v=>{s.remove();document.removeEventListener('keydown',kd,true);if(prev&&prev.focus)prev.focus({preventScroll:true});res(v)};
   const kd=e=>{if(e.key==='Escape'){e.preventDefault();close(false)}
     if(e.key==='Tab'){const bs=[...s.querySelectorAll('button')],i=bs.indexOf(document.activeElement);e.preventDefault();bs[(i+(e.shiftKey?-1:1)+bs.length)%bs.length].focus()}};
@@ -844,7 +844,8 @@ function sendSummary(key){
   const date=$('date').value,[y,m,d]=date.split('-').map(Number),when=`${d}/${m}`;
   const short=names=>names.slice(0,3).join(', ')+(names.length>3?` และอีก ${names.length-3} ${key==='tasks'?'งาน':'ช่อง'}`:'');
   if(key==='tasks'){const list=TASKS[new Date(date+'T12:00').getDay()],r=rec('tasks'),left=list.filter((_,i)=>!r['t'+i]);
-    return{title:'ต้องการส่งหรือไม่?',sub:`Check sheet night · ${when}`,
+    // end of shift: the buttons say what they do (no "ถัดไป" here — there is no next step after the shift)
+    return{title:'ยืนยันจบกะ?',sub:`Check sheet night · ${when}`,okLabel:'ยืนยันจบกะ',backLabel:'กลับไปติ๊กให้ครบ',
       stats:[{n:list.length-left.length,label:'ติ๊กแล้ว',tone:'ok'},{n:left.length,label:'ยังไม่ติ๊ก',tone:'wait'},{n:list.length,label:'งานทั้งหมด',tone:''}],
       lines:left.length?[{text:'ยังไม่ติ๊ก: '+short(left.map(t=>cleanName(t.name)))}]:[]}}
   const fs=FORMS[key][1].flatMap(g=>g.f),r=rec(key),bad=fs.filter(f=>isBad(f,value(f,r))),blank=fs.filter(f=>value(f,r)===''),ok=fs.length-bad.length-blank.length;
