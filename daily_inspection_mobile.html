@@ -703,25 +703,14 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
 .ovn.part{background:color-mix(in srgb,var(--tint) 12%,transparent);color:var(--tint)}
 .ovn.bad{background:color-mix(in srgb,var(--red) 14%,transparent);color:var(--red-t)}
 .ovrow .chev{color:var(--label3)}
+/* computer: the same one-column page as before, centred, a bit wider — "ตรวจ" sits under the machine info */
 @media (min-width:1024px){
-  .ovw{display:block}
-  main{grid-template-columns:minmax(0,460px) minmax(0,1fr)!important}
-  .row.info .datehint{white-space:nowrap}
-  .checkbtn{flex-direction:row;justify-content:space-between;gap:16px;min-height:96px!important;padding:16px 24px;text-align:left}
-  .checkbtn .cb-t{order:2;font-size:1.15rem!important;background:var(--tint);color:#fff;padding:12px 28px;border-radius:999px;letter-spacing:0}
-  .checkbtn .cb-s{order:1;font-size:.95rem;color:var(--label)}
-  .bar-in{max-width:1072px}
-}
-@media (min-width:1024px){
-  .shell{max-width:1120px}
-  .bar-in{max-width:1072px}
+  .shell{max-width:760px}
+  .bar-in{max-width:712px}
   .head,main,.nav{padding-left:24px;padding-right:24px}
-  .seg{max-width:520px}
-  main{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:28px;align-items:start}
-  main>.sec{position:sticky;top:64px;margin-top:0!important}
-  #formContainer{min-width:0;padding-top:27px}   /* lines up with the "ข้อมูลเครื่อง" card */
-  .field{width:12rem}
-  .checkbtn{min-height:120px}
+  .row.info .datehint{white-space:nowrap}
+  .field{width:13rem}
+  .checkbtn{min-height:110px}
   .checkbtn .cb-t{font-size:1.7rem}
   .wz-in{max-width:780px}
   .wz-chip.big{min-height:76px}
