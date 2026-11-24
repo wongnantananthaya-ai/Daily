@@ -650,6 +650,14 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
 @media (hover:none){.lb-nav{display:none}}
 .mbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;border:0;border-radius:12px;background:var(--card);color:var(--tint);font-weight:600;margin:0 0 16px;cursor:pointer}
 .mbtn:active{opacity:.6}
+/* save status pill (top right) */
+.dsync{display:inline-flex;align-items:center;gap:4px;margin-right:4px;padding:4px 10px;border-radius:999px;font-size:.74rem;font-weight:600;white-space:nowrap}
+.dsync[hidden]{display:none}
+.dsync svg.i{width:14px;height:14px;stroke-width:2.4}
+.dsync.ok{background:color-mix(in srgb,var(--green) 14%,transparent);color:var(--ok-t)}
+.dsync.wait{background:color-mix(in srgb,var(--tint) 11%,transparent);color:var(--tint)}
+.dsync.off{background:color-mix(in srgb,var(--red) 12%,transparent);color:var(--red-t)}
+.embed #userBtn{display:none}
 /* ===== Size per device =====
    phone (<768): one column, as designed.
    iPad (768–1023): same column, wider and a step larger; the question screen becomes a centred card.
@@ -787,6 +795,7 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
       </button>
       <span class="nav-title" id="navTitle" aria-hidden="true"></span>
       <span style="display:flex;align-items:center">
+      <span class="dsync" id="dSync" role="status" hidden></span>
       <button class="tbtn" id="teamBtn" type="button" aria-label="ผู้ตรวจ (admin)" hidden>
         <svg class="i duo" style="width:1.5rem;height:1.5rem;stroke-width:1.8"><use href="#i-team"/></svg>
       </button>
@@ -1051,8 +1060,12 @@ window.shellOpenDate = function (d, view) {
 function setToday() { $('inspectDate').value = localToday(); dateAuto = true; updateDateHint(); }
 function updateDateHint() {
   const v = $('inspectDate').value, t = localToday(), h = $('dateHint'); if (!h) return;
-  if (v === t) { h.className = 'datehint'; h.textContent = 'วันนี้'; }
-  else { h.className = 'datehint'; h.textContent = ''; }   // another date picked: no extra text
+  // Thai date under "วันที่" (the field shows the browser's format, e.g. 11/24/2026)
+  const TW = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสฯ', 'ศุกร์', 'เสาร์'], TM = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+  const d = /^\d{4}-\d{2}-\d{2}$/.test(v) ? new Date(+v.slice(0, 4), +v.slice(5, 7) - 1, +v.slice(8, 10)) : null;
+  const th = d ? `${TW[d.getDay()]} ${d.getDate()} ${TM[d.getMonth()]} ${d.getFullYear() + 543}` : '';
+  h.className = 'datehint' + (d && v !== t ? ' other' : '');
+  h.textContent = th + (v === t ? ' · วันนี้' : '');
 }
 function refreshAutoDate() { if (dateAuto && $('inspectDate').value !== localToday()) setToday(); else updateDateHint(); }
 $('inspectDate').addEventListener('change', () => { dateAuto = $('inspectDate').value === localToday(); updateDateHint(); });
@@ -1193,7 +1206,10 @@ function updateOverallProgress() {
   let total = 0, filled = 0, issues = 0;
   FORMS[currentType].sections.forEach(s => { if (!s.fields) return; const st = stats(s); total += st.total; filled += st.filled; issues += st.issues; });
   $('overallProgress').textContent = `กรอกแล้ว ${filled}/${total}`;
-  $('overallSub').innerHTML = issues ? `<span style="color:var(--red-t)">${icon('warn')} ผิดปกติ ${issues} รายการ</span>` : filled === total ? 'ครบทุกช่องแล้ว' : 'ข้ามได้ถ้าเครื่อง M/C Stop';
+  // say plainly that nothing is saved until "บันทึก" is pressed
+  $('overallSub').innerHTML = issues ? `<span style="color:var(--red-t)">${icon('warn')} ผิดปกติ ${issues} รายการ · ยังไม่บันทึก</span>`
+    : filled === total ? 'ครบแล้ว · กด "บันทึก" เพื่อส่ง'
+    : filled ? 'ยังไม่บันทึก · กด "บันทึก" เมื่อตรวจเสร็จ' : 'ข้ามได้ถ้าเครื่อง M/C Stop';
   $('pbar').className = 'pbar ' + (issues ? 'warn' : filled === total ? 'done' : '');
   $('pbar').firstElementChild.style.width = (total ? filled / total * 100 : 0) + '%';
 }
@@ -1536,7 +1552,18 @@ async function flushSync() {
     if (!syncWarned) { syncWarned = true; showToast('ยังส่งเข้า Google Sheet ไม่ได้ จะลองใหม่อัตโนมัติ', true); }
   } finally { syncBusy = false; updateSyncDot(); renderSyncInfo(); }
 }
-function updateSyncDot() { const d = $('syncDot'); if (d) d.hidden = !(sheetUrl() && syncQ().length); }
+function updateSyncDot() { const d = $('syncDot'); if (d) d.hidden = !(sheetUrl() && syncQ().length); updateDSync(); }
+// save status in words, top of the page: has every saved inspection reached the Google Sheet?
+function updateDSync() {
+  const el = $('dSync'); if (!el) return;
+  let signed = false; try { signed = !!session; } catch { return; }   // runs once before the session is read at start-up
+  const n = syncQ().length, off = !!syncErr || !navigator.onLine;
+  el.hidden = !signed;
+  el.className = 'dsync ' + (n && off ? 'off' : n ? 'wait' : 'ok');
+  el.innerHTML = n && off ? `${icon('warn')}ยังไม่ส่ง ${n} · ไม่มีเน็ต` : n ? `${icon('clock')}กำลังส่ง ${n}…` : `${icon('check')}ส่งเข้า Sheet ครบ`;
+  el.title = n && off ? 'บันทึกเก็บอยู่ในเครื่องนี้แล้ว จะส่งเข้า Google Sheet เองเมื่อมีเน็ต' : n ? 'กำลังส่งเข้า Google Sheet' : 'ทุกใบที่บันทึกแล้วอยู่ใน Google Sheet';
+}
+addEventListener('online', updateDSync); addEventListener('offline', updateDSync);
 function renderSyncInfo(msg) {
   const url = sheetUrl(), n = syncQ().length, last = lsGet(SY.last, '');
   $('syAll').hidden = !url || !session;
@@ -2364,7 +2391,10 @@ function applyUser() {
   $('inspectorInput').readOnly = !!session;   // the inspector is whoever is logged in
   $('teamBtn').hidden = !session?.admin;       // "ผู้ตรวจ" page is for admins only
   $('userBtn').setAttribute('aria-label', session ? `ผู้ใช้: ${session.name} (แตะเพื่อออกจากระบบ)` : 'ผู้ใช้');
+  updateDSync();
 }
+// inside app.html the shell shows the account and the logout button, so this page doesn't repeat them
+if (window.parent !== window) document.documentElement.classList.add('embed');
 function showLogin(msg) {
   $('lgIcon').src = document.querySelector('link[rel="apple-touch-icon"]')?.href || document.querySelector('link[rel="icon"]')?.href || '';
   $('lgUrlGrp').hidden = !!sheetUrl();      // the link is asked for once per device
