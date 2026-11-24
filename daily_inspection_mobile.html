@@ -1491,7 +1491,7 @@ async function pullSync() {
     for (const [k, l] of byKey) {
       if (pend.has(k)) out.push(l);                      // waiting to be sent
       else if (!l.synced && !l.demo) { out.push(l); toSend.push(l); }   // never uploaded yet
-      else if (l.demo) out.push(l);                      // sample data stays on this device only
+      // old device-only sample data (demo:true) is dropped: the Sheet decides what exists
       // synced before but gone from the Sheet = deleted on another device → drop it here too
     }
     out.sort((a, b) => (b.date || '').localeCompare(a.date || '') || b.id - a.id);

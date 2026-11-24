@@ -743,9 +743,19 @@ function put(form,id,v){const date=$('date').value,r=rec(form);if(r[id]===v)retu
   db.q=db.q.filter(x=>!(x.form===form&&x.date===date&&x.id===id));db.q.push({form,date,id,v:toServer(form,id,v)});
   save();clearTimeout(flushT);flushT=setTimeout(flush,1500)}
 const pendingOf=(form,date)=>db.q.filter(x=>x.form===form&&x.date===date);
-function applyState(date,state){for(const [form,fs] of Object.entries(state||{})){
+function applyState(date,state){state=state||{};
+  // the Sheet is the truth: values deleted there (e.g. sample data removed) also leave this device, unless they are still waiting to be sent
+  for(const key of Object.keys(db.rec)){const [form,d]=key.split('|');if(d!==date)continue;
+    const r=db.rec[key],fs=state[form]||{},pend=new Set(pendingOf(form,date).map(x=>x.id));
+    for(const id of Object.keys(r)){if(id.startsWith('_')||id in fs||pend.has(id))continue;delete r[id];if(r._who)delete r._who[id]}
+    if(!Object.keys(r).some(k=>!k.startsWith('_')))delete db.rec[key]}
+  for(const [form,fs] of Object.entries(state)){
   const r=db.rec[form+'|'+date]=db.rec[form+'|'+date]||{},pend=new Set(pendingOf(form,date).map(x=>x.id));
   for(const [id,{v,by}] of Object.entries(fs)){if(pend.has(id))continue;r[id]=fromServer(form,id,v);(r._who=r._who||{})[id]=by}}}
+// one-time clean-up: nights on this device that only ever held sample data ("(ตัวอย่าง)") are dropped
+(()=>{let n=0;for(const [k,r] of Object.entries(db.rec||{})){const w=Object.values(r._who||{});
+  if(w.length&&w.every(x=>String(x).includes('(ตัวอย่าง)'))&&!(db.q||[]).some(x=>x.form+'|'+x.date===k)){delete db.rec[k];n++}}
+  if(n)try{localStorage.setItem('nsp',JSON.stringify(db))}catch(e){}})();
 function schemaOf(form,date){const list=TASKS[new Date(date+'T12:00').getDay()];
   return {schema:fieldsOf(form,date).map(([l,f])=>[l,form==='tasks'?f:f.id]),
     items:form==='tasks'?list.map((t,i)=>({time:t.time,name:t.name,freq:t.freq,id:'t'+i,checks:t.checks.map((c,j)=>[c,'t'+i+'c'+j])})):undefined}}
