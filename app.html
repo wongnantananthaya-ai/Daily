@@ -11,8 +11,6 @@
   document.addEventListener('gesturestart',stop,{passive:false});
   document.addEventListener('gesturechange',stop,{passive:false});
   document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1&&!own(e))e.preventDefault()},{passive:false});
-  addEventListener('wheel',function(e){if(e.ctrlKey&&!own(e))e.preventDefault()},{passive:false});
-  addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&/^(\+|=|-|_|0)$/.test(e.key))e.preventDefault()});
 })();
 </script>
 <meta name="theme-color" content="#F2F2F7">
@@ -68,7 +66,7 @@ h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0 0 26px}
 .frames{position:fixed;top:calc(var(--top) + env(safe-area-inset-top));left:0;right:0;bottom:0}
 .frames iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg)}
 .frames iframe[hidden]{display:none}
-.fab{display:none}
+.dsk-home,.dsk-tabs,.dsk-right{display:none}
 
 /* Navigation drawer */
 .scrim{position:fixed;inset:0;background:rgba(0,0,0,.32);opacity:0;pointer-events:none;transition:opacity .25s;z-index:13}
@@ -125,17 +123,59 @@ body.menu-open .scrim{opacity:1;pointer-events:auto}
 .out{border:0;background:none;color:var(--red);font:inherit;font-weight:600;font-size:.88rem;cursor:pointer;padding:8px}
 
 @media (min-width:900px){
-  .topbar{display:none}
-  .frames{top:0;left:0}
-  .fab{
-    display:flex;position:fixed;top:8px;left:10px;z-index:12;width:40px;height:40px;
-    border:.5px solid var(--sep);border-radius:12px;background:rgba(255,255,255,.92);
-    -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
-    box-shadow:0 2px 8px rgba(0,0,0,.08);align-items:center;justify-content:center;color:var(--navy);cursor:pointer;
+  .topbar{
+    height:48px;padding:0 16px;justify-content:space-between;gap:12px;
+    background:rgba(255,255,255,.94);
   }
-  .fab:hover{background:#fff}
-  .fab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
-  body.at-home .fab,body.locked .fab,body.menu-open .fab{display:none}
+  #menuOpen,#appTitle{display:none}
+  .frames{top:48px;left:0}
+  .dsk-home{
+    display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 12px;
+    border:.5px solid var(--g2);border-radius:10px;background:var(--g1);color:#1C1C1E;
+    font:inherit;font-size:.86rem;font-weight:600;cursor:pointer;
+  }
+  .dsk-home:hover{background:#E5E5EA}
+  .dsk-home svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .dsk-tabs{display:inline-flex;align-items:center;gap:2px;padding:3px;border-radius:10px;background:var(--g1)}
+  .dsk-tab{
+    position:relative;display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:0 14px;
+    border:0;border-radius:8px;background:none;color:var(--l2);
+    font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;
+  }
+  .dsk-tab:hover{color:#000}
+  .dsk-tab[data-app="daily"][aria-current="page"]{background:var(--red);color:#fff;box-shadow:0 1px 3px rgba(255,59,48,.28)}
+  .dsk-tab[data-app="night"][aria-current="page"]{background:var(--navy);color:#fff;box-shadow:0 1px 3px rgba(28,43,90,.28)}
+  .dsk-cnt{
+    min-width:17px;height:17px;padding:0 5px;border-radius:9px;
+    background:var(--red);color:#fff;font-size:.68rem;font-weight:800;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
+  .dsk-cnt[hidden]{display:none}
+  .dsk-tab[aria-current="page"] .dsk-cnt{background:#fff;color:var(--navy)}
+  .dsk-tab[data-app="daily"][aria-current="page"] .dsk-cnt{color:var(--red-ink)}
+  .dsk-right{display:inline-flex;align-items:center;gap:6px}
+  .dsk-me{
+    position:relative;display:inline-flex;align-items:center;gap:7px;min-height:34px;max-width:210px;
+    padding:0 11px 0 5px;border:0;border-radius:999px;background:var(--g1);color:#1C1C1E;
+    font:inherit;font-size:.84rem;font-weight:600;cursor:pointer;
+  }
+  .dsk-me:hover{background:#E5E5EA}
+  .dsk-av{
+    width:26px;height:26px;border-radius:50%;background:#EEF1F6;color:var(--navy);
+    font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  #topName{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .dsk-pend{
+    min-width:17px;height:17px;padding:0 5px;border-radius:9px;flex:none;
+    background:var(--red);color:#fff;font-size:.68rem;font-weight:800;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
+  .dsk-pend[hidden]{display:none}
+  .dsk-out{
+    min-height:34px;padding:0 10px;border:0;border-radius:9px;background:none;
+    color:var(--red-ink);font:inherit;font-size:.84rem;font-weight:600;cursor:pointer;
+  }
+  .dsk-out:hover{background:#FFE5E3}
   .side{border-right:.5px solid #D1D1D6}
   .sec{margin-top:16px}
 }
@@ -223,6 +263,17 @@ body.at-home .topbar,body.at-home .side,body.at-home .scrim,body.at-home .frames
 .hm-b.navy{background:var(--navy);color:#fff}
 .hm-b.alt{background:var(--g1);color:#000}
 .hm-foot{text-align:center;color:var(--l3);font-size:.75rem;margin:14px 0 0}
+.hm-grid[hidden],.hm-card[hidden]{display:none}
+@media (min-width:900px){
+  .hm-in{max-width:980px;padding:28px 32px 48px}
+  .hm-ib:hover,.hm-day:hover{background:var(--g1)}
+  .hm-day[aria-pressed="true"]:hover{background:none}
+  .hm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
+  .hm-grid .hm-card{margin-bottom:0;padding:20px;display:flex;flex-direction:column}
+  .hm-grid .hm-acts{margin-top:auto;padding-top:16px}
+  .hm-b.alt:hover{background:#E5E5EA}
+  .hm-b.red:hover,.hm-b.navy:hover{filter:brightness(1.06)}
+}
 @media (prefers-reduced-motion:reduce){.hm-prog i{transition:none}}
 
 
@@ -325,6 +376,14 @@ button.adm-row:hover{background:#F7F7FA}
 .ad-it small{display:block;color:var(--l2);font-size:.78rem;margin-top:2px}
 .ad-it .bad{color:var(--red-ink)}
 .ad-open{display:block;width:100%;min-height:44px;margin-top:6px;border:0;border-radius:12px;background:var(--g1);font:inherit;font-weight:600;cursor:pointer}
+.ad-open:hover{background:#E5E5EA}
+@media (min-width:900px){
+  .adm-kpi{gap:12px;margin:6px 0 14px}
+  .adm-kpi div{padding:14px 16px}
+  .adm-acts{gap:12px;margin-bottom:14px}
+  .adm-row{grid-template-columns:minmax(0,1.25fr) minmax(0,2.3fr) minmax(0,1.4fr) 68px 54px;gap:12px;padding:12px 16px}
+  .adm-det{max-width:540px}
+}
 @media (max-width:560px){
   .adm-kpi{grid-template-columns:repeat(2,minmax(0,1fr))}
   .adm-acts{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -434,32 +493,34 @@ button.adm-row:hover{background:#F7F7FA}
       <button type="button" class="hm-today" id="hmGoToday" hidden>กลับไปวันนี้</button>
     </div>
 
-    <article class="hm-card" aria-labelledby="hmDT">
-      <div class="hm-ch">
-        <span class="hm-ico red"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M8 3v4M16 3v4"/><circle cx="12" cy="15" r="2.2"/></svg></span>
-        <span class="hm-ct"><b id="hmDT">Daily Inspection</b><small id="hmDSub">ตรวจเช็คเครื่องรายวัน</small></span>
-        <span class="hm-stat" id="hmDStat"></span>
-      </div>
-      <div class="hm-chips" id="hmDChips"></div>
-      <div class="hm-acts">
-        <button type="button" class="hm-b alt" data-open="daily" data-view="1">ดูข้อมูล</button>
-        <button type="button" class="hm-b red" data-open="daily">กรอก</button>
-      </div>
-    </article>
+    <div class="hm-grid" id="hmGrid">
+      <article class="hm-card" aria-labelledby="hmDT">
+        <div class="hm-ch">
+          <span class="hm-ico red"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M8 3v4M16 3v4"/><circle cx="12" cy="15" r="2.2"/></svg></span>
+          <span class="hm-ct"><b id="hmDT">Daily Inspection</b><small id="hmDSub">ตรวจเช็คเครื่องรายวัน</small></span>
+          <span class="hm-stat" id="hmDStat"></span>
+        </div>
+        <div class="hm-chips" id="hmDChips"></div>
+        <div class="hm-acts">
+          <button type="button" class="hm-b alt" data-open="daily" data-view="1">ดูข้อมูล</button>
+          <button type="button" class="hm-b red" data-open="daily">กรอก</button>
+        </div>
+      </article>
 
-    <article class="hm-card" aria-labelledby="hmNT">
-      <div class="hm-ch">
-        <span class="hm-ico navy"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></span>
-        <span class="hm-ct"><b id="hmNT">Night Shift</b><small id="hmNSub">งานกะดึก 20:00–08:00</small></span>
-        <span class="hm-stat" id="hmNStat"></span>
-      </div>
-      <div class="hm-prog"><i id="hmNBar"></i></div>
-      <div class="hm-chips" id="hmNChips"></div>
-      <div class="hm-acts">
-        <button type="button" class="hm-b alt" data-open="night" data-view="1">ดูข้อมูล</button>
-        <button type="button" class="hm-b navy" data-open="night">กรอก</button>
-      </div>
-    </article>
+      <article class="hm-card" aria-labelledby="hmNT">
+        <div class="hm-ch">
+          <span class="hm-ico navy"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></span>
+          <span class="hm-ct"><b id="hmNT">Night Shift</b><small id="hmNSub">งานกะดึก 20:00–08:00</small></span>
+          <span class="hm-stat" id="hmNStat"></span>
+        </div>
+        <div class="hm-prog"><i id="hmNBar"></i></div>
+        <div class="hm-chips" id="hmNChips"></div>
+        <div class="hm-acts">
+          <button type="button" class="hm-b alt" data-open="night" data-view="1">ดูข้อมูล</button>
+          <button type="button" class="hm-b navy" data-open="night">กรอก</button>
+        </div>
+      </article>
+    </div>
 
     <div id="admBox" hidden>
       <div class="adm-kpi" id="admKpi"></div>
@@ -495,8 +556,23 @@ button.adm-row:hover{background:#F7F7FA}
 <header class="topbar">
   <button type="button" class="iconbtn" id="menuOpen" aria-label="เปิดเมนู" aria-controls="side" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
   <b id="appTitle">Daily Inspection</b>
+  <button type="button" class="dsk-home" id="topHome">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7"/><path d="M6 9.5V20h12V9.5"/></svg>
+    <span>หน้าแรก</span>
+  </button>
+  <div class="dsk-tabs" role="navigation" aria-label="สลับงานตรวจ">
+    <button type="button" class="dsk-tab" data-app="daily">Daily Inspection<span class="dsk-cnt" id="topCntDaily" hidden></span></button>
+    <button type="button" class="dsk-tab" data-app="night">Night Shift<span class="dsk-cnt" id="topCntNight" hidden></span></button>
+  </div>
+  <div class="dsk-right">
+    <button type="button" class="dsk-me" id="topMe" aria-label="ข้อมูลบัญชีและสถานะซิงก์" aria-haspopup="dialog">
+      <span class="dsk-av" id="topAv">?</span>
+      <span id="topName">-</span>
+      <span class="dsk-pend" id="topPend" hidden></span>
+    </button>
+    <button type="button" class="dsk-out" id="topOut">ออกจากระบบ</button>
+  </div>
 </header>
-<button type="button" class="fab" id="menuFab" aria-label="เปิดเมนู" aria-controls="side"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
 <div class="scrim" id="scrim"></div>
 <nav class="side" id="side" aria-label="เมนู">
   <button type="button" class="iconbtn" id="menuClose" aria-label="ปิดเมนู"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
@@ -567,7 +643,7 @@ button.adm-row:hover{background:#F7F7FA}
 
 <script src="tasks.js"></script>
 <script>
-const V = '20261125f';
+const V = '20261125g';
 const APPS = { daily: 'daily_inspection_mobile.html?v=' + V, night: 'index.html?v=' + V };
 const DAILY_API = 'https://script.google.com/macros/s/AKfycbxuM2GmQGbDG7tLM0uQiqsEvHcqeEQ8M93e6qsIn06fAmSB8MUMGz7mh-nRX8ZOUc6H9Q/exec';
 
@@ -687,6 +763,7 @@ function hmRender() {
   }
 
   const adm = isAdmin();
+  $('hmGrid').hidden = adm;
   document.querySelectorAll('.hm-card').forEach(c => { c.hidden = adm; });
   $('admBox').hidden = !adm;
   $('hmTitle').textContent = adm ? 'ผู้ดูแล' : 'Inspection';
@@ -1045,19 +1122,22 @@ function show(app) {
   current = app;
   ls.set('shell_tab', app);
   if (LOCAL) {
-    document.querySelectorAll('.side [data-app]').forEach(b => b.dataset.app === app ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
+    document.querySelectorAll('[data-app]').forEach(b => b.dataset.app === app ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
     $('appTitle').textContent = TITLES[app];
     closeMenu();
     return localNotice();
   }
   frame(app).hidden = false;
   Object.entries(frames).forEach(([k, f]) => { if (k !== app) f.hidden = true; });
-  document.querySelectorAll('.side [data-app]').forEach(b => b.dataset.app === app ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
+  document.querySelectorAll('[data-app]').forEach(b => b.dataset.app === app ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
   $('appTitle').textContent = TITLES[app];
   document.title = TITLES[app];
   closeMenu();
 }
-document.querySelectorAll('.side [data-app]').forEach(b => b.addEventListener('click', () => show(b.dataset.app)));
+document.querySelectorAll('[data-app]').forEach(b => b.addEventListener('click', () => show(b.dataset.app)));
+$('topHome').addEventListener('click', showHome);
+$('topMe').addEventListener('click', openAcct);
+$('topOut').addEventListener('click', askLogout);
 
 /* Drawer toggle */
 function openMenu() {
@@ -1070,7 +1150,6 @@ function closeMenu() {
   $('menuOpen').setAttribute('aria-expanded', 'false');
 }
 $('menuOpen').addEventListener('click', openMenu);
-$('menuFab').addEventListener('click', openMenu);
 $('menuClose').addEventListener('click', closeMenu);
 $('scrim').addEventListener('click', closeMenu);
 addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
@@ -1086,6 +1165,14 @@ function refreshMe() {
   $('cntDaily').textContent = dq;
   $('cntNight').hidden = !nq;
   $('cntNight').textContent = nq;
+  $('topCntDaily').hidden = !dq;
+  $('topCntDaily').textContent = dq;
+  $('topCntNight').hidden = !nq;
+  $('topCntNight').textContent = nq;
+  $('topAv').textContent = $('meAv').textContent;
+  $('topName').textContent = name;
+  $('topPend').hidden = !tot;
+  $('topPend').textContent = tot;
   $('hmAv').textContent = $('meAv').textContent;
   $('hmPend').hidden = !tot;
   $('hmPend').textContent = tot;

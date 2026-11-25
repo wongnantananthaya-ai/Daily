@@ -4,12 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <style>html{touch-action:manipulation}</style>
-<script>/* no page zoom: pinch, double-tap, Ctrl+wheel, Ctrl +/-/0 (Daily's monthly-sheet viewer keeps its own zoom) */
+<script>/* prevent accidental multi-touch page zoom on phones (.viewer and .ls keep their own pinch/wheel zoom) */
 (function(){var own=function(e){return e.target&&e.target.closest&&e.target.closest('.viewer,.ls')},stop=function(e){e.preventDefault()};
 document.addEventListener('gesturestart',stop,{passive:false});document.addEventListener('gesturechange',stop,{passive:false});
-document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1&&!own(e))e.preventDefault()},{passive:false});
-addEventListener('wheel',function(e){if(e.ctrlKey&&!own(e))e.preventDefault()},{passive:false});
-addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&/^(\+|=|-|_|0)$/.test(e.key))e.preventDefault()});})();</script>
+document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1&&!own(e))e.preventDefault()},{passive:false});})();</script>
 <meta name="color-scheme" content="light only">
 <meta name="theme-color" content="#F2F2F7">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -399,7 +397,13 @@ textarea.inp{display:block;width:calc(100% - 32px);margin:2px 16px 14px;min-heig
 .paper.rep.dense table.rt td.note{font-size:9px;line-height:1.1;padding:1px 3px}
 /* month summary boxes on screen (outside the paper) */
 .mkpi{max-width:600px;margin:12px auto 0;padding:0 16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-@media (min-width:700px){.mkpi{max-width:900px;grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (min-width:700px){
+  .mctl,.mhint,.mkpi,.daylist{max-width:900px}
+  .mkpi{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .mctl .grp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mctl .grp .row+.row::before{left:0;right:auto;bottom:0;border-top:0;border-left:.5px solid var(--sep)}
+}
+@media (min-width:900px){.zoomctl .landbtn{display:none}}
 .mkpi>.kpi{display:flex;align-items:center;gap:11px;min-height:60px;padding:10px 14px;border:0;border-radius:14px;background:var(--card);color:var(--label);font:inherit;text-align:left;cursor:pointer;transition:box-shadow .2s,background .2s,transform .15s}
 .mkpi>.kpi:active{transform:scale(.97)}
 .mkpi>.kpi[aria-pressed=true]{background:color-mix(in srgb,var(--k) 12%,var(--card));box-shadow:0 0 0 2px var(--k)}
@@ -666,9 +670,8 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
 .dsync.wait{background:color-mix(in srgb,var(--tint) 11%,transparent);color:var(--tint)}
 .dsync.off{background:color-mix(in srgb,var(--red) 12%,transparent);color:var(--red-t)}
 .embed #userBtn{display:none}
-@media (min-width:900px){.embed .nav,.embed .mnav{padding-left:64px}}   /* room for app.html's ☰ button (top-left) */
 /* admin = view only */
-.ro .bar,.ro [data-wz],.ro [data-wzat]{display:none!important}
+.ro .bar,.ro .ovw,.ro [data-wz],.ro [data-wzat]{display:none!important}
 .taken .bar{display:none}
 .admed #typeSeg,.admed #machineNo,.admed #inspectDate{pointer-events:none;opacity:.55}
 .ro .shell{padding-bottom:calc(env(safe-area-inset-bottom) + 24px)}
@@ -686,6 +689,11 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
   .seg button{min-height:40px;font-size:.88rem}
   .field{width:11rem}
   .checkbtn{min-height:96px}
+  .dim{align-items:center;padding:24px}
+  .sheet{max-width:640px;max-height:min(86vh,820px);border-radius:20px;box-shadow:0 24px 60px -16px rgba(0,0,0,.35);transform:scale(.96) translateY(10px);transition:transform .24s cubic-bezier(.2,.8,.2,1)}
+  .dim.open .sheet{transform:none}
+  .grab{display:none}
+  .sheet-b{padding-bottom:24px}
   .wz{background:rgba(0,0,0,.32);display:flex;align-items:center;justify-content:center;padding:24px}
   .wz[hidden]{display:none}
   .wz-in{width:100%;max-width:720px;height:min(100%,900px);margin:0;background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 24px 60px -20px rgba(0,0,0,.35);padding:0}
@@ -719,6 +727,7 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
   .field{width:13rem}
   .checkbtn{min-height:110px}
   .checkbtn .cb-t{font-size:1.7rem}
+  .ovw{display:block}
   .wz-in{max-width:780px}
   .wz-chip.big{min-height:76px}
 }
@@ -1189,7 +1198,7 @@ function renderForm() {
   else html += `<button type="button" class="checkbtn" data-wz><span class="cb-t">ตรวจ</span>
     <span class="cb-s">${isStopped() ? 'เครื่องหยุด · เพิ่มหมายเหตุได้' : nFilled ? `ตรวจแล้ว ${nFilled}/${fs.length} ข้อ${nBad ? ` · ผิดปกติ ${nBad}` : ''} · กดเพื่อตรวจต่อ` : `${fs.length} ข้อ · ตอบทีละข้อ`}</span></button>`;
   // computer: list of topics to check, each with its own count; click = jump straight to that topic (hidden on phones)
-  html += `<div class="sec ovw"><div class="sec-h"><h2>หัวข้อที่ต้องตรวจ</h2><small class="sec-n">${nFilled}/${fs.length} ข้อ</small></div><div class="grp">${
+  if (!(session?.admin && !editingId) && !isStopped()) html += `<div class="sec ovw"><div class="sec-h"><h2>หัวข้อที่ต้องตรวจ</h2><small class="sec-n">${nFilled}/${fs.length} ข้อ</small></div><div class="grp">${
     schema.sections.filter(s => s.fields).map(s => {
       const st = stats(s), first = s.fields.find(f => !filled(formValues[f.id])) || s.fields[0];
       const cls = st.issues ? 'bad' : st.filled === st.total ? 'ok' : st.filled ? 'part' : '';
@@ -1932,7 +1941,10 @@ function renderPaper() {
   $('mKpi').innerHTML = [['all', '#007AFF', 'cal', recs.length, 'วันที่บันทึก'], ['ok', '#34C759', 'checkc', recs.length - nBad, 'ปกติ'],
     ['ng', '#FF3B30', 'warn', nBad, 'ผิดปกติ'], ['stop', '#FF9500', 'power', nStop, 'M/C Stop / Unload']]
     .map(([k, c, ic, n, l]) => `<button type="button" class="kpi" data-kpi="${k}" aria-pressed="false" style="--k:${c}"><span class="ki">${icon(ic)}</span><span><b>${n}</b><span class="l">${l}</span></span></button>`).join('');
-  $('mHint').innerHTML = `${icon('sheet', 'duo')}<span>บันทึกแล้ว <b>${recs.length}</b> วันในเดือนนี้ · ใช้สองนิ้ว ปุ่ม + − หรือแตะสองครั้งเพื่อซูม</span>`;
+  const deskZoom = matchMedia('(hover:hover) and (pointer:fine)').matches || window.innerWidth >= 900;
+  const zoomGuide = deskZoom ? 'คลิกสองครั้ง ปุ่ม + − หรือกด Ctrl + ลูกกลิ้งเมาส์เพื่อซูม' : 'ใช้สองนิ้ว ปุ่ม + − หรือแตะสองครั้งเพื่อซูม';
+  $('viewer').setAttribute('aria-label', `ใบตรวจรายเดือน (${zoomGuide})`);
+  $('mHint').innerHTML = `${icon('sheet', 'duo')}<span>บันทึกแล้ว <b>${recs.length}</b> วันในเดือนนี้ · ${zoomGuide}</span>`;
   layoutViewer(true);   // also places the camera icons once the page is visible
   applyFilter();
 }
