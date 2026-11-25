@@ -855,7 +855,10 @@ const pendLabel=form=>{const n=pendingOf(form,$('date').value).length;return n?`
 function fieldsOf(key,date){
   if(key!=='tasks')return FORMS[key][1].flatMap(g=>g.f).map(f=>[f.label,f]);
   const list=TASKS[new Date(date+'T12:00').getDay()];
-  return list.flatMap((t,i)=>[[t.name,'t'+i],...t.checks.map((c,j)=>[t.name+' / '+c,'t'+i+'c'+j]),[t.name+' / Remark','n'+i]]);
+  return list.flatMap((t,i)=>{
+    const nm=list.filter(x=>x.name===t.name).length>1&&t.time?`${t.name} · ${t.time}`:t.name;
+    return [[nm,'t'+i],...t.checks.map((c,j)=>[nm+' / '+c,'t'+i+'c'+j]),[nm+' / Remark','n'+i]];
+  });
 }
 // "ต้องการส่งหรือไม่?" sheet (design D3): counts first, then a short list of what is missing, then the note warning.
 // Resolves true = send, false = go back and fill. Replaces the browser's confirm box, which cannot be styled.
