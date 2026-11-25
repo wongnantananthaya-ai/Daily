@@ -671,7 +671,7 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
 .dsync.off{background:color-mix(in srgb,var(--red) 12%,transparent);color:var(--red-t)}
 .embed #userBtn{display:none}
 /* admin = view only */
-.ro .bar,.ro .ovw,.ro [data-wz],.ro [data-wzat]{display:none!important}
+.ro .bar,.ro [data-wz],.ro [data-wzat]{display:none!important}
 .taken .bar{display:none}
 .admed #typeSeg,.admed #machineNo,.admed #inspectDate{pointer-events:none;opacity:.55}
 .ro .shell{padding-bottom:calc(env(safe-area-inset-bottom) + 24px)}
@@ -703,21 +703,6 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
   .wz-input{width:6.5em}
 }
 @media (min-width:1400px){html{font-size:19px}}
-/* topic list (computer only) */
-.ovw{display:none}
-.ovrow{display:flex;align-items:center;gap:14px;width:100%;min-height:64px;padding:10px 16px;border:0;background:none;text-align:left;cursor:pointer;position:relative;color:var(--label);font:inherit}
-.ovrow+.ovrow::before{content:"";position:absolute;top:0;left:66px;right:0;border-top:.5px solid var(--sep)}
-.ovrow:hover{background:var(--fill2)}
-.ovi{width:36px;height:36px;border-radius:10px;flex:none;display:grid;place-items:center;background:var(--c);color:#fff}
-.ovi svg.i{width:20px;height:20px;stroke-width:2;--duo:rgba(255,255,255,.3)}
-.ovrow .sl{flex:1;min-width:0}
-.ovrow .sl b{display:block;font-weight:600}
-.ovrow .sl small{display:block;margin-top:2px;font-size:.78rem;color:var(--label2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ovn{flex:none;min-width:3.2em;text-align:center;font-size:.82rem;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--fill2);color:var(--label2);font-variant-numeric:tabular-nums}
-.ovn.ok{background:color-mix(in srgb,var(--green) 15%,transparent);color:var(--green-t)}
-.ovn.part{background:color-mix(in srgb,var(--tint) 12%,transparent);color:var(--tint)}
-.ovn.bad{background:color-mix(in srgb,var(--red) 14%,transparent);color:var(--red-t)}
-.ovrow .chev{color:var(--label3)}
 /* computer: the same one-column page as before, centred, a bit wider — "ตรวจ" sits under the machine info */
 @media (min-width:1024px){
   .shell{max-width:760px}
@@ -727,7 +712,6 @@ img.ph-loading{background:var(--fill);animation:phl 1.2s ease-in-out infinite}
   .field{width:13rem}
   .checkbtn{min-height:110px}
   .checkbtn .cb-t{font-size:1.7rem}
-  .ovw{display:block}
   .wz-in{max-width:780px}
   .wz-chip.big{min-height:76px}
 }
@@ -1197,15 +1181,6 @@ function renderForm() {
   if (session?.admin && !editingId) html += `<div class="banner info" role="note">${icon('team')}<span>บัญชี <b>admin</b> กรอกใบใหม่ไม่ได้ · ดู/แก้ใบที่บันทึกแล้วได้ที่ปุ่มนาฬิกา (ประวัติ) ด้านบน → ปัดแถวแล้วกด "แก้"</span></div>`;
   else html += `<button type="button" class="checkbtn" data-wz><span class="cb-t">ตรวจ</span>
     <span class="cb-s">${isStopped() ? 'เครื่องหยุด · เพิ่มหมายเหตุได้' : nFilled ? `ตรวจแล้ว ${nFilled}/${fs.length} ข้อ${nBad ? ` · ผิดปกติ ${nBad}` : ''} · กดเพื่อตรวจต่อ` : `${fs.length} ข้อ · ตอบทีละข้อ`}</span></button>`;
-  // computer: list of topics to check, each with its own count; click = jump straight to that topic (hidden on phones)
-  if (!(session?.admin && !editingId) && !isStopped()) html += `<div class="sec ovw"><div class="sec-h"><h2>หัวข้อที่ต้องตรวจ</h2><small class="sec-n">${nFilled}/${fs.length} ข้อ</small></div><div class="grp">${
-    schema.sections.filter(s => s.fields).map(s => {
-      const st = stats(s), first = s.fields.find(f => !filled(formValues[f.id])) || s.fields[0];
-      const cls = st.issues ? 'bad' : st.filled === st.total ? 'ok' : st.filled ? 'part' : '';
-      return `<button type="button" class="ovrow" data-wzat="${first.id}"><span class="ovi" style="--c:${s.color}">${icon(s.icon)}</span>
-        <span class="sl"><b>${esc(s.title)}</b><small>${s.fields.slice(0, 3).map(f => esc(f.label)).join(' · ')}${s.fields.length > 3 ? ' …' : ''}</small></span>
-        <span class="ovn ${cls}">${st.issues ? `ผิดปกติ ${st.issues}` : `${st.filled}/${st.total}`}</span>${icon('chev', 'chev')}</button>`;
-    }).join('')}</div></div>`;
   // compact summary of what has been answered; tap a row to jump back to that question
   schema.sections.forEach(sec => {
     if (!sec.fields) return;

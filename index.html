@@ -610,12 +610,13 @@ button.primary{border-radius:var(--r-lg)}
 /* sidebar = inset grouped lists */
 @media (min-width:1000px){
  #side{background:var(--bg);border-right:.5px solid var(--line);gap:var(--s3)}
+ #side>*{flex-shrink:0}
  .sd-day b{font-size:22px;font-weight:700}
  .sd-day b small{font-size:13px;font-weight:500;color:var(--mute)}
  .sd-day span{display:block}
  .sd-h{font-size:13px;font-weight:400;letter-spacing:0;color:var(--mute);margin:0 var(--s3) 6px}
- .sd-list{gap:0;background:var(--card);border-radius:var(--r-lg);overflow:hidden}
- .sd-it{border:0;border-radius:0;min-height:48px;padding:6px var(--s3);position:relative}
+ .sd-list{gap:0;background:var(--card);border-radius:var(--r-lg);overflow:hidden;flex-shrink:0}
+ .sd-it{border:0;border-radius:0;min-height:48px;padding:6px var(--s3);position:relative;flex-shrink:0}
  .sd-it+.sd-it::before{content:"";position:absolute;top:0;left:48px;right:0;border-top:.5px solid var(--line)}
  .sd-it:hover{background:var(--raise)}
  .sd-it.on{background:var(--acc);color:var(--on-acc);border:0}
