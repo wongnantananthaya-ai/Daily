@@ -227,12 +227,12 @@ table.xl{border-collapse:separate;border-spacing:0;font-size:14px;line-height:1.
 .c3row{display:grid;grid-template-columns:36% 64%;background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:var(--s2);min-height:56px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.05)}
 .c3n{padding:var(--s2) var(--s3);display:flex;align-items:center;font-weight:600;font-size:15px;line-height:1.3;overflow-wrap:anywhere}
 /* S3 "soft outline": the result is a light box inside the card — dashed amber when empty, soft green / soft red outline when filled */
-.c3c{display:flex;align-items:center;gap:6px;margin:6px;padding:0 var(--s3);border-radius:10px;font-family:var(--sans);font-weight:700;font-size:17px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;
-  border:1.5px dashed color-mix(in srgb,var(--acc) 55%,var(--line));background:color-mix(in srgb,var(--acc) 6%,var(--card));color:var(--acc-ink);transition:background var(--dur),border-color var(--dur),color var(--dur)}
+.c3c{display:flex;align-items:center;gap:6px;margin:6px;padding:0 var(--s3);border-radius:10px;font-family:var(--sans);font-weight:700;font-size:17px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  border:1.5px dashed color-mix(in srgb,var(--acc) 55%,var(--line));background:color-mix(in srgb,var(--acc) 6%,var(--card));color:var(--acc-ink);transition:none}
 .c3c:empty::before{content:"แตะเพื่อเลือก";font-weight:500;font-size:14px}
 .c3c::after{content:attr(data-m);margin-left:auto;font-weight:500;font-size:13px;opacity:.9}
 .c3c:empty::after{content:"›";font-size:20px;font-weight:400;line-height:1}
-.c3c:active{filter:brightness(.97)}
+.c3c:active{opacity:.86;transform:scale(.99)}
 .c3c.filled{border:1.5px solid color-mix(in srgb,var(--okdot) 45%,var(--card));background:color-mix(in srgb,var(--okdot) 7%,var(--card));color:var(--ok)}
 .c3c.filled::before{content:"✓"}
 .c3c.bad{border:1.5px solid color-mix(in srgb,var(--ngdot) 45%,var(--card))!important;background:color-mix(in srgb,var(--ngdot) 6%,var(--card))!important;color:var(--ng)!important}
@@ -330,7 +330,7 @@ table.xl{border-collapse:separate;border-spacing:0;font-size:14px;line-height:1.
 .route3{position:relative;padding-left:38px}
 .route3::before{content:"";position:absolute;left:14px;top:16px;bottom:16px;width:2px;border-radius:1px;background:var(--line)}
 .stop3{position:relative;margin-bottom:var(--s5)}
-.dot3{position:absolute;left:-38px;top:0;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:14px;border:2px solid var(--line);background:var(--bg);color:var(--mute);transition:background var(--dur),border-color var(--dur)}
+.dot3{position:absolute;left:-38px;top:0;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:14px;border:2px solid var(--line);background:var(--bg);color:var(--mute);transition:none}
 .dot3.done{background:var(--g);border-color:var(--g);color:#fff}
 .dot3.bad{background:var(--r);border-color:var(--r);color:#fff}
 .dot3.on{background:var(--acc);border-color:var(--acc);color:var(--on-acc);box-shadow:0 0 0 5px color-mix(in srgb,var(--acc) 25%,transparent)}
@@ -738,7 +738,7 @@ function pruneRec(){const ds=[...new Set(Object.keys(db.rec).map(k=>k.split('|')
 // Saving to the device runs just after a tap (not during it), so the cell changes at once; saveNow = right away.
 let saveT=0;
 const saveNow=()=>{clearTimeout(saveT);saveT=0;pruneRec();try{localStorage.setItem('nsp',JSON.stringify(db))}catch(e){alert('บันทึกไม่ได้: '+e.message)}};
-const save=()=>{badge();clearTimeout(saveT);saveT=setTimeout(saveNow,250)};
+const save=()=>{syncLabel();clearTimeout(saveT);saveT=setTimeout(saveNow,600)};
 addEventListener('pagehide',saveNow);document.addEventListener('visibilitychange',()=>{if(document.hidden&&saveT)saveNow()});
 // Same Google Sheet + Apps Script as Daily Inspection: one account (the "ผู้ใช้" tab), data in the "กะดึก" tab.
 const API='https://script.google.com/macros/s/AKfycbxuM2GmQGbDG7tLM0uQiqsEvHcqeEQ8M93e6qsIn06fAmSB8MUMGz7mh-nRX8ZOUc6H9Q/exec';
@@ -763,7 +763,7 @@ $('date').value=shiftDate();
 // autoDate: follow the current shift unless the user picked another date to review
 let autoDate=true;
 // app.html (home page) opens Night Shift at a chosen night: show / fill that night's sheet
-window.shellOpenDate=(d,view)=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(d||''))return;$('date').value=d;autoDate=d===shiftDate();slotSel=null;if(db.user){tab=view?'summary':'tasks';returnTo=null;lastSync=0;render();scrollTo(0,0)}};
+window.shellOpenDate=(d,view)=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(d||''))return;document.querySelectorAll('.ss-scrim').forEach(x=>x.remove());$('date').value=d;autoDate=d===shiftDate();slotSel=null;if(db.user){tab=view?'summary':'tasks';returnTo=null;lastSync=0;render();scrollTo(0,0)}};
 $('date').onchange=()=>{autoDate=$('date').value===shiftDate();slotSel=null;lastSync=0;render()};
 function rollDate(){const now=shiftDate();if(!autoDate||$('date').value===now)return false;
   if(document.activeElement?.matches?.('textarea,input:not(#date)'))return false; // don't yank the page mid-typing
@@ -798,12 +798,14 @@ let flushT=null,flushing=null,curRefresh=null,lastSync=0;
 // short message at the bottom of the screen
 function note(msg){let el=document.getElementById('nsNote');if(!el){el=document.createElement('div');el.id='nsNote';el.setAttribute('role','status');document.body.appendChild(el)}
   el.textContent=msg;el.classList.add('on');clearTimeout(note.t);note.t=setTimeout(()=>el.classList.remove('on'),2600)}
+function nowStamp(){const d=new Date();return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()+543} ${pad(d.getHours())}:${pad(d.getMinutes())}`}
 function put(form,id,v){const date=$('date').value,r=rec(form);if(r[id]===v)return;
   // admin: only fields someone already filled can be changed (no new entries)
   if(db.user?.admin&&!(id in r)){if(!put.quiet)note('admin แก้ได้เฉพาะช่องที่มีคนกรอกไว้แล้ว');return}
-  r[id]=v;(r._who=r._who||{})[id]=db.user?.name;r._at=new Date().toLocaleString('th-TH');
-  db.q=db.q.filter(x=>!(x.form===form&&x.date===date&&x.id===id));db.q.push({form,date,id,v:toServer(form,id,v)});
-  save();clearTimeout(flushT);flushT=setTimeout(flush,1500)}
+  r[id]=v;(r._who=r._who||{})[id]=db.user?.name;r._at=nowStamp();
+  for(let i=db.q.length-1;i>=0;i--){const x=db.q[i];if(x.form===form&&x.date===date&&x.id===id)db.q.splice(i,1)}
+  db.q.push({form,date,id,v:toServer(form,id,v)});
+  save();clearTimeout(flushT);flushT=setTimeout(flush,2200)}
 const pendingOf=(form,date)=>db.q.filter(x=>x.form===form&&x.date===date);
 function applyState(date,state){state=state||{};
   // the Sheet is the truth: values deleted there (e.g. sample data removed) also leave this device, unless they are still waiting to be sent
@@ -836,11 +838,13 @@ async function sync(){if(!db.user||document.hidden)return;lastSync=Date.now();ro
 // Save status in words: everything is saved on this device the moment it's ticked/typed; this says whether it has reached the Sheet.
 let netOk=true,lastOk='';
 function syncLabel(ok){if(ok!=null){netOk=ok;if(ok)lastOk=new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})}
-  const el=$('sync');if(!el)return;const n=db.q.length;el.setAttribute('role','status');
-  el.className='meta sst '+(n&&!netOk?'off':n?'wait':'ok');
-  el.innerHTML=n&&!netOk?`<i class="ti ti-wifi-off" aria-hidden="true"></i> ยังไม่ส่ง ${n} · ไม่มีเน็ต`
+  const el=$('sync');if(!el)return;const n=db.q.length;
+  const cls='meta sst '+(n&&!netOk?'off':n?'wait':'ok');
+  const html=n&&!netOk?`<i class="ti ti-wifi-off" aria-hidden="true"></i> ยังไม่ส่ง ${n} · ไม่มีเน็ต`
     :n?`<i class="ti ti-loader-2" aria-hidden="true"></i> กำลังส่ง ${n}…`
     :`<i class="ti ti-circle-check" aria-hidden="true"></i> บันทึกแล้ว`;
+  if(el.className!==cls)el.className=cls;
+  if(el._h!==html){el._h=html;el.setAttribute('role','status');el.innerHTML=html}
   el.title=n&&!netOk?'ข้อมูลเก็บอยู่ในเครื่องนี้แล้ว จะส่งเข้า Google Sheet เองเมื่อมีเน็ต':n?'กำลังส่งเข้า Google Sheet':'ส่งเข้า Google Sheet แล้ว'+(lastOk?' · '+lastOk:'')}
 function refreshView(){if(!db.user)return;badge();const typing=document.activeElement?.matches?.('textarea,input');
   if(typing)return curRefresh&&curRefresh(true);
@@ -971,39 +975,83 @@ function renderForm(key){
   $('view').innerHTML=h;
   document.querySelectorAll('.xl-wrap:not(.fit)').forEach(axisLock);
   document.querySelectorAll('.xf .today').forEach((el,i)=>{if(i===0)el.scrollIntoView({block:'nearest',inline:'center'})});
-  const td=id=>document.querySelector(`[data-cell="${CSS.escape(id)}"]`);
+  const fMap=new Map(all.map(f=>[f.id,f])), cellMap=new Map(), grpOf=new Map();
+  for(const el of $('view').querySelectorAll('[data-cell]'))cellMap.set(el.dataset.cell,el);
+  groups.forEach((g,gi)=>g.f.forEach(f=>grpOf.set(f.id,gi)));
+  const td=id=>cellMap.get(id);
+  const sumEl=$('sum'), cntEl=$('c3cnt'), barEl=$('c3bar'), noteEl=$('note'), noteReqEl=$('noteReq'), savedEl=$('saved'), leftEl=$('left'), jumpEl=$('jump');
+  const whoEls=[...$('view').querySelectorAll('[data-who]')], dotEls=groups.map((_,gi)=>$('dot'+gi)), leftEls=groups.map((_,gi)=>$('left'+gi));
+  const setTxt=(el,s)=>{if(el&&el.textContent!==s)el.textContent=s};
+  const paintCell=(f,fromSync)=>{
+    const c=cellMap.get(f.id);if(!c)return;
+    const v=value(f,r), bad=isBad(f,v);
+    if(c.classList.contains('bad')!==bad)c.classList.toggle('bad',bad);
+    if(c.classList.contains('c3c')){
+      const fil=v!=='', off=v==='ไม่เปิดใช้', m=meanOf(f,v);
+      if(c.classList.contains('filled')!==fil)c.classList.toggle('filled',fil);
+      if(c.classList.contains('off')!==off)c.classList.toggle('off',off);
+      if(c.dataset.m!==m)c.dataset.m=m;
+    }
+    if(f.t==='num'){const i=c.querySelector('input');if(fromSync&&i&&i!==document.activeElement&&i.value!==v)i.value=v}
+    else{const txt=c.classList.contains('c3c')?v:showV(f,v);if(c.textContent!==txt)c.textContent=txt}
+  };
+  const paintGroup=gi=>{
+    const dot=dotEls[gi], g=groups[gi];if(!dot||!g)return;
+    let left=0, bad=false;
+    for(const f of g.f){const v=value(f,r);if(v==='')left++;else if(!bad&&isBad(f,v))bad=true}
+    const cls='dot3'+(left?'':bad?' bad':' done'), txt=left?String(gi+1):bad?'!':'✓';
+    if(dot.className!==cls)dot.className=cls;
+    setTxt(dot,txt);
+    setTxt(leftEls[gi],left?`เหลือ ${left}/${g.f.length}`:bad?'ครบ · มี NG':'ครบ');
+    return left>0;
+  };
   const state=()=>({bad:all.filter(f=>isBad(f,value(f,r))),blank:all.filter(f=>value(f,r)==='')});
   // fromSync: values may have been changed by someone else; never overwrite the input being typed in.
-  const refresh=fromSync=>{const {bad,blank}=state();
-    if(LAYOUT[key]==='rows'){let cur=-1;
-      groups.forEach((g,gi)=>{const dot=$('dot'+gi);if(!dot)return;const left=g.f.filter(f=>value(f,r)==='').length,bad=g.f.some(f=>isBad(f,value(f,r)));
-        if(left&&cur<0)cur=gi;dot.className='dot3'+(left?'':bad?' bad':' done');dot.textContent=left?String(gi+1):bad?'!':'✓';
-        $('left'+gi).textContent=left?`เหลือ ${left}/${g.f.length}`:bad?'ครบ · มี NG':'ครบ'});
-      if(cur>=0)$('dot'+cur).classList.add('on')}
-    const done3=all.filter(f=>value(f,r)!=='').length,cnt3=$('c3cnt');if(cnt3){cnt3.textContent=`ตรวจแล้ว ${done3}/${all.length}`;$('c3bar').style.width=(done3/all.length*100)+'%'}
-    for(const f of all){const c=td(f.id),v=value(f,r);c.classList.toggle('bad',isBad(f,v));
-      if(c.classList.contains('c3c')){c.classList.toggle('filled',v!=='');c.classList.toggle('off',v==='ไม่เปิดใช้');c.dataset.m=meanOf(f,v)}
-      if(f.t==='num'){const i=c.querySelector('input');if(fromSync&&i!==document.activeElement&&i.value!==v)i.value=v}else c.textContent=c.classList.contains('c3c')?v:showV(f,v)}
-    document.querySelectorAll('[data-who]').forEach(w=>{const n=whoOf(r,all);w.textContent=n?'กรอกโดย '+n:''});
-    $('sum').className='sum'+(bad.length?' bad':'');
-    $('sum').textContent=bad.length?'ผิดปกติ '+bad.length+' จุด · แตะเพื่อดู':title+(blank.length?'':' · ทุกจุดปกติ');
-    if(bad.length){$('sum').setAttribute('role','button');$('sum').tabIndex=0}else{$('sum').removeAttribute('role');$('sum').removeAttribute('tabindex')}
-    if(fromSync&&$('note')!==document.activeElement)$('note').value=r._note||'';
-    $('noteReq').textContent=bad.length?'(ต้องกรอก เพราะมีจุดผิดปกติ)':'';
-    $('note').classList.toggle('bad',!!(bad.length&&!r._note));
-    $('saved').textContent=pendLabel(key);
-    $('left').textContent=blank.length?`เหลือ ${blank.length} จาก ${all.length} ช่อง`:'กรอกครบทุกช่องแล้ว';
-    $('jump').hidden=!blank.length};
+  // changedId: when set, updates only that single cell instead of walking all cells on screen.
+  const refresh=(fromSync,changedId)=>{
+    if(changedId){const f=fMap.get(changedId);if(f)paintCell(f,false)}
+    else for(const f of all)paintCell(f,fromSync);
+    if(LAYOUT[key]==='rows'){
+      let cur=-1;
+      for(let gi=0;gi<groups.length;gi++){
+        const hasLeft=changedId&&grpOf.get(changedId)!==gi
+          ?groups[gi].f.some(f=>value(f,r)==='')
+          :paintGroup(gi);
+        if(dotEls[gi]&&changedId&&grpOf.get(changedId)!==gi)dotEls[gi].classList.remove('on');
+        if(hasLeft&&cur<0)cur=gi;
+      }
+      if(cur>=0&&dotEls[cur])dotEls[cur].classList.add('on');
+    }
+    let badCnt=0, blankCnt=0;
+    for(const f of all){const v=value(f,r);if(v==='')blankCnt++;else if(isBad(f,v))badCnt++}
+    const done3=all.length-blankCnt;
+    if(cntEl){setTxt(cntEl,`ตรวจแล้ว ${done3}/${all.length}`);const w=(done3/all.length*100)+'%';if(barEl.style.width!==w)barEl.style.width=w}
+    if(whoEls.length&&(!changedId||fromSync)){const n=whoOf(r,all),wt=n?'กรอกโดย '+n:'';whoEls.forEach(w=>setTxt(w,wt))}
+    const sCls='sum'+(badCnt?' bad':'');
+    if(sumEl.className!==sCls)sumEl.className=sCls;
+    setTxt(sumEl,badCnt?'ผิดปกติ '+badCnt+' จุด · แตะเพื่อดู':title+(blankCnt?'':' · ทุกจุดปกติ'));
+    if(badCnt){if(sumEl.getAttribute('role')!=='button'){sumEl.setAttribute('role','button');sumEl.tabIndex=0}}
+    else if(sumEl.hasAttribute('role')){sumEl.removeAttribute('role');sumEl.removeAttribute('tabindex')}
+    if(fromSync&&noteEl!==document.activeElement)noteEl.value=r._note||'';
+    setTxt(noteReqEl,badCnt?'(ต้องกรอก เพราะมีจุดผิดปกติ)':'');
+    const nBad=!!(badCnt&&!r._note);
+    if(noteEl.classList.contains('bad')!==nBad)noteEl.classList.toggle('bad',nBad);
+    setTxt(savedEl,pendLabel(key));
+    setTxt(leftEl,blankCnt?`เหลือ ${blankCnt} จาก ${all.length} ช่อง`:'กรอกครบทุกช่องแล้ว');
+    if(jumpEl.hidden!==!blankCnt)jumpEl.hidden=!blankCnt;
+  };
   curRefresh=refresh;
-  const set=(id,v)=>{put(key,id,v);refresh()};
-  // Tap cycles: blank → first option → … → blank. G/NG: blank → G → NG.
-  // Tap cycles between the values only (G ↔ NG, or ปกติ → ผิดปกติ → ไม่เปิดใช้ → ปกติ); it never goes back to blank,
-  // so an extra tap can't wipe a value. Long-press (0.6 s) clears the cell.
-  const cycle=id=>{const f=all.find(f=>f.id===id),opts=f.t==='gng'?['G','NG']:f.opts,v=value(f,r);set(id,v===''?opts[0]:opts[(opts.indexOf(v)+1)%opts.length])};
-  let lpT=null,lpDone=false;
+  const set=(id,v)=>{put(key,id,v);refresh(false,id)};
+  // Tap cycles between the values only (G ↔ NG, or ปกติ → ผิดปกติ → ไม่เปิดใช้ → ปกติ); long-press (0.6 s) clears the cell.
+  const cycle=id=>{const f=fMap.get(id),opts=f.t==='gng'?['G','NG']:f.opts,v=value(f,r);set(id,v===''?opts[0]:opts[(opts.indexOf(v)+1)%opts.length])};
+  let lpT=null,lpDone=false,pTap=null,skipClickUntil=0;
   $('view').onpointerdown=e=>{const t=e.target.closest('[data-tap]');if(!t)return;lpDone=false;clearTimeout(lpT);
-    lpT=setTimeout(()=>{if(value(all.find(f=>f.id===t.dataset.tap),r)!==''){lpDone=true;set(t.dataset.tap,'');if(navigator.vibrate)navigator.vibrate(15)}},600)};
-  $('view').onpointerup=$('view').onpointercancel=$('view').onpointerleave=()=>clearTimeout(lpT);
+    pTap={el:t,id:t.dataset.tap,x:e.clientX,y:e.clientY,touch:e.pointerType!=='mouse'};
+    lpT=setTimeout(()=>{const f=fMap.get(t.dataset.tap);if(f&&value(f,r)!==''){lpDone=true;pTap=null;set(t.dataset.tap,'');if(navigator.vibrate)navigator.vibrate(15)}},600)};
+  $('view').onpointerup=e=>{clearTimeout(lpT);if(!pTap||!pTap.touch||lpDone){pTap=null;return}
+    const cur=pTap;pTap=null;
+    if(Math.hypot(e.clientX-cur.x,e.clientY-cur.y)<14&&e.target.closest('[data-tap]')===cur.el){skipClickUntil=performance.now()+400;cycle(cur.id)}};
+  $('view').onpointercancel=$('view').onpointerleave=()=>{clearTimeout(lpT);pTap=null};
   $('view').oncontextmenu=e=>{if(e.target.closest('[data-tap]'))e.preventDefault()};
   const jump=()=>{const f=all.find(f=>value(f,r)==='');if(!f)return;const c=td(f.id);
     c.scrollIntoView({block:'center',inline:'center',behavior:motion()});(c.querySelector('input')||c).focus({preventScroll:true});
@@ -1014,7 +1062,7 @@ function renderForm(key){
     c.scrollIntoView({block:'center',behavior:motion()});c.classList.add('flash');setTimeout(()=>c.classList.remove('flash'),1200)};
   $('view').onclick=e=>{if(e.target.closest('#sum.bad')){jumpBad();return}
     const t=e.target.closest('button,[data-tap]');if(!t)return;
-    if(t.dataset.tap){if(lpDone){lpDone=false;return}cycle(t.dataset.tap)}
+    if(t.dataset.tap){if(lpDone){lpDone=false;return}if(performance.now()<skipClickUntil)return;cycle(t.dataset.tap)}
     if(t.id==='jump')jump();
     if(t.id==='back'||t.id==='back2'){tab=returnTo;returnTo=null;render();scrollTo(0,0)}
     if(t.id==='primary'){const {bad,blank}=state();confirmSend(key,()=>renderForm(key),[
@@ -1124,9 +1172,15 @@ function renderTasks(){
 
 function renderSummary(){
   curRefresh=null;
-  const {day,list,r}=deriveTasks(), who=r._who||{}, date=$('date').value;
+  const date=$('date').value, day=new Date(date+'T12:00').getDay(), list=TASKS[day]||[], r=db.rec['tasks|'+date]||{}, who=r._who||{};
   const [y,m,dd]=date.split('-').map(Number), nd=new Date(y,m-1,dd+1);
-  const done=list.filter((_,i)=>r['t'+i]).length, slots=taskSlots(list);
+  const taskOk=(t,i)=>{
+    const ks=linksOf(t.name,t.time);
+    if(ks.length&&ks.every(k=>!formState(k,date).blank))return true;
+    if(t.checks.length&&t.checks.every((_,j)=>r['t'+i+'c'+j]))return true;
+    return !!r['t'+i];
+  };
+  const done=list.filter(taskOk).length, slots=taskSlots(list);
   const per=SLOTS.map((_,s)=>list.map((_,i)=>i).filter(i=>slots[i]===s));
   const doneBy=(t,i)=>[...new Set((t.checks.length?t.checks.map((_,j)=>r['t'+i+'c'+j]&&who['t'+i+'c'+j]):[r['t'+i]&&who['t'+i]]).filter(Boolean))].join(', ');
   const tonight=[...new Set(list.flatMap(t=>linksOf(t.name,t.time)))];
@@ -1168,9 +1222,9 @@ function renderSummary(){
   }
   per.forEach((ix,s)=>{
     if(!ix.length)return;
-    const sDone=ix.filter(i=>r['t'+i]).length;
+    const sDone=ix.filter(i=>taskOk(list[i],i)).length;
     h+=`<div class="ns-sec">${esc(SLOTS[s])} · ${sDone}/${ix.length} ข้อ</div><div class="ns-list">`+ix.map(i=>{
-      const t=list[i], ok=!!r['t'+i], by=doneBy(t,i), rmk=(r['n'+i]||'').trim();
+      const t=list[i], ok=taskOk(t,i), by=doneBy(t,i), rmk=(r['n'+i]||'').trim();
       const sub=t.checks.length?t.checks.map((c,j)=>`${r['t'+i+'c'+j]?'✓':'○'} ${esc(c)}`).join(' · '):'';
       return `<div class="ns-tk">
         <span class="ns-dot ${ok?'ok':''}" aria-hidden="true">✓</span>
@@ -1276,6 +1330,7 @@ function render(){
   document.body.classList.toggle('is-form',!!FORMS[tab]);
   const view={tasks:renderTasks,summary:renderSummary,data:renderData}[tab];view?view():renderForm(tab);
   badge();
+  sideSoon();
   if(Date.now()-lastSync>5000)sync();
 }
 
@@ -1285,14 +1340,20 @@ const wake=()=>{try{navigator.wakeLock?.request('screen').catch(()=>{})}catch(e)
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){wake();sync()}});wake();
 setInterval(sync,30000);
 addEventListener('online',sync);
-let wasNarrow=innerWidth<640;addEventListener('resize',()=>{const n=innerWidth<640;if(n!==wasNarrow&&tab==='tasks')renderTasks();wasNarrow=n});
+let wasNarrow=innerWidth<640,wasDesk=innerWidth>=1000;
+addEventListener('resize',()=>{
+  const n=innerWidth<640,desk=innerWidth>=1000;
+  if(n!==wasNarrow&&tab==='tasks')renderTasks();
+  if(desk&&!wasDesk)renderSide();
+  wasNarrow=n;wasDesk=desk;
+});
 $('menuBtn').onclick=()=>{tab='data';returnTo=null;render();scrollTo(0,0)};
 const thBtn=$('themeToggle');if(thBtn)thBtn.onclick=toggleTheme;
 // ===== Desktop sidebar =====
 // Tonight at a glance: the four time slots (ticked / total) and every check sheet with its live status.
 // Clicking opens the slot on the task list or the sheet itself. Redrawn whenever the page or a value changes.
 const SHEET_IC={sub1:'ti-bolt',sub2:'ti-bolt',adrain:'ti-wind',light:'ti-bulb'};
-function renderSide(){syncLabel();dateLabel();const el=$('side');if(!el)return;if(!db.user){el.innerHTML='';return}
+function renderSide(){if(innerWidth<1000)return;syncLabel();dateLabel();const el=$('side');if(!el)return;if(!db.user){el.innerHTML='';return}
   const date=$('date').value,day=new Date(date+'T12:00').getDay(),list=TASKS[day],r=db.rec['tasks|'+date]||{};
   const slots=taskSlots(list),per=SLOTS.map((_,s)=>list.map((_,i)=>i).filter(i=>slots[i]===s)),nowSlot=nowSlotOf();
   const done=list.filter((_,i)=>r['t'+i]).length;
@@ -1320,9 +1381,8 @@ $('side').onclick=e=>{const b=e.target.closest('.sd-it');if(!b||b.disabled)retur
   else if(b.dataset.sform){returnTo=tab==='summary'?'summary':'tasks';tab=b.dataset.sform}
   else if(b.dataset.sdata!=null){tab='data';returnTo=null}
   render();scrollTo(0,0)};
-let sideT=0;const sideSoon=()=>{clearTimeout(sideT);sideT=setTimeout(renderSide,0)};
+let sideT=0;const sideSoon=()=>{if(innerWidth<1000)return;clearTimeout(sideT);sideT=setTimeout(renderSide,150)};
 {const _put=put;put=function(...a){const r=_put.apply(this,a);sideSoon();return r}}
-new MutationObserver(sideSoon).observe($('view'),{childList:true});
 // Esc = back to the task list (same as the back button), unless a dialog is open or a field is being typed in.
 addEventListener('keydown',e=>{if(e.key!=='Escape'||document.querySelector('.ss-scrim'))return;
   if(document.activeElement?.matches?.('input,textarea')){document.activeElement.blur();return}

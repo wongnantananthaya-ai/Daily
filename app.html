@@ -566,7 +566,7 @@ button.adm-row:hover{background:#F7F7FA}
 
 <script src="tasks.js"></script>
 <script>
-const V = '20261125a';
+const V = '20261125c';
 const APPS = { daily: 'daily_inspection_mobile.html?v=' + V, night: 'index.html?v=' + V };
 const DAILY_API = 'https://script.google.com/macros/s/AKfycbxuM2GmQGbDG7tLM0uQiqsEvHcqeEQ8M93e6qsIn06fAmSB8MUMGz7mh-nRX8ZOUc6H9Q/exec';
 
@@ -670,11 +670,11 @@ function hmRender() {
     $('hmNBar').style.width = '0';
     $('hmNChips').innerHTML = '<span class="hm-empty">กำลังโหลด…</span>';
   } else {
-    const tasks = st.tasks || {}, list = (typeof TASKS !== 'undefined' && TASKS[pd(sel).getDay()]) || [];
+    const tasks = st.tasks || {}, list = (typeof TASKS !== 'undefined' && TASKS[nsD.getDay()]) || [];
     const done = Object.keys(tasks).filter(k => /^t\d+$/.test(k) && tasks[k].v === '✓').length, total = list.length || done;
     let ng = 0;
     const forms = [['sub1', 'Sub 1'], ['sub2', 'Sub 2'], ['adrain', 'Auto drain'], ['light', 'Light']].map(([k, n]) => {
-      const vals = Object.values(st[k] || {}).map(x => x.v).filter(v => v !== '');
+      const vals = Object.entries(st[k] || {}).filter(([id]) => !id.startsWith('_')).map(([, x]) => x.v).filter(v => v !== '');
       const bad = vals.filter(v => v === 'NG' || v === 'ผิดปกติ').length;
       ng += bad;
       return `<span class="hm-chip ${bad ? 'ng' : vals.length ? 'ok' : ''}">${n} ${bad ? 'NG ' + bad : vals.length ? '✓' : '–'}</span>`;
@@ -717,7 +717,7 @@ function admWork(p) {
   Object.entries(st).forEach(([form, fs]) => Object.entries(fs).forEach(([id, x]) => {
     if (x.by !== p.name || x.v === '') return;
     if (form === 'tasks') { if (/^t\d+$/.test(id) && x.v === '✓') tasks++; }
-    else forms[form] = (forms[form] || 0) + 1;
+    else if (!id.startsWith('_')) forms[form] = (forms[form] || 0) + 1;
     if (x.at && x.at > last) last = x.at;
   }));
   daily.forEach(r => {
@@ -811,39 +811,76 @@ $('admDet').addEventListener('click', e => {
 });
 addEventListener('keydown', e => { if (e.key === 'Escape' && !$('admDet').hidden) $('admDet').hidden = true; });
 
+function mergeLocalDaily(base) {
+  const s = dailySession(), local = (ls.json('daily_inspection_records_v1') || []).filter(r => !r.demo);
+  const out = [...(base || [])];
+  const seen = new Set(out.map(r => `${r.date}|${r.type}|${r.no}`));
+  local.forEach(r => {
+    const no = String(r.machineNo || '').trim(), key = `${r.date}|${r.type}|${no}`;
+    if (!r.date || !r.type || !no || seen.has(key)) return;
+    seen.add(key);
+    const st = String(r.status || '');
+    const hasNg = Object.values(r.data || {}).some(v => v === 'ผิดปกติ');
+    out.push({
+      date: String(r.date), type: r.type, no,
+      result: st === 'M/C Stop' ? 'Stop' : hasNg ? 'ผิดปกติ' : 'ปกติ',
+      inspector: String((r.data && r.data.inspector) || (s && s.name) || ''),
+      user: String((s && s.user) || '').toLowerCase(),
+      saved: String(r.savedAt || ''), status: st, issues: [],
+    });
+  });
+  return out;
+}
+
 async function hmLoadDaily() {
   const s = dailySession();
+  let ok = false;
   try {
     const j = s ? await post(DAILY_API, { action: 'list', token: s.token }) : null;
     if (j && j.ok) {
-      HM.daily = (j.records || []).map(r => ({
+      HM.daily = mergeLocalDaily((j.records || []).map(r => ({
         date: String(r.date), type: r.type, no: String(r.no), result: r.result || '',
         inspector: String(r.inspector || ''), user: String(r.user || '').toLowerCase(),
         saved: String(r.saved || ''), status: String(r.status || ''),
         issues: (r.issueList || []).map(i => i.label),
-      }));
+      })));
+      ok = true;
     } else if (j && j.auth === false) return signOutAll();
   } catch {}
-  if (!HM.daily) HM.daily = (ls.json('daily_inspection_records_v1') || []).map(r => ({ date: r.date, type: r.type, no: String(r.machineNo || ''), result: '' }));
+  if (!ok) HM.daily = mergeLocalDaily(HM.daily);
   if (!$('home').hidden) hmRender();
+}
+
+function localNightState(date, base) {
+  const nsp = ls.json('nsp') || {}, rec = nsp.rec || {}, q = nsp.q || [], s = dailySession() || nightSession() || {};
+  const st = base ? JSON.parse(JSON.stringify(base)) : {};
+  if (!base) {
+    Object.entries(rec).forEach(([k, v]) => {
+      const [f, d] = k.split('|');
+      if (d !== date) return;
+      const who = v._who || {};
+      st[f] = Object.fromEntries(Object.entries(v).filter(([id]) => !id.startsWith('_')).map(([id, x]) => [id, { v: x === true ? '✓' : String(x ?? ''), by: who[id] || s.name || '' }]));
+    });
+  }
+  q.filter(x => x.date === date).forEach(x => {
+    st[x.form] = st[x.form] || {};
+    st[x.form][x.id] = { v: String(x.v ?? ''), by: s.name || '' };
+  });
+  return st;
 }
 
 async function hmLoadNight(date) {
   const s = dailySession() || nightSession();
   HM.loadingNight = date;
+  let ok = false;
   try {
     const j = s ? await post(DAILY_API, { action: 'get', date, token: s.token }) : null;
-    if (j && j.ok) HM.night[date] = j.state || {};
-    else if (j && j.auth === false) return signOutAll();
+    if (j && j.ok) {
+      HM.night[date] = localNightState(date, j.state || {});
+      ok = true;
+    } else if (j && j.auth === false) return signOutAll();
   } catch {}
-  if (HM.night[date] === undefined) {
-    const rec = ((ls.json('nsp') || {}).rec) || {}, st = {};
-    Object.entries(rec).forEach(([k, v]) => {
-      const [f, d] = k.split('|');
-      if (d === date) st[f] = Object.fromEntries(Object.entries(v).filter(([id]) => !id.startsWith('_')).map(([id, x]) => [id, { v: x === true ? '✓' : String(x ?? '') }]));
-    });
-    HM.night[date] = st;
-  }
+  if (!ok) HM.night[date] = localNightState(date, HM.night[date]);
   if (!$('home').hidden && nightOf(HM.sel) === date) hmRender();
 }
 
