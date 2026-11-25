@@ -4,242 +4,382 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <style>html{touch-action:manipulation}</style>
-<script>/* no page zoom: pinch, double-tap, Ctrl+wheel, Ctrl +/-/0 (Daily's monthly-sheet viewer keeps its own zoom) */
-(function(){var own=function(e){return e.target&&e.target.closest&&e.target.closest('.viewer,.ls')},stop=function(e){e.preventDefault()};
-document.addEventListener('gesturestart',stop,{passive:false});document.addEventListener('gesturechange',stop,{passive:false});
-document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1&&!own(e))e.preventDefault()},{passive:false});
-addEventListener('wheel',function(e){if(e.ctrlKey&&!own(e))e.preventDefault()},{passive:false});
-addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&/^(\+|=|-|_|0)$/.test(e.key))e.preventDefault()});})();</script>
+<script>
+(function(){
+  var own=function(e){return e.target&&e.target.closest&&e.target.closest('.viewer,.ls')};
+  var stop=function(e){e.preventDefault()};
+  document.addEventListener('gesturestart',stop,{passive:false});
+  document.addEventListener('gesturechange',stop,{passive:false});
+  document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1&&!own(e))e.preventDefault()},{passive:false});
+  addEventListener('wheel',function(e){if(e.ctrlKey&&!own(e))e.preventDefault()},{passive:false});
+  addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&/^(\+|=|-|_|0)$/.test(e.key))e.preventDefault()});
+})();
+</script>
 <meta name="theme-color" content="#F2F2F7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Daily">
 <title>Daily · Night Shift</title>
-<script data-icon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiPiA8ZGVmcz4gPGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPiA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNGQUZCRkYiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNEQ0U1RkIiLz4gPC9saW5lYXJHcmFkaWVudD4gPGxpbmVhckdyYWRpZW50IGlkPSJyaW5nIiB4MT0iMC4wOCIgeTE9IjAuNiIgeDI9IjAuOTIiIHkyPSIwLjQiPiA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMwQjJBNkIiLz48c3RvcCBvZmZzZXQ9IjAuNDgiIHN0b3AtY29sb3I9IiMxRTRCQTgiLz4gPHN0b3Agb2Zmc2V0PSIwLjciIHN0b3AtY29sb3I9IiNGMkE5M0IiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkM1MzEiLz4gPC9saW5lYXJHcmFkaWVudD4gPHJhZGlhbEdyYWRpZW50IGlkPSJzdW4iIGN4PSIwLjM4IiBjeT0iMC4zNSIgcj0iMC43NSI+IDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0ZGRDI1QSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZGOEEwMCIvPiA8L3JhZGlhbEdyYWRpZW50PiA8bGluZWFyR3JhZGllbnQgaWQ9Im1vb24iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4gPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMUQzRjhGIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDcxQjREIi8+IDwvbGluZWFyR3JhZGllbnQ+IDxsaW5lYXJHcmFkaWVudCBpZD0iY2FsSGVhZCIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPiA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMxRjRGQjAiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwRDJGNzgiLz4gPC9saW5lYXJHcmFkaWVudD4gPGZpbHRlciBpZD0ic29mdCIgeD0iLTIwJSIgeT0iLTIwJSIgd2lkdGg9IjE0MCUiIGhlaWdodD0iMTQwJSI+PGZlRHJvcFNoYWRvdyBkeD0iMCIgZHk9IjE0IiBzdGREZXZpYXRpb249IjE4IiBmbG9vZC1jb2xvcj0iIzBCMkE2QiIgZmxvb2Qtb3BhY2l0eT0iLjE4Ii8+PC9maWx0ZXI+IDxmaWx0ZXIgaWQ9ImxpZnQiIHg9Ii0yMCUiIHk9Ii0yMCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjE0MCUiPjxmZURyb3BTaGFkb3cgZHg9IjAiIGR5PSIxMCIgc3RkRGV2aWF0aW9uPSIxNCIgZmxvb2QtY29sb3I9IiMwQjJBNkIiIGZsb29kLW9wYWNpdHk9Ii4yNSIvPjwvZmlsdGVyPiA8L2RlZnM+IDxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjEwMjQiIGZpbGw9InVybCgjYmcpIi8+IDxnIGZpbHRlcj0idXJsKCNzb2Z0KSI+IDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjUwMCIgcj0iMzAwIiBmaWxsPSJub25lIiBzdHJva2U9InVybCgjcmluZykiIHN0cm9rZS13aWR0aD0iNTQiLz4gPGNpcmNsZSBjeD0iNDcwIiBjeT0iNTAwIiByPSIyNjIiIGZpbGw9IiNGRkZGRkYiLz4gPC9nPiA8ZyBzdHJva2U9IiMxRDNGOEYiIHN0cm9rZS13aWR0aD0iMjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+IDxwYXRoIGQ9Ik00NzAgMjc4djQwTTQ3MCA2ODJ2NDBNMjQ4IDUwMGg0ME02NTIgNTAwaDQwIi8+IDxwYXRoIGQ9Ik0zNTkgMzA4bDE0IDI0TTU4MSAzMDhsLTE0IDI0TTM1OSA2OTJsMTQtMjRNNTgxIDY5MmwtMTQtMjRNMjc4IDM4OWwyNCAxNE02NjIgMzg5bC0yNCAxNE0yNzggNjExbDI0LTE0TTY2MiA2MTFsLTI0LTE0IiBzdHJva2Utd2lkdGg9IjE0IiBvcGFjaXR5PSIuNTUiLz4gPC9nPiA8ZyBzdHJva2U9IiMwQjJBNkIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+IDxwYXRoIGQ9Ik00NzAgNTAwVjMzOCIgc3Ryb2tlLXdpZHRoPSIzMCIvPiA8cGF0aCBkPSJNNDcwIDUwMGwxNDYtODAiIHN0cm9rZS13aWR0aD0iMjQiLz4gPC9nPiA8Y2lyY2xlIGN4PSI0NzAiIGN5PSI1MDAiIHI9IjM0IiBmaWxsPSIjMEIyQTZCIi8+IDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjUwMCIgcj0iMTEiIGZpbGw9IiNGRkM1MzEiLz4gPGcgZmlsdGVyPSJ1cmwoI2xpZnQpIj4gPHBhdGggZD0iTTIzMyAzNzhhMTI4IDEyOCAwIDEgMCAxMjggMTg2IDEwNCAxMDQgMCAxIDEtMTI4LTE4NnoiIGZpbGw9InVybCgjbW9vbikiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIxOCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPiA8L2c+IDxnIHN0cm9rZT0iI0ZGQTIxQSIgc3Ryb2tlLXdpZHRoPSIyNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj4gPHBhdGggZD0iTTc5MCAxMTJ2NTJNNzkwIDM2MHY1Mk05MTQgMjM2aDUyTTg3OCAxNDhsMzYtMzZNODc4IDMyNGwzNiAzNk03MDIgMTQ4bC0zMC0zMCIvPiA8L2c+IDxnIGZpbHRlcj0idXJsKCNsaWZ0KSI+PGNpcmNsZSBjeD0iNzkwIiBjeT0iMjM2IiByPSI5NiIgZmlsbD0idXJsKCNzdW4pIiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMTYiLz48L2c+IDxnIGZpbHRlcj0idXJsKCNsaWZ0KSI+IDxyZWN0IHg9IjU5MCIgeT0iNjAwIiB3aWR0aD0iMzAwIiBoZWlnaHQ9IjI4MCIgcng9IjUyIiBmaWxsPSIjRkZGRkZGIi8+IDxwYXRoIGQ9Ik02NDIgNjAwaDE5NmE1MiA1MiAwIDAgMSA1MiA1MnYzOEg1OTB2LTM4YTUyIDUyIDAgMCAxIDUyLTUyeiIgZmlsbD0idXJsKCNjYWxIZWFkKSIvPiA8L2c+IDxnIGZpbGw9IiNGRkZGRkYiIHN0cm9rZT0iIzBCMkE2QiIgc3Ryb2tlLXdpZHRoPSIxMCI+PHJlY3QgeD0iNjU2IiB5PSI1NjAiIHdpZHRoPSIzMCIgaGVpZ2h0PSI4NCIgcng9IjE1Ii8+PHJlY3QgeD0iNzk0IiB5PSI1NjAiIHdpZHRoPSIzMCIgaGVpZ2h0PSI4NCIgcng9IjE1Ii8+PC9nPiA8ZyBmaWxsPSIjOERBQUU2Ij4gPHJlY3QgeD0iNjI2IiB5PSI3MjAiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0NiIgcng9IjEyIi8+PHJlY3QgeD0iNzAwIiB5PSI3MjAiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0NiIgcng9IjEyIi8+PHJlY3QgeD0iNzc0IiB5PSI3MjAiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0NiIgcng9IjEyIiBmaWxsPSIjMEQyRjc4Ii8+IDxyZWN0IHg9IjYyNiIgeT0iNzg0IiB3aWR0aD0iNTYiIGhlaWdodD0iNDYiIHJ4PSIxMiIvPjxyZWN0IHg9IjcwMCIgeT0iNzg0IiB3aWR0aD0iNTYiIGhlaWdodD0iNDYiIHJ4PSIxMiIgZmlsbD0iIzFFNUJFMCIvPiA8L2c+IDwvc3ZnPg==">(function(){var u=document.currentScript.dataset.icon;function add(r,h,s){var l=document.createElement("link");l.rel=r;l.href=h;if(s)l.setAttribute("sizes",s);document.head.appendChild(l);return l}add("icon",u).type="image/svg+xml";var t=add("apple-touch-icon",u,"180x180"),i=new Image();i.onload=function(){try{var c=document.createElement("canvas");c.width=c.height=180;c.getContext("2d").drawImage(i,0,0,180,180);t.href=c.toDataURL("image/png")}catch(e){}};i.src=u})();</script>
-<!-- no web fonts here: the page uses the device's own fonts (faster first paint) -->
-<link rel="preconnect" href="https://script.google.com" crossorigin><link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+<script data-icon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiPiA8ZGVmcz4gPGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPiA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNGQUZCRkYiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNEQ0U1RkIiLz4gPC9saW5lYXJHcmFkaWVudD4gPGxpbmVhckdyYWRpZW50IGlkPSJyaW5nIiB4MT0iMC4wOCIgeTE9IjAuNiIgeDI9IjAuOTIiIHkyPSIwLjQiPiA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMwQjJBNkIiLz48c3RvcCBvZmZzZXQ9IjAuNDgiIHN0b3AtY29sb3I9IiMxRTRCQTgiLz4gPHN0b3Agb2Zmc2V0PSIwLjciIHN0b3AtY29sb3I9IiNGMkE5M0IiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkM1MzEiLz4gPC9saW5lYXJHcmFkaWVudD4gPHJhZGlhbEdyYWRpZW50IGlkPSJzdW4iIGN4PSIwLjM4IiBjeT0iMC4zNSIgcj0iMC43NSI+IDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0ZGRDI1QSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZGOEEwMCIvPiA8L3JhZGlhbEdyYWRpZW50PiA8bGluZWFyR3JhZGllbnQgaWQ9Im1vb24iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4gPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMUQzRjhGIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDcxQjREIi8+IDwvbGluZWFyR3JhZGllbnQ+IDxsaW5lYXJHcmFkaWVudCBpZD0iY2FsSGVhZCIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPiA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMxRjRGQjAiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwRDJGNzgiLz4gPC9saW5lYXJHcmFkaWVudD4gPGZpbHRlciBpZD0ic29mdCIgeD0iLTIwJSIgeT0iLTIwJSIgd2lkdGg9IjE0MCUiIGhlaWdodD0iMTQwJSI+PGZlRHJvcFNoYWRvdyBkeD0iMCIgZHk9IjE0IiBzdGREZXZpYXRpb249IjE4IiBmbG9vZC1jb2xvcj0iIzBCMkE2QiIgZmxvb2Qtb3BhY2l0eT0iLjE4Ii8+PC9maWx0ZXI+IDxmaWx0ZXIgaWQ9ImxpZnQiIHg9Ii0yMCUiIHk9Ii0yMCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjE0MCUiPjxmZURyb3BTaGFkb3cgZHg9IjAiIGR5PSIxMCIgc3RkRGV2aWF0aW9uPSIxNCIgZmxvb2QtY29sb3I9IiMwQjJBNkIiIGZsb29kLW9wYWNpdHk9Ii4yNSIvPjwvZmlsdGVyPiA8L2RlZnM+IDxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjEwMjQiIGZpbGw9InVybCgjYmcpIi8+IDxnIGZpbHRlcj0idXJsKCNzb2Z0KSI+IDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjUwMCIgcj0iMzAwIiBmaWxsPSJub25lIiBzdHJva2U9InVybCgjcmluZykiIHN0cm9rZS13aWR0aD0iNTQiLz4gPGNpcmNsZSBjeD0iNDcwIiBjeT0iNTAwIiByPSIyNjIiIGZpbGw9IiNGRkZGRkYiLz4gPC9nPiA8ZyBzdHJva2U9IiMxRDNGOEYiIHN0cm9rZS13aWR0aD0iMjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+IDxwYXRoIGQ9Ik00NzAgMjc4djQwTTQ3MCA2ODJ2NDBNMjQ4IDUwMGg0ME02NTIgNTAwaDQwIi8+IDxwYXRoIGQ9Ik0zNTkgMzA4bDE0IDI0TTU4MSAzMDhsLTE0IDI0TTM1OSA2OTJsMTQtMjRNNTgxIDY5MmwtMTQtMjRNMjc4IDM4OWwyNCAxNE02NjIgMzg5bC0yNCAxNE0yNzggNjExbDI0LTE0TTY2MiA2MTFsLTI0LTE0IiBzdHJva2Utd2lkdGg9IjE0IiBvcGFjaXR5PSIuNTUiLz4gPC9nPiA8ZyBzdHJva2U9IiMwQjJBNkIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+IDxwYXRoIGQ9Ik00NzAgNTAwVjMzOCIgc3Ryb2tlLXdpZHRoPSIzMCIvPiA8cGF0aCBkPSJNNDcwIDUwMGwxNDYtODAiIHN0cm9rZS13aWR0aD0iMjQiLz4gPC9nPiA8Y2lyY2xlIGN4PSI0NzAiIGN5PSI1MDAiIHI9IjM0IiBmaWxsPSIjMEIyQTZCIi8+IDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjUwMCIgcj0iMTEiIGZpbGw9IiNGRkM1MzEiLz4gPGcgZmlsdGVyPSJ1cmwoI2xpZnQpIj4gPHBhdGggZD0iTTIzMyAzNzhhMTI4IDEyOCAwIDEgMCAxMjggMTg2IDEwNCAxMDQgMCAxIDEtMTI4LTE4NnoiIGZpbGw9InVybCgjbW9vbikiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIxOCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPiA8L2c+IDxnIHN0cm9rZT0iI0ZGQTIxQSIgc3Ryb2tlLXdpZHRoPSIyNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj4gPHBhdGggZD0iTTc5MCAxMTJ2NTJNNzkwIDM2MHY1Mk05MTQgMjM2aDUyTTg3OCAxNDhsMzYtMzZNODc4IDMyNGwzNiAzNk03MDIgMTQ4bC0zMC0zMCIvPiA8L2c+IDxnIGZpbHRlcj0idXJsKCNsaWZ0KSI+PGNpcmNsZSBjeD0iNzkwIiBjeT0iMjM2IiByPSI5NiIgZmlsbD0idXJsKCNzdW4pIiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMTYiLz48L2c+IDxnIGZpbHRlcj0idXJsKCNsaWZ0KSI+IDxyZWN0IHg9IjU5MCIgeT0iNjAwIiB3aWR0aD0iMzAwIiBoZWlnaHQ9IjI4MCIgcng9IjUyIiBmaWxsPSIjRkZGRkZGIi8+IDxwYXRoIGQ9Ik02NDIgNjAwaDE5NmE1MiA1MiAwIDAgMSA1MiA1MnYzOEg1OTB2LTM4YTUyIDUyIDAgMCAxIDUyLTUyeiIgZmlsbD0idXJsKCNjYWxIZWFkKSIvPiA8L2c+IDxnIGZpbGw9IiNGRkZGRkYiIHN0cm9rZT0iIzBCMkE2QiIgc3Ryb2tlLXdpZHRoPSIxMCI+PHJlY3QgeD0iNjU2IiB5PSI1NjAiIHdpZHRoPSIzMCIgaGVpZ2h0PSI4NCIgcng9IjE1Ii8+PHJlY3QgeD0iNzk0IiB5PSI1NjAiIHdpZHRoPSIzMCIgaGVpZ2h0PSI4NCIgcng9IjE1Ii8+PC9nPiA8ZyBmaWxsPSIjOERBQUU2Ij4gPHJlY3QgeD0iNjI2IiB5PSI3MjAiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0NiIgcng9IjEyIi8+PHJlY3QgeD0iNzAwIiB5PSI3MjAiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0NiIgcng9IjEyIi8+PHJlY3QgeD0iNzc0IiB5PSI3MjAiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0NiIgcng9IjEyIiBmaWxsPSIjMEQyRjc4Ii8+IDxyZWN0IHg9IjYyNiIgeT0iNzg0IiB3aWR0aD0iNTYiIGhlaWdodD0iNDYiIHJ4PSIxMiIvPjxyZWN0IHg9IjcwMCIgeT0iNzg0IiB3aWR0aD0iNTYiIGhlaWdodD0iNDYiIHJ4PSIxMiIgZmlsbD0iIzFFNUJFMCIvPiA8L2c+IDwvc3ZnPg==">
+(function(){
+  var u=document.currentScript.dataset.icon;
+  function add(r,h,s){var l=document.createElement("link");l.rel=r;l.href=h;if(s)l.setAttribute("sizes",s);document.head.appendChild(l);return l}
+  add("icon",u).type="image/svg+xml";
+  var t=add("apple-touch-icon",u,"180x180"),i=new Image();
+  i.onload=function(){try{var c=document.createElement("canvas");c.width=c.height=180;c.getContext("2d").drawImage(i,0,0,180,180);t.href=c.toDataURL("image/png")}catch(e){}};
+  i.src=u;
+  document.addEventListener("DOMContentLoaded",function(){var g=document.getElementById("lgLogo");if(g)g.src=u});
+})();
+</script>
+<link rel="preconnect" href="https://script.google.com" crossorigin>
+<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
 <style>
-/* Shell: one login, two apps (Daily Inspection + Night Shift Plan) in tabs.
-   Both apps live in same-origin iframes; the shell signs in to both back ends and leaves each app's session in localStorage. */
-:root{--bg:#F2F2F7;--card:#fff;--label:#000;--label2:rgba(60,60,67,.62);--sep:rgba(60,60,67,.29);--tint:#007AFF;--red:#D70015;
-  --bar:rgba(249,249,249,.94);color-scheme:light}
+:root{
+  --bg:#F2F2F7;--card:#fff;--bar:rgba(249,249,249,.94);
+  --g1:#F2F2F7;--g2:#E5E5EA;
+  --label:#000;--label2:rgba(60,60,67,.62);--l2:#6E6E73;--l3:#8E8E93;
+  --sep:rgba(60,60,67,.29);
+  --tint:#007AFF;--red:#FF3B30;--red-ink:#D70015;--navy:#1C2B5A;--ok:#248A3D;
+  --side:256px;--top:52px;
+  color-scheme:light;
+}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Leelawadee UI","Noto Sans Thai",sans-serif;color:var(--label);-webkit-font-smoothing:antialiased}
-/* layout: top bar (phone) / fixed side menu (computer) + the selected app */
-:root{--side:256px;--top:52px;--brand:#D7263D;--brand2:#FF5A5F;--navy:#1E2B4A}
-.topbar{position:fixed;top:0;left:0;right:0;height:calc(var(--top) + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);
-  display:flex;align-items:center;gap:6px;padding-left:6px;background:var(--bar);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid var(--sep);z-index:12}
+html,body{
+  margin:0;height:100%;background:var(--bg);color:var(--label);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Leelawadee UI","Noto Sans Thai",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0 0 26px}
+
+/* Top bar & app frames */
+.topbar{
+  position:fixed;top:0;left:0;right:0;
+  height:calc(var(--top) + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);
+  display:flex;align-items:center;gap:6px;padding-left:6px;
+  background:var(--bar);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:.5px solid var(--sep);z-index:12;
+}
 .topbar b{font-size:1rem;font-weight:600}
-.iconbtn{width:44px;height:44px;border:0;background:none;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--navy);cursor:pointer}
+.iconbtn{
+  width:44px;height:44px;border:0;background:none;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;color:var(--navy);cursor:pointer;
+}
 .iconbtn:active{background:rgba(0,0,0,.06)}
 .iconbtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 .frames{position:fixed;top:calc(var(--top) + env(safe-area-inset-top));left:0;right:0;bottom:0}
 .frames iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg)}
 .frames iframe[hidden]{display:none}
-/* side menu */
+.fab{display:none}
+
+/* Navigation drawer */
 .scrim{position:fixed;inset:0;background:rgba(0,0,0,.32);opacity:0;pointer-events:none;transition:opacity .25s;z-index:13}
-.side{position:fixed;top:0;bottom:0;left:0;width:var(--side);max-width:84vw;background:linear-gradient(180deg,#FFFFFF,#F7F8FB);z-index:14;
-  transform:translateX(-102%);transition:transform .28s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;
-  padding:calc(10px + env(safe-area-inset-top)) 12px calc(14px + env(safe-area-inset-bottom));box-shadow:4px 0 24px rgba(30,43,74,.12);border-radius:0 22px 22px 0}
+.side{
+  position:fixed;top:0;bottom:0;left:0;width:var(--side);max-width:84vw;
+  background:var(--bg);z-index:14;
+  transform:translateX(-102%);transition:transform .28s cubic-bezier(.2,.8,.2,1);
+  display:flex;flex-direction:column;
+  padding:calc(10px + env(safe-area-inset-top)) 12px calc(14px + env(safe-area-inset-bottom));
+  box-shadow:4px 0 24px rgba(30,43,74,.12);border-radius:0 22px 22px 0;
+}
 body.menu-open .side{transform:none}
 body.menu-open .scrim{opacity:1;pointer-events:auto}
 .side .iconbtn{margin:0 0 14px 2px}
-.sec{display:flex;align-items:center;gap:8px;margin:6px 10px 8px;font-size:.82rem;font-weight:700;color:var(--brand)}
-.sec i{width:12px;height:12px;border-radius:3px;background:var(--brand);display:block}
-.item{position:relative;display:flex;align-items:center;gap:14px;width:100%;min-height:50px;border:0;background:none;border-radius:16px;padding:0 14px;margin-bottom:4px;
-  font:inherit;font-size:1.02rem;color:#3A4256;cursor:pointer;text-align:left}
-.item svg{width:24px;height:24px;flex:none;fill:none;stroke:var(--brand);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.item:hover{background:rgba(215,38,61,.06)}
-.item[aria-current="page"]{background:linear-gradient(90deg,var(--brand),var(--brand2));color:#fff;font-weight:700;box-shadow:0 6px 16px rgba(215,38,61,.28)}
-.item[aria-current="page"] svg{stroke:#fff}
-.item .cnt{position:absolute;left:30px;top:8px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#fff;color:var(--brand);font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.18)}
-.item:not([aria-current="page"]) .cnt{background:var(--brand);color:#fff}
-.item .cnt[hidden]{display:none}
-.item small{display:block;font-size:.75rem;font-weight:500;opacity:.75}
-.hr{height:.5px;background:var(--sep);margin:12px 6px}
-.me{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 8px 0;border-top:.5px solid var(--sep)}
-.me .av{width:38px;height:38px;border-radius:50%;background:#EEF1F6;color:var(--navy);font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
-.me div{flex:1;min-width:0}
-.me b{display:block;font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.me small{color:var(--label2);font-size:.78rem}
-.out{border:0;background:none;color:var(--brand);font:inherit;font-weight:600;font-size:.88rem;cursor:pointer;padding:8px}
-/* computer: the form gets the whole screen; the app menu sits behind a ☰ button (top-left) and slides in over the page */
-.fab{display:none}
-@media (min-width:900px){
-  .topbar{display:none}
-  .frames{top:0;left:0}
-  .fab{display:flex;position:fixed;top:8px;left:10px;z-index:12;width:40px;height:40px;border:.5px solid var(--sep);border-radius:12px;background:rgba(255,255,255,.92);
-    -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:0 2px 8px rgba(0,0,0,.08);align-items:center;justify-content:center;color:var(--navy);cursor:pointer}
-  .fab:hover{background:#fff}
-  .fab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
-  body.at-home .fab,body.locked .fab,body.menu-open .fab{display:none}
-  .sec{margin-top:18px}
+.sec{margin:14px 12px 6px;font-size:.8rem;font-weight:400;color:var(--l2)}
+.item{
+  position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:54px;
+  border:0;background:#fff;padding:0 12px;margin:0;
+  font:inherit;font-size:.98rem;color:#000;cursor:pointer;text-align:left;
 }
-body.locked .topbar,body.locked .side,body.locked .scrim{display:none}
-/* Apple look (matches Night Shift design 1): grey sidebar, items in one inset group, the open app filled with its own colour */
-.side{background:#F2F2F7;padding-left:12px;padding-right:12px}
-.sec{margin:14px 12px 6px;font-size:.8rem;font-weight:400;color:var(--l2,#6E6E73)}
-.sec i{display:none}
-#goHome,.side [data-app]{background:#fff;border-radius:0;margin:0;min-height:54px;padding:0 12px;gap:12px;color:#000;font-size:.98rem}
 #goHome{border-radius:12px;margin-top:4px}
 .side [data-app="daily"]{border-radius:12px 12px 0 0}
 .side [data-app="night"]{border-radius:0 0 12px 12px}
-.side [data-app="night"]::before{content:"";position:absolute;top:0;left:52px;right:0;border-top:.5px solid #E5E5EA}
-.item svg{width:30px;height:30px;padding:5px;border-radius:8px;background:#8E8E93;stroke:#fff;stroke-width:2.2}
-#goHome svg{background:#8E8E93}
-.side [data-app="daily"] svg{background:#FF3B30}
-.side [data-app="night"] svg{background:#1C2B5A}
-.item small{color:#6E6E73;opacity:1}
+.side [data-app="night"]::before{content:"";position:absolute;top:0;left:52px;right:0;border-top:.5px solid var(--g2)}
+.item svg{
+  width:30px;height:30px;padding:5px;border-radius:8px;flex:none;
+  fill:none;background:var(--l3);stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;
+}
+.side [data-app="daily"] svg{background:var(--red)}
+.side [data-app="night"] svg{background:var(--navy)}
+.item small{display:block;font-size:.75rem;font-weight:500;color:var(--l2)}
 .item:hover{background:#F7F7FA}
-.item[aria-current="page"]{background:#1C2B5A;color:#fff;font-weight:600;box-shadow:none}
-.side [data-app="daily"][aria-current="page"]{background:#FF3B30}
+.item[aria-current="page"]{background:var(--navy);color:#fff;font-weight:600}
+.side [data-app="daily"][aria-current="page"]{background:var(--red)}
 .item[aria-current="page"] small{color:rgba(255,255,255,.8)}
 .item[aria-current="page"] svg{background:rgba(255,255,255,.2)}
-.side [data-app="night"][aria-current="page"]::before,.side [aria-current="page"]+[data-app="night"]::before{display:none}
-.item .cnt{left:34px;top:6px;background:#FF3B30;color:#fff;box-shadow:0 0 0 2px #fff}
-.item[aria-current="page"] .cnt{background:#fff;color:#1C2B5A;box-shadow:none}
-.me{border-top:0;background:#fff;border-radius:12px;padding:10px}
-.out{color:#FF3B30}
-@media (min-width:900px){.side{border-right:.5px solid #D1D1D6}.sec{margin-top:16px}}
+.side [data-app="night"][aria-current="page"]::before,
+.side [aria-current="page"]+[data-app="night"]::before{display:none}
+.item .cnt{
+  position:absolute;left:34px;top:6px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;
+  background:var(--red);color:#fff;font-size:.7rem;font-weight:800;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #fff;
+}
+.item[aria-current="page"] .cnt{background:#fff;color:var(--navy);box-shadow:none}
+.item .cnt[hidden]{display:none}
+.me{margin-top:auto;display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:10px}
+.me .av{
+  width:38px;height:38px;border-radius:50%;background:#EEF1F6;color:var(--navy);
+  font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;
+}
+.me div{flex:1;min-width:0}
+.me b{display:block;font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.me small{color:var(--label2);font-size:.78rem}
+.out{border:0;background:none;color:var(--red);font:inherit;font-weight:600;font-size:.88rem;cursor:pointer;padding:8px}
 
-/* ===== Home (white): date strip + day summary for Daily and Night Shift ===== */
-:root{--red:#FF3B30;--red-ink:#D70015;--navy:#1C2B5A;--navy-ink:#1C2B5A;--g1:#F2F2F7;--g2:#E5E5EA;--l2:#6E6E73;--l3:#8E8E93;--ok:#248A3D}
-.home{position:fixed;inset:0;z-index:15;background:#FFFFFF;overflow:auto;-webkit-overflow-scrolling:touch;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Noto Sans Thai","Leelawadee UI",system-ui,sans-serif;color:#000}
+@media (min-width:900px){
+  .topbar{display:none}
+  .frames{top:0;left:0}
+  .fab{
+    display:flex;position:fixed;top:8px;left:10px;z-index:12;width:40px;height:40px;
+    border:.5px solid var(--sep);border-radius:12px;background:rgba(255,255,255,.92);
+    -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+    box-shadow:0 2px 8px rgba(0,0,0,.08);align-items:center;justify-content:center;color:var(--navy);cursor:pointer;
+  }
+  .fab:hover{background:#fff}
+  .fab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+  body.at-home .fab,body.locked .fab,body.menu-open .fab{display:none}
+  .side{border-right:.5px solid #D1D1D6}
+  .sec{margin-top:16px}
+}
+body.locked .topbar,body.locked .side,body.locked .scrim{display:none}
+
+/* Home dashboard */
+.home{
+  position:fixed;inset:0;z-index:15;background:#fff;overflow:auto;-webkit-overflow-scrolling:touch;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Noto Sans Thai","Leelawadee UI",system-ui,sans-serif;color:#000;
+}
 .home[hidden]{display:none}
 body.at-home .topbar,body.at-home .side,body.at-home .scrim,body.at-home .frames{display:none}
 .hm-in{max-width:640px;margin:0 auto;padding:calc(16px + env(safe-area-inset-top)) 16px calc(32px + env(safe-area-inset-bottom))}
 .hm-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
-.hm-date{margin:0;color:var(--l3);font-size:.82rem;font-weight:600;text-transform:none}
+.hm-date{margin:0;color:#3A3A3C;font-size:.9rem;font-weight:600}
 .home h1{margin:2px 0 0;font-size:2.1rem;font-weight:700;letter-spacing:-.025em;line-height:1.1}
-.hm-me{width:40px;height:40px;border-radius:50%;border:0;padding:0;background:var(--g1);cursor:pointer;flex:none}
+.hm-me{position:relative;width:40px;height:40px;border-radius:50%;border:0;padding:0;background:var(--g1);cursor:pointer;flex:none}
 .hm-av{display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#3A3A3C}
-/* week */
+.hm-pend{
+  position:absolute;top:-2px;right:-2px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;
+  background:var(--red);color:#fff;font-size:.68rem;font-weight:800;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #fff;
+}
+.hm-pend[hidden]{display:none}
+.hm-sync{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
+  margin:0 0 14px;padding:10px 14px;border:0;border-radius:14px;
+  background:#FFF1E0;color:#C93400;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;text-align:left;
+}
+.hm-sync[hidden]{display:none}
+.hm-sync small{color:var(--tint);font-weight:700;white-space:nowrap}
+
 .hm-week{margin-bottom:16px}
 .hm-weekbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .hm-weekbar b{font-size:1.05rem;font-weight:600}
 .hm-nav{display:flex;gap:4px}
-.hm-ib{position:relative;width:44px;height:44px;border:0;border-radius:12px;background:none;color:var(--red-ink);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.hm-ib{
+  position:relative;width:44px;height:44px;border:0;border-radius:12px;
+  background:none;color:#1C1C1E;display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
 .hm-ib:active{background:var(--g1)}
 .hm-ib svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.hm-cal input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .hm-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
-.hm-day{border:0;background:none;border-radius:14px;padding:6px 0 8px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;font:inherit;color:#000;min-height:64px}
+.hm-day{
+  border:0;background:none;border-radius:14px;padding:6px 0 8px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;font:inherit;color:#000;min-height:64px;
+}
 .hm-day .w{font-size:.7rem;color:var(--l3);font-weight:600}
 .hm-day .d{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.05rem;font-weight:600}
-.hm-day.today .d{color:var(--red-ink)}
-.hm-day[aria-pressed="true"] .d{background:#000;color:#fff}
-.hm-day[aria-pressed="true"].today .d{background:var(--red)}
+.hm-day.today .d{color:#000;box-shadow:inset 0 0 0 1.5px #1C1C1E}
+.hm-day[aria-pressed="true"] .d{background:#1C1C1E;color:#fff;box-shadow:none}
 .hm-day.future{opacity:.35}
+.hm-day.future[aria-pressed="true"]{opacity:1}
 .hm-dots{display:flex;gap:3px;height:6px}
-.hm-dots i{width:6px;height:6px;border-radius:50%}
-.hm-dots .dd{background:var(--red)}.hm-dots .dn{background:var(--navy)}.hm-dots .bad{background:#FF9500}
-.hm-today{display:block;margin:6px auto 0;border:0;background:none;color:var(--red-ink);font:inherit;font-weight:600;font-size:.88rem;min-height:36px;cursor:pointer}
+.hm-dots i{width:6px;height:6px;border-radius:50%;background:var(--l3)}
+.hm-today{display:block;margin:6px auto 0;border:0;background:none;color:#1C1C1E;font:inherit;font-weight:600;font-size:.88rem;min-height:36px;cursor:pointer}
 .hm-today[hidden]{display:none}
-/* cards */
+
 .hm-card{border:.5px solid var(--g2);border-radius:20px;padding:16px;margin-bottom:12px;background:#fff;box-shadow:0 8px 24px -14px rgba(0,0,0,.22)}
 .hm-ch{display:flex;align-items:center;gap:12px}
 .hm-ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
-.hm-ico.red{background:var(--red)}.hm-ico.navy{background:var(--navy)}
+.hm-ico.red{background:var(--red)}
+.hm-ico.navy{background:var(--navy)}
 .hm-ico svg{width:24px;height:24px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.hm-ct{flex:1;min-width:0}.hm-ct b{display:block;font-size:1.05rem;font-weight:600}.hm-ct small{color:var(--l2);font-size:.82rem}
+.hm-ct{flex:1;min-width:0}
+.hm-ct b{display:block;font-size:1.05rem;font-weight:600}
+.hm-ct small{color:var(--l2);font-size:.82rem}
 .hm-stat{text-align:right;font-size:1.35rem;font-weight:700;line-height:1.1;white-space:nowrap}
 .hm-stat small{display:block;font-size:.72rem;font-weight:500;color:var(--l3)}
 .hm-prog{height:6px;border-radius:3px;background:var(--g1);overflow:hidden;margin:14px 0 0}
 .hm-prog i{display:block;height:100%;width:0;background:var(--navy);border-radius:3px;transition:width .3s ease}
 .hm-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;min-height:8px}
 .hm-chip{font-size:.78rem;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--g1);color:#3A3A3C}
-.hm-chip.ok{background:#E8F8EC;color:var(--ok)}.hm-chip.ng{background:#FFE5E3;color:var(--red-ink)}.hm-chip.st{background:#FFF1E0;color:#C93400}
+.hm-chip.ok{background:#E8F8EC;color:var(--ok)}
+.hm-chip.ng{background:#FFE5E3;color:var(--red-ink)}
+.hm-chip.st{background:#FFF1E0;color:#C93400}
 .hm-empty{color:var(--l3);font-size:.85rem}
 .hm-acts{display:flex;gap:8px;margin-top:14px}
-.hm-b{flex:1;min-height:44px;border:0;border-radius:12px;font:inherit;font-size:.95rem;font-weight:600;cursor:pointer;text-align:center;display:flex;align-items:center;justify-content:center}
+.hm-b{
+  flex:1;min-height:44px;border:0;border-radius:12px;font:inherit;font-size:.95rem;font-weight:600;
+  cursor:pointer;text-align:center;display:flex;align-items:center;justify-content:center;
+}
 .hm-b:active{transform:scale(.98)}
-.hm-b.red{background:var(--red);color:#fff}.hm-b.navy{background:var(--navy);color:#fff}.hm-b.alt{background:var(--g1);color:#000}
-/* one style for both cards and one colour for the calendar (no red = Daily / blue = Night) */
-.hm-b.pri{background:#1C1C1E;color:#fff}
-.hm-ib{color:#1C1C1E}
-.hm-day.today .d{color:#000;box-shadow:inset 0 0 0 1.5px #1C1C1E}
-.hm-day[aria-pressed="true"] .d,.hm-day[aria-pressed="true"].today .d{background:#1C1C1E;color:#fff;box-shadow:none}
-.hm-day.future[aria-pressed="true"]{opacity:1}
-.hm-dots .dd,.hm-dots .dn{background:#8E8E93}
-.hm-today{color:#1C1C1E}
-.hm-date{color:#3A3A3C;font-size:.9rem}
+.hm-b.red{background:var(--red);color:#fff}
+.hm-b.navy{background:var(--navy);color:#fff}
+.hm-b.alt{background:var(--g1);color:#000}
 .hm-foot{text-align:center;color:var(--l3);font-size:.75rem;margin:14px 0 0}
 @media (prefers-reduced-motion:reduce){.hm-prog i{transition:none}}
-/* login */
-.login{position:fixed;inset:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px 16px calc(24px + env(safe-area-inset-bottom));overflow:auto}
+
+/* Login */
+.login{
+  position:fixed;inset:0;z-index:20;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  padding:24px 16px calc(24px + env(safe-area-inset-bottom));overflow:auto;
+}
 .login[hidden]{display:none}
 .card{width:100%;max-width:380px;text-align:center}
-.lg-logo{display:block;width:120px;height:120px;margin:0 auto 18px;border-radius:27px;box-shadow:0 10px 28px -8px rgba(11,42,107,.35),0 1px 2px rgba(11,42,107,.12)}
-.icons span{width:68px;height:68px;border-radius:16px;box-shadow:0 4px 14px rgba(30,43,74,.16);display:flex;align-items:center;justify-content:center;overflow:hidden}
-.icons img{width:100%;height:100%}
-.icons .ns{background:#0d1117;color:#f5b301}
-.icons .ns svg{width:36px;height:36px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin:0 0 26px}
-.sub{margin:6px 0 26px;color:var(--label2);font-size:.92rem}
+.lg-logo{
+  display:block;width:120px;height:120px;margin:0 auto 18px;border-radius:27px;
+  box-shadow:0 10px 28px -8px rgba(11,42,107,.35),0 1px 2px rgba(11,42,107,.12);
+}
 .grp{background:var(--card);border-radius:14px;overflow:hidden;text-align:left;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .f{display:flex;align-items:center;min-height:52px;padding:0 16px;gap:12px}
 .f+.f{border-top:.5px solid var(--sep)}
-.f span{width:72px;flex:none}
+.f span,.f label{width:72px;flex:none}
 .f input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:1rem;color:var(--label);height:50px;outline:none}
+.pw-eye{
+  width:40px;height:40px;margin-right:-8px;border:0;border-radius:10px;background:none;
+  color:var(--l3);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;
+}
+.pw-eye:active{background:var(--g1)}
+.pw-eye svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .err{min-height:1.4em;margin:10px 4px 6px;color:var(--red);font-size:.9rem;text-align:left}
 .btn{width:100%;min-height:52px;border:0;border-radius:14px;background:var(--tint);color:#fff;font:inherit;font-size:1.05rem;font-weight:700;cursor:pointer}
 .btn:disabled{opacity:.6}
-.note{margin:16px 4px 0;color:var(--label2);font-size:.8rem;line-height:1.5}
-/* month calendar (centred card) */
+
+/* Month picker & modal sheets */
 .cal{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.32);animation:alFade .2s ease}
 .cal[hidden]{display:none}
-.cal-box{width:100%;max-width:360px;background:#fff;border-radius:22px;padding:14px 14px 10px;box-shadow:0 24px 60px -16px rgba(0,0,0,.4);animation:alPop .25s cubic-bezier(.32,.72,0,1);
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Noto Sans Thai","Leelawadee UI",system-ui,sans-serif;color:#000}
+.cal-box{
+  width:100%;max-width:360px;background:#fff;border-radius:22px;padding:14px 14px 10px;
+  box-shadow:0 24px 60px -16px rgba(0,0,0,.4);animation:alPop .25s cubic-bezier(.32,.72,0,1);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Noto Sans Thai","Leelawadee UI",system-ui,sans-serif;color:#000;
+}
 .cal-h{display:flex;align-items:center;justify-content:space-between;padding:0 2px 0 8px}
 .cal-h b{font-size:1.05rem;font-weight:600}
 .cal-h span{display:flex}
 .cal-w,.cal-g{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));text-align:center}
-.cal-w{margin:6px 0 2px;font-size:.72rem;font-weight:600;color:#8E8E93}
-.cal-g button{position:relative;aspect-ratio:1;max-height:48px;border:0;background:none;font:inherit;font-size:1.02rem;font-weight:500;color:#000;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.cal-w{margin:6px 0 2px;font-size:.72rem;font-weight:600;color:var(--l3)}
+.cal-g button{
+  position:relative;aspect-ratio:1;max-height:48px;border:0;background:none;
+  font:inherit;font-size:1.02rem;font-weight:500;color:#000;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;padding:0;
+}
 .cal-g button span{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 .cal-g button.today span{box-shadow:inset 0 0 0 1.5px #1C1C1E;font-weight:700}
 .cal-g button[aria-pressed="true"] span{background:#1C1C1E;color:#fff;font-weight:700;box-shadow:none}
 .cal-g button.future{color:#C7C7CC}
-.cal-g button.has::after{content:"";position:absolute;bottom:2px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#8E8E93}
-.cal-g button:hover span{background:#F2F2F7}
+.cal-g button.has::after{content:"";position:absolute;bottom:2px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--l3)}
+.cal-g button:hover span{background:var(--g1)}
 .cal-g button[aria-pressed="true"]:hover span{background:#1C1C1E}
-.cal-f{display:flex;justify-content:space-between;margin-top:6px;border-top:.5px solid #E5E5EA;padding-top:6px}
+.cal-f{display:flex;justify-content:space-between;margin-top:6px;border-top:.5px solid var(--g2);padding-top:6px}
 .cal-f button{min-height:44px;padding:0 14px;border:0;background:none;font:inherit;font-size:1rem;font-weight:600;color:#1C1C1E;cursor:pointer;border-radius:10px}
-.cal-f button:active{background:#F2F2F7}
-/* admin view (design A): KPI row + people table + detail sheet */
-.adm-pill{display:inline-block;margin-left:8px;vertical-align:middle;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:999px;background:#EEF1F6;color:#1C2B5A;letter-spacing:0}
+.cal-f button:active{background:var(--g1)}
+
+/* Admin summary */
 .adm-kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:4px 0 12px}
-.adm-kpi div{border:.5px solid #E5E5EA;border-radius:14px;padding:10px 12px;background:#fff}
-.adm-kpi small{display:block;color:#8E8E93;font-size:.72rem;font-weight:600}
-.adm-kpi b{font-size:1.45rem;font-weight:700}.adm-kpi b i{font-style:normal;font-size:.75rem;font-weight:500;color:#8E8E93}
-.adm-tbl{border:.5px solid #E5E5EA;border-radius:16px;overflow:hidden;background:#fff}
-.adm-row{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,2fr) minmax(0,1.3fr) 54px 44px;align-items:center;gap:8px;padding:10px 12px;border-top:.5px solid #F0F0F2;width:100%;border-left:0;border-right:0;border-bottom:0;background:none;font:inherit;text-align:left;color:#000}
-.adm-h{border-top:0;font-size:.72rem;font-weight:600;color:#8E8E93;padding-top:8px;padding-bottom:8px}
-button.adm-row{cursor:pointer;min-height:56px}button.adm-row:hover{background:#F7F7FA}
+.adm-kpi div{border:.5px solid var(--g2);border-radius:14px;padding:10px 12px;background:#fff}
+.adm-kpi small{display:block;color:var(--l3);font-size:.72rem;font-weight:600}
+.adm-kpi b{font-size:1.45rem;font-weight:700}
+.adm-kpi b i{font-style:normal;font-size:.75rem;font-weight:500;color:var(--l3)}
+.adm-acts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 12px}
+.adm-act{
+  display:flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:8px 10px;
+  border:.5px solid var(--g2);border-radius:12px;background:var(--g1);color:#000;
+  font:inherit;font-size:.86rem;font-weight:600;cursor:pointer;
+}
+.adm-act:hover{background:#EAEAEF}
+.adm-act:active{transform:scale(.98)}
+.adm-act svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.adm-act.d svg{stroke:var(--red)}
+.adm-act.n svg{stroke:var(--navy)}
+.adm-act.u svg{stroke:var(--tint)}
+.adm-tbl{border:.5px solid var(--g2);border-radius:16px;overflow:hidden;background:#fff}
+.adm-row{
+  display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,2fr) minmax(0,1.3fr) 54px 44px;
+  align-items:center;gap:8px;padding:10px 12px;border:0;border-top:.5px solid #F0F0F2;
+  width:100%;background:none;font:inherit;text-align:left;color:#000;
+}
+.adm-h{border-top:0;font-size:.72rem;font-weight:600;color:var(--l3);padding-top:8px;padding-bottom:8px}
+button.adm-row{cursor:pointer;min-height:56px}
+button.adm-row:hover{background:#F7F7FA}
 .adm-row.off{opacity:.5}
-.adm-who{display:flex;align-items:center;gap:8px;min-width:0}.adm-who b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.adm-av{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:.72rem;font-weight:700;background:#EEF1F6;color:#1C2B5A}
+.adm-who{display:flex;align-items:center;gap:8px;min-width:0}
+.adm-who b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adm-av{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:.72rem;font-weight:700;background:#EEF1F6;color:var(--navy)}
 .adm-chips{display:flex;flex-wrap:wrap;gap:3px}
-.adm-ns{font-size:.85rem}.adm-ns .hm-prog{margin:4px 0 0;height:4px}
-.adm-t{font-size:.78rem;color:#8E8E93}.adm-go{color:#007AFF;font-weight:600;font-size:.85rem;text-align:right}
+.adm-ns{font-size:.85rem}
+.adm-ns .hm-prog{margin:4px 0 0;height:4px}
+.adm-t{font-size:.78rem;color:var(--l3)}
+.adm-go{color:var(--tint);font-weight:600;font-size:.85rem;text-align:right}
 .adm-det{max-width:460px;max-height:86vh;overflow:auto}
-.ad-sec{margin:12px 2px 6px;font-size:.78rem;font-weight:600;color:#8E8E93}
-.ad-it{border:.5px solid #E5E5EA;border-radius:12px;padding:10px 12px;margin-bottom:6px}
-.ad-it b{font-weight:600}.ad-it small{display:block;color:#6E6E73;font-size:.78rem;margin-top:2px}.ad-it .bad{color:#D70015}
-.ad-open{display:block;width:100%;min-height:44px;margin-top:6px;border:0;border-radius:12px;background:#F2F2F7;font:inherit;font-weight:600;cursor:pointer}
-@media (max-width:560px){.adm-kpi{grid-template-columns:repeat(2,minmax(0,1fr))}.adm-row{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) 44px}.adm-row>:nth-child(3),.adm-row>:nth-child(4){display:none}}
-/* iOS-style alert (replaces the browser's own confirm box) */
-.al{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.32);animation:alFade .2s ease}
+.ad-sec{margin:12px 2px 6px;font-size:.78rem;font-weight:600;color:var(--l3)}
+.ad-it{border:.5px solid var(--g2);border-radius:12px;padding:10px 12px;margin-bottom:6px}
+.ad-it b{font-weight:600}
+.ad-it small{display:block;color:var(--l2);font-size:.78rem;margin-top:2px}
+.ad-it .bad{color:var(--red-ink)}
+.ad-open{display:block;width:100%;min-height:44px;margin-top:6px;border:0;border-radius:12px;background:var(--g1);font:inherit;font-weight:600;cursor:pointer}
+@media (max-width:560px){
+  .adm-kpi{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .adm-acts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .adm-act:last-child{grid-column:1 / -1}
+  .adm-h{display:none}
+  div.adm-row:not(.adm-h){grid-template-columns:1fr}
+  button.adm-row{grid-template-columns:minmax(0,1fr) auto auto;gap:6px 8px;padding:12px}
+  button.adm-row .adm-who{grid-column:1}
+  button.adm-row .adm-t{grid-column:2}
+  button.adm-row .adm-go{grid-column:3}
+  button.adm-row .adm-chips{grid-column:1 / -1;padding-left:38px;align-items:center}
+  button.adm-row:not(.off) .adm-chips::before{content:"Daily:";font-size:.72rem;font-weight:600;color:var(--l3);margin-right:4px}
+  button.adm-row .adm-ns{grid-column:1 / -1;padding-left:38px;display:flex;align-items:center;gap:8px;font-size:.8rem}
+  button.adm-row .adm-ns::before{content:"กะดึก:";font-size:.72rem;font-weight:600;color:var(--l3);flex:none}
+  button.adm-row .adm-ns .hm-prog{flex:1;max-width:96px;margin:0}
+  button.adm-row.off .adm-ns{display:none}
+}
+
+/* Account & Logout dialogs */
+.ac-box{max-width:340px;padding:18px 16px 14px;text-align:center}
+.ac-av{
+  width:56px;height:56px;margin:0 auto 10px;border-radius:50%;
+  background:#EEF1F6;color:var(--navy);font-size:1.15rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.ac-name{font-size:1.1rem;font-weight:700;margin:0}
+.ac-meta{margin:4px 0 14px;font-size:.82rem;color:var(--l2)}
+.ac-role{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--g1);color:#3A3A3C;font-weight:600;font-size:.75rem}
+.ac-sync{padding:10px 12px;border-radius:12px;font-size:.84rem;font-weight:600;text-align:left;margin-bottom:12px;line-height:1.45}
+.ac-sync.ok{background:#E8F8EC;color:var(--ok)}
+.ac-sync.wait{background:#FFF1E0;color:#C93400}
+.ac-sync button{
+  display:block;width:100%;margin-top:8px;min-height:38px;border:0;border-radius:10px;
+  background:#fff;color:#C93400;font:inherit;font-size:.82rem;font-weight:700;cursor:pointer;
+}
+.ac-btns{display:flex;flex-direction:column;gap:8px}
+.ac-btns button{min-height:44px;border:0;border-radius:12px;font:inherit;font-size:.95rem;font-weight:600;cursor:pointer}
+.ac-btns .sec-btn{background:var(--g1);color:#000}
+.ac-btns .out-btn{background:#FFE5E3;color:var(--red-ink)}
+
+.al{position:fixed;inset:0;z-index:45;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.32);animation:alFade .2s ease}
 .al[hidden]{display:none}
-.al-box{width:100%;max-width:290px;border-radius:14px;overflow:hidden;text-align:center;background:rgba(246,246,248,.94);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);box-shadow:0 20px 50px -12px rgba(0,0,0,.35);animation:alPop .25s cubic-bezier(.32,.72,0,1)}
-.al-av{width:52px;height:52px;margin:20px auto 10px;border-radius:50%;background:#E5E5EA;color:#3A3A3C;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.05rem}
-.al-box h2{margin:0;padding:22px 16px;font-size:1.05rem;font-weight:600}
-.al-box p{margin:0 16px 18px;font-size:.84rem;line-height:1.45;color:#3C3C43}
-.al-acts{display:flex;border-top:.5px solid rgba(60,60,67,.29)}
-.al-acts button{flex:1;min-height:46px;border:0;background:none;font:inherit;font-size:1.02rem;color:#007AFF;cursor:pointer}
-.al-acts button+button{border-left:.5px solid rgba(60,60,67,.29)}
+.al-box{
+  width:100%;max-width:300px;border-radius:14px;overflow:hidden;text-align:center;
+  background:rgba(246,246,248,.94);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);
+  box-shadow:0 20px 50px -12px rgba(0,0,0,.35);animation:alPop .25s cubic-bezier(.32,.72,0,1);
+}
+.al-box h2{margin:0;padding:20px 16px 18px;font-size:1.05rem;font-weight:600}
+.al-box p{margin:-10px 16px 18px;font-size:.84rem;line-height:1.45;color:#3C3C43}
+.al-box p.warn{color:var(--red-ink);font-weight:600}
+.al-box p[hidden]{display:none}
+.al-acts{display:flex;border-top:.5px solid var(--sep)}
+.al-acts button{flex:1;min-height:46px;border:0;background:none;font:inherit;font-size:1.02rem;color:var(--tint);cursor:pointer}
+.al-acts button+button{border-left:.5px solid var(--sep)}
 .al-acts button:active{background:rgba(0,0,0,.06)}
-.al-acts .danger{color:#FF3B30;font-weight:600}
+.al-acts .danger{color:var(--red);font-weight:600}
 @keyframes alFade{from{opacity:0}}
 @keyframes alPop{from{transform:scale(1.12);opacity:0}}
 @media (prefers-reduced-motion:reduce){.al,.al-box{animation:none}}
@@ -249,18 +389,23 @@ button.adm-row{cursor:pointer;min-height:56px}button.adm-row:hover{background:#F
 
 <div class="login" id="login">
   <form class="card" id="form" novalidate>
-    <img class="lg-logo" id="lgLogo" alt="" width="132" height="132" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiPiA8ZGVmcz4gPGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPiA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNGQUZCRkYiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNEQ0U1RkIiLz4gPC9saW5lYXJHcmFkaWVudD4gPGxpbmVhckdyYWRpZW50IGlkPSJyaW5nIiB4MT0iMC4wOCIgeTE9IjAuNiIgeDI9IjAuOTIiIHkyPSIwLjQiPiA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMwQjJBNkIiLz48c3RvcCBvZmZzZXQ9IjAuNDgiIHN0b3AtY29sb3I9IiMxRTRCQTgiLz4gPHN0b3Agb2Zmc2V0PSIwLjciIHN0b3AtY29sb3I9IiNGMkE5M0IiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkM1MzEiLz4gPC9saW5lYXJHcmFkaWVudD4gPHJhZGlhbEdyYWRpZW50IGlkPSJzdW4iIGN4PSIwLjM4IiBjeT0iMC4zNSIgcj0iMC43NSI+IDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0ZGRDI1QSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZGOEEwMCIvPiA8L3JhZGlhbEdyYWRpZW50PiA8bGluZWFyR3JhZGllbnQgaWQ9Im1vb24iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4gPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMUQzRjhGIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDcxQjREIi8+IDwvbGluZWFyR3JhZGllbnQ+IDxsaW5lYXJHcmFkaWVudCBpZD0iY2FsSGVhZCIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPiA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMxRjRGQjAiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwRDJGNzgiLz4gPC9saW5lYXJHcmFkaWVudD4gPGZpbHRlciBpZD0ic29mdCIgeD0iLTIwJSIgeT0iLTIwJSIgd2lkdGg9IjE0MCUiIGhlaWdodD0iMTQwJSI+PGZlRHJvcFNoYWRvdyBkeD0iMCIgZHk9IjE0IiBzdGREZXZpYXRpb249IjE4IiBmbG9vZC1jb2xvcj0iIzBCMkE2QiIgZmxvb2Qtb3BhY2l0eT0iLjE4Ii8+PC9maWx0ZXI+IDxmaWx0ZXIgaWQ9ImxpZnQiIHg9Ii0yMCUiIHk9Ii0yMCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjE0MCUiPjxmZURyb3BTaGFkb3cgZHg9IjAiIGR5PSIxMCIgc3RkRGV2aWF0aW9uPSIxNCIgZmxvb2QtY29sb3I9IiMwQjJBNkIiIGZsb29kLW9wYWNpdHk9Ii4yNSIvPjwvZmlsdGVyPiA8L2RlZnM+IDxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjEwMjQiIGZpbGw9InVybCgjYmcpIi8+IDxnIGZpbHRlcj0idXJsKCNzb2Z0KSI+IDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjUwMCIgcj0iMzAwIiBmaWxsPSJub25lIiBzdHJva2U9InVybCgjcmluZykiIHN0cm9rZS13aWR0aD0iNTQiLz4gPGNpcmNsZSBjeD0iNDcwIiBjeT0iNTAwIiByPSIyNjIiIGZpbGw9IiNGRkZGRkYiLz4gPC9nPiA8ZyBzdHJva2U9IiMxRDNGOEYiIHN0cm9rZS13aWR0aD0iMjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+IDxwYXRoIGQ9Ik00NzAgMjc4djQwTTQ3MCA2ODJ2NDBNMjQ4IDUwMGg0ME02NTIgNTAwaDQwIi8+IDxwYXRoIGQ9Ik0zNTkgMzA4bDE0IDI0TTU4MSAzMDhsLTE0IDI0TTM1OSA2OTJsMTQtMjRNNTgxIDY5MmwtMTQtMjRNMjc4IDM4OWwyNCAxNE02NjIgMzg5bC0yNCAxNE0yNzggNjExbDI0LTE0TTY2MiA2MTFsLTI0LTE0IiBzdHJva2Utd2lkdGg9IjE0IiBvcGFjaXR5PSIuNTUiLz4gPC9nPiA8ZyBzdHJva2U9IiMwQjJBNkIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+IDxwYXRoIGQ9Ik00NzAgNTAwVjMzOCIgc3Ryb2tlLXdpZHRoPSIzMCIvPiA8cGF0aCBkPSJNNDcwIDUwMGwxNDYtODAiIHN0cm9rZS13aWR0aD0iMjQiLz4gPC9nPiA8Y2lyY2xlIGN4PSI0NzAiIGN5PSI1MDAiIHI9IjM0IiBmaWxsPSIjMEIyQTZCIi8+IDxjaXJjbGUgY3g9IjQ3MCIgY3k9IjUwMCIgcj0iMTEiIGZpbGw9IiNGRkM1MzEiLz4gPGcgZmlsdGVyPSJ1cmwoI2xpZnQpIj4gPHBhdGggZD0iTTIzMyAzNzhhMTI4IDEyOCAwIDEgMCAxMjggMTg2IDEwNCAxMDQgMCAxIDEtMTI4LTE4NnoiIGZpbGw9InVybCgjbW9vbikiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIxOCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPiA8L2c+IDxnIHN0cm9rZT0iI0ZGQTIxQSIgc3Ryb2tlLXdpZHRoPSIyNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj4gPHBhdGggZD0iTTc5MCAxMTJ2NTJNNzkwIDM2MHY1Mk05MTQgMjM2aDUyTTg3OCAxNDhsMzYtMzZNODc4IDMyNGwzNiAzNk03MDIgMTQ4bC0zMC0zMCIvPiA8L2c+IDxnIGZpbHRlcj0idXJsKCNsaWZ0KSI+PGNpcmNsZSBjeD0iNzkwIiBjeT0iMjM2IiByPSI5NiIgZmlsbD0idXJsKCNzdW4pIiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMTYiLz48L2c+IDxnIGZpbHRlcj0idXJsKCNsaWZ0KSI+IDxyZWN0IHg9IjU5MCIgeT0iNjAwIiB3aWR0aD0iMzAwIiBoZWlnaHQ9IjI4MCIgcng9IjUyIiBmaWxsPSIjRkZGRkZGIi8+IDxwYXRoIGQ9Ik02NDIgNjAwaDE5NmE1MiA1MiAwIDAgMSA1MiA1MnYzOEg1OTB2LTM4YTUyIDUyIDAgMCAxIDUyLTUyeiIgZmlsbD0idXJsKCNjYWxIZWFkKSIvPiA8L2c+IDxnIGZpbGw9IiNGRkZGRkYiIHN0cm9rZT0iIzBCMkE2QiIgc3Ryb2tlLXdpZHRoPSIxMCI+PHJlY3QgeD0iNjU2IiB5PSI1NjAiIHdpZHRoPSIzMCIgaGVpZ2h0PSI4NCIgcng9IjE1Ii8+PHJlY3QgeD0iNzk0IiB5PSI1NjAiIHdpZHRoPSIzMCIgaGVpZ2h0PSI4NCIgcng9IjE1Ii8+PC9nPiA8ZyBmaWxsPSIjOERBQUU2Ij4gPHJlY3QgeD0iNjI2IiB5PSI3MjAiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0NiIgcng9IjEyIi8+PHJlY3QgeD0iNzAwIiB5PSI3MjAiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0NiIgcng9IjEyIi8+PHJlY3QgeD0iNzc0IiB5PSI3MjAiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0NiIgcng9IjEyIiBmaWxsPSIjMEQyRjc4Ii8+IDxyZWN0IHg9IjYyNiIgeT0iNzg0IiB3aWR0aD0iNTYiIGhlaWdodD0iNDYiIHJ4PSIxMiIvPjxyZWN0IHg9IjcwMCIgeT0iNzg0IiB3aWR0aD0iNTYiIGhlaWdodD0iNDYiIHJ4PSIxMiIgZmlsbD0iIzFFNUJFMCIvPiA8L2c+IDwvc3ZnPg==">
+    <img class="lg-logo" id="lgLogo" alt="" width="132" height="132">
     <h1>Daily · Night Shift</h1>
     <div class="grp">
       <label class="f"><span>ผู้ใช้</span><input id="user" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ชื่อผู้ใช้" enterkeyhint="next"></label>
-      <label class="f"><span>รหัสผ่าน</span><input id="pass" type="password" autocomplete="current-password" placeholder="รหัสผ่าน" enterkeyhint="go"></label>
+      <div class="f">
+        <label for="pass">รหัสผ่าน</label>
+        <input id="pass" type="password" autocomplete="current-password" placeholder="รหัสผ่าน" enterkeyhint="go">
+        <button type="button" class="pw-eye" id="pwToggle" aria-label="แสดงรหัสผ่าน" aria-pressed="false">
+          <svg id="pwIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
     </div>
     <p class="err" id="err" role="alert"></p>
     <button class="btn" id="go">เข้าสู่ระบบ</button>
   </form>
 </div>
 
-<!-- Home: pick a day, see what was filled (Daily + Night Shift), open either app at that day -->
 <section class="home" id="home" hidden aria-labelledby="hmTitle">
   <div class="hm-in">
     <header class="hm-head">
@@ -268,10 +413,13 @@ button.adm-row{cursor:pointer;min-height:56px}button.adm-row:hover{background:#F
         <p class="hm-date" id="hmToday"></p>
         <h1 id="hmTitle">Inspection</h1>
       </div>
-      <button type="button" class="hm-me" id="hmMe" aria-label="บัญชี / ออกจากระบบ"><span class="hm-av" id="hmAv">?</span></button>
+      <button type="button" class="hm-me" id="hmMe" aria-label="ข้อมูลบัญชีและสถานะซิงก์" aria-haspopup="dialog">
+        <span class="hm-av" id="hmAv">?</span>
+        <span class="hm-pend" id="hmPend" hidden></span>
+      </button>
     </header>
+    <button type="button" class="hm-sync" id="hmSyncWarn" hidden></button>
 
-    <!-- week strip + calendar -->
     <div class="hm-week" role="group" aria-label="เลือกวันที่">
       <div class="hm-weekbar">
         <b id="hmMonth"></b>
@@ -285,7 +433,6 @@ button.adm-row{cursor:pointer;min-height:56px}button.adm-row:hover{background:#F
       <button type="button" class="hm-today" id="hmGoToday" hidden>กลับไปวันนี้</button>
     </div>
 
-    <!-- Daily -->
     <article class="hm-card" aria-labelledby="hmDT">
       <div class="hm-ch">
         <span class="hm-ico red"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M8 3v4M16 3v4"/><circle cx="12" cy="15" r="2.2"/></svg></span>
@@ -299,7 +446,6 @@ button.adm-row{cursor:pointer;min-height:56px}button.adm-row:hover{background:#F
       </div>
     </article>
 
-    <!-- Night Shift -->
     <article class="hm-card" aria-labelledby="hmNT">
       <div class="hm-ch">
         <span class="hm-ico navy"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></span>
@@ -313,11 +459,31 @@ button.adm-row{cursor:pointer;min-height:56px}button.adm-row:hover{background:#F
         <button type="button" class="hm-b navy" data-open="night">กรอก</button>
       </div>
     </article>
-    <!-- admin: who filled what on the chosen day (view only — admins can't fill) -->
+
     <div id="admBox" hidden>
       <div class="adm-kpi" id="admKpi"></div>
+      <div class="adm-acts" id="admActs">
+        <button type="button" class="adm-act d" data-adm-go="daily">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M8 3v4M16 3v4"/></svg>
+          <span>Daily · ประวัติ</span>
+        </button>
+        <button type="button" class="adm-act n" data-adm-go="night">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+          <span>สรุปกะดึก</span>
+        </button>
+        <button type="button" class="adm-act u" data-adm-go="team">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9.5" r="2.5"/><path d="M15.5 19a4.5 4.5 0 0 1 5-4.4"/></svg>
+          <span>สถิติผู้ตรวจ</span>
+        </button>
+      </div>
       <div class="adm-tbl" role="table" aria-label="ผู้ตรวจและงานที่กรอก">
-        <div class="adm-row adm-h" role="row"><span role="columnheader">ผู้ตรวจ</span><span role="columnheader">Daily (เครื่อง)</span><span role="columnheader">Night Shift</span><span role="columnheader">ล่าสุด</span><span></span></div>
+        <div class="adm-row adm-h" role="row">
+          <span role="columnheader">ผู้ตรวจ</span>
+          <span role="columnheader">Daily (เครื่อง)</span>
+          <span role="columnheader">Night Shift</span>
+          <span role="columnheader">ล่าสุด</span>
+          <span></span>
+        </div>
         <div id="admRows"></div>
       </div>
     </div>
@@ -337,7 +503,7 @@ button.adm-row{cursor:pointer;min-height:56px}button.adm-row:hover{background:#F
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7"/><path d="M6 9.5V20h12V9.5"/></svg>
     <span>หน้าแรก<small>เลือกประเภทการตรวจ</small></span>
   </button>
-  <div class="sec"><i></i>งานตรวจเช็ค</div>
+  <div class="sec">งานตรวจเช็ค</div>
   <button type="button" class="item" data-app="daily">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4.5h12v16H6z"/><path d="M9 3h6v3H9z"/><path d="M9 11l1.5 1.5L13.5 9.5M9 16l1.5 1.5 3-3"/></svg>
     <span>Daily Inspection<small>ตรวจเช็คเครื่องรายวัน</small></span><span class="cnt" id="cntDaily" hidden></span>
@@ -355,19 +521,21 @@ button.adm-row{cursor:pointer;min-height:56px}button.adm-row:hover{background:#F
 
 <div class="frames" id="frames"></div>
 
-<!-- month calendar: opens in the middle of the screen (the phone's own date picker sticks to the button and runs off the edge) -->
 <div class="cal" id="cal" hidden role="dialog" aria-modal="true" aria-labelledby="calT">
   <div class="cal-box">
-    <div class="cal-h"><b id="calT"></b>
-      <span><button type="button" class="hm-ib" id="calPrev" aria-label="เดือนก่อน"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
-      <button type="button" class="hm-ib" id="calNext" aria-label="เดือนถัดไป"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></span></div>
+    <div class="cal-h">
+      <b id="calT"></b>
+      <span>
+        <button type="button" class="hm-ib" id="calPrev" aria-label="เดือนก่อน"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <button type="button" class="hm-ib" id="calNext" aria-label="เดือนถัดไป"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      </span>
+    </div>
     <div class="cal-w" aria-hidden="true"><span>อา</span><span>จ</span><span>อ</span><span>พ</span><span>พฤ</span><span>ศ</span><span>ส</span></div>
     <div class="cal-g" id="calG"></div>
     <div class="cal-f"><button type="button" id="calToday">วันนี้</button><button type="button" id="calClose">ปิด</button></div>
   </div>
 </div>
 
-<!-- admin: one person's work on the chosen day -->
 <div class="cal" id="admDet" hidden role="dialog" aria-modal="true" aria-labelledby="adT">
   <div class="cal-box adm-det">
     <div class="cal-h"><b id="adT"></b><button type="button" class="hm-ib" id="adX" aria-label="ปิด"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
@@ -375,21 +543,33 @@ button.adm-row{cursor:pointer;min-height:56px}button.adm-row:hover{background:#F
   </div>
 </div>
 
-<div class="al" id="alOut" hidden role="alertdialog" aria-modal="true" aria-labelledby="alT">
+<div class="cal" id="acctDlg" hidden role="dialog" aria-modal="true" aria-labelledby="acName">
+  <div class="cal-box ac-box">
+    <div class="ac-av" id="acAv">?</div>
+    <p class="ac-name" id="acName">-</p>
+    <p class="ac-meta"><span id="acUser"></span> <span class="ac-role" id="acRole">ผู้ตรวจ</span></p>
+    <div class="ac-sync ok" id="acSync"></div>
+    <div class="ac-btns">
+      <button type="button" class="out-btn" id="acLogout">ออกจากระบบ</button>
+      <button type="button" class="sec-btn" id="acClose">ปิด</button>
+    </div>
+  </div>
+</div>
+
+<div class="al" id="alOut" hidden role="alertdialog" aria-modal="true" aria-labelledby="alT" aria-describedby="alMsg">
   <div class="al-box">
     <h2 id="alT">ออกจากระบบ</h2>
+    <p id="alMsg" hidden></p>
     <div class="al-acts"><button type="button" id="alNo">ยกเลิก</button><button type="button" class="danger" id="alYes">ออกจากระบบ</button></div>
   </div>
 </div>
 
 <script src="tasks.js"></script>
 <script>
-/* where the two apps and their Apps Script back ends are */
-// ?v= makes the browser load the new file after each upload (bump it whenever index.html / daily_inspection_mobile.html change)
-const V = '20261124t';
+const V = '20261125a';
 const APPS = { daily: 'daily_inspection_mobile.html?v=' + V, night: 'index.html?v=' + V };
-// both apps now use the same Apps Script (Daily's): one account list, one Google Sheet
 const DAILY_API = 'https://script.google.com/macros/s/AKfycbxuM2GmQGbDG7tLM0uQiqsEvHcqeEQ8M93e6qsIn06fAmSB8MUMGz7mh-nRX8ZOUc6H9Q/exec';
+
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const ls = {
@@ -402,7 +582,6 @@ const post = async (url, body) => {
   return r.json();
 };
 
-/* signed in = at least one of the two apps has a session */
 const dailySession = () => { const s = ls.json('di_user'); return s && s.token ? s : null; };
 const nightSession = () => { const u = (ls.json('nsp') || {}).user; return u && u.token ? u : null; };
 
@@ -420,51 +599,59 @@ function frame(app) {
   }
   return frames[app];
 }
+
 const TITLES = { daily: 'Daily Inspection', night: 'Night Shift' };
-/* opened as a local file / preview snapshot: the two apps can't load inside — say how to open it instead of a blank page */
 const LOCAL = !/^https?:$/.test(location.protocol);
 function localNotice() {
   $('frames').innerHTML = `<div style="max-width:420px;margin:15vh auto 0;padding:24px;text-align:center;color:#3A4256;line-height:1.6">
-    <div style="font-size:2.2rem">📱</div><h2 style="margin:8px 0;font-size:1.2rem">เปิดจากไฟล์ในเครื่องไม่ได้</h2>
+    <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>
+    <h2 style="margin:10px 0 8px;font-size:1.2rem">เปิดจากไฟล์ในเครื่องไม่ได้</h2>
     <p style="margin:0 0 16px;color:var(--label2)">หน้านี้ต้องเปิดผ่านเว็บ ฟอร์ม Daily และ Night Shift ถึงจะขึ้น อัปโหลดขึ้น GitHub แล้วเปิดลิงก์นี้</p>
     <a href="https://wongnantananthaya-ai.github.io/Daily/app.html" style="color:var(--tint);font-weight:600;word-break:break-all">wongnantananthaya-ai.github.io/Daily/app.html</a></div>`;
 }
-/* ---------- home: pick a day → see what was filled (Daily + Night Shift) → open either app at that day ---------- */
+
+/* Home state & Thai date helpers */
 const HM = { sel: '', daily: null, night: {}, loadingNight: '' };
-const TH_W = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'], TH_WL = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+const TH_W = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+const TH_WL = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
 const TH_M = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
 const TH_MS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
 const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const pd = s => new Date(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10));
 const addDays = (s, n) => { const d = pd(s); d.setDate(d.getDate() + n); return ymd(d); };
 const todayStr = () => ymd(new Date());
-// Night shift runs 20:00 → 08:00 next morning and is named by the evening it starts.
-// Before 08:00 "today" is still last night's shift, so the Night Shift card shows that night.
+// กะดึกนับตามคืนที่เริ่มงาน (20:00-08:00) ถ้าเปิดก่อน 08:00 ของวันนี้ยังเป็นกะเมื่อคืน
 const nightOf = d => (d === todayStr() && new Date().getHours() < 8) ? addDays(d, -1) : d;
 const thShort = s => { const d = pd(s); return `${d.getDate()} ${TH_MS[d.getMonth()]} ${d.getFullYear() + 543}`; };
-// nights that this device already has (Night Shift keeps a local copy) — for the dots on the week strip
-const localNights = () => { const s = new Set(); Object.keys(((ls.json('nsp') || {}).rec) || {}).forEach(k => { const d = k.split('|')[1]; if (d) s.add(d); }); return s; };
+const localNights = () => {
+  const s = new Set();
+  Object.keys(((ls.json('nsp') || {}).rec) || {}).forEach(k => { const d = k.split('|')[1]; if (d) s.add(d); });
+  return s;
+};
 
 function hmRender() {
   const sel = HM.sel, t = todayStr(), mon = addDays(sel, -((pd(sel).getDay() + 6) % 7));
-  const sd = pd(sel);   // the line above the title shows the day picked on the calendar
+  const sd = pd(sel);
   $('hmToday').textContent = `วัน${TH_WL[sd.getDay()]}ที่ ${sd.getDate()} ${TH_M[sd.getMonth()]} ${sd.getFullYear() + 543}${sel === t ? ' · วันนี้' : ''}`;
-  $('hmMonth').textContent = `${TH_M[pd(sel).getMonth()]} ${pd(sel).getFullYear() + 543}`;
+  $('hmMonth').textContent = `${TH_M[sd.getMonth()]} ${sd.getFullYear() + 543}`;
+
   const dDays = new Set((HM.daily || []).map(r => r.date)), nDays = localNights();
   Object.entries(HM.night).forEach(([d, st]) => { if (st && Object.keys(st).length) nDays.add(d); });
   $('hmDays').innerHTML = Array.from({ length: 7 }, (_, i) => {
     const d = addDays(mon, i), dt = pd(d);
     return `<button type="button" class="hm-day ${d === t ? 'today' : ''} ${d > t ? 'future' : ''}" data-day="${d}" aria-pressed="${d === sel}" aria-label="${TH_WL[dt.getDay()]} ${dt.getDate()} ${TH_M[dt.getMonth()]}">
       <span class="w">${TH_W[dt.getDay()]}</span><span class="d">${dt.getDate()}</span>
-      <span class="hm-dots">${dDays.has(d) || nDays.has(d) ? '<i class="dd"></i>' : ''}</span></button>`;   // one dot = something was filled that day
+      <span class="hm-dots">${dDays.has(d) || nDays.has(d) ? '<i class="dd"></i>' : ''}</span></button>`;
   }).join('');
   $('hmGoToday').hidden = sel === t;
   if (!$('cal').hidden) calRender();
 
-  // ---- Daily of the selected day ----
+  // Daily summary
   $('hmDSub').textContent = 'วันที่ ' + thShort(sel);
-  if (!HM.daily) { $('hmDStat').innerHTML = ''; $('hmDChips').innerHTML = '<span class="hm-empty">กำลังโหลด…</span>'; }
-  else {
+  if (!HM.daily) {
+    $('hmDStat').innerHTML = '';
+    $('hmDChips').innerHTML = '<span class="hm-empty">กำลังโหลด…</span>';
+  } else {
     const recs = HM.daily.filter(r => r.date === sel).sort((a, b) => (a.type + a.no).localeCompare(b.type + b.no));
     const bad = recs.filter(r => r.result === 'ผิดปกติ').length;
     $('hmDStat').innerHTML = `${recs.length}<small>เครื่อง${bad ? ` · ผิดปกติ ${bad}` : ''}</small>`;
@@ -474,18 +661,22 @@ function hmRender() {
       : `<span class="hm-empty">${sel > t ? 'ยังไม่ถึงวันนี้' : 'ยังไม่มีการตรวจวันนี้'}</span>`;
   }
 
-  // ---- Night Shift of the selected night ----
+  // Night Shift summary
   const ns = nightOf(sel), nsD = pd(ns), nsN = pd(addDays(ns, 1));
   $('hmNSub').textContent = `${nsD.getDate()} ${TH_MS[nsD.getMonth()]} 20:00 – ${nsN.getDate()} ${TH_MS[nsN.getMonth()]} 08:00`;
   const st = HM.night[ns];
-  if (st === undefined) { $('hmNStat').innerHTML = ''; $('hmNBar').style.width = '0'; $('hmNChips').innerHTML = '<span class="hm-empty">กำลังโหลด…</span>'; }
-  else {
-    const tasks = st.tasks || {}, list = (typeof TASKS !== 'undefined' && TASKS[pd(sel).getDay()]) || [];   // TASKS comes from tasks.js
+  if (st === undefined) {
+    $('hmNStat').innerHTML = '';
+    $('hmNBar').style.width = '0';
+    $('hmNChips').innerHTML = '<span class="hm-empty">กำลังโหลด…</span>';
+  } else {
+    const tasks = st.tasks || {}, list = (typeof TASKS !== 'undefined' && TASKS[pd(sel).getDay()]) || [];
     const done = Object.keys(tasks).filter(k => /^t\d+$/.test(k) && tasks[k].v === '✓').length, total = list.length || done;
     let ng = 0;
     const forms = [['sub1', 'Sub 1'], ['sub2', 'Sub 2'], ['adrain', 'Auto drain'], ['light', 'Light']].map(([k, n]) => {
       const vals = Object.values(st[k] || {}).map(x => x.v).filter(v => v !== '');
-      const bad = vals.filter(v => v === 'NG' || v === 'ผิดปกติ').length; ng += bad;
+      const bad = vals.filter(v => v === 'NG' || v === 'ผิดปกติ').length;
+      ng += bad;
       return `<span class="hm-chip ${bad ? 'ng' : vals.length ? 'ok' : ''}">${n} ${bad ? 'NG ' + bad : vals.length ? '✓' : '–'}</span>`;
     });
     $('hmNStat').innerHTML = total ? `${done}/${total}<small>งาน${ng ? ` · NG ${ng}` : ''}</small>` : `–<small>งาน</small>`;
@@ -493,7 +684,7 @@ function hmRender() {
     $('hmNBar').style.width = total ? Math.round(done / total * 100) + '%' : '0';
     $('hmNChips').innerHTML = Object.keys(st).length ? forms.join('') : `<span class="hm-empty">${ns > nightOf(t) ? 'ยังไม่ถึงคืนนี้' : 'ยังไม่มีการกรอกคืนนี้'}</span>`;
   }
-  // admin: the two app cards (with "กรอก") make way for the who-filled-what view
+
   const adm = isAdmin();
   document.querySelectorAll('.hm-card').forEach(c => { c.hidden = adm; });
   $('admBox').hidden = !adm;
@@ -502,15 +693,21 @@ function hmRender() {
   const d = dailySession() || nightSession();
   $('hmFoot').textContent = d ? `${d.name}${d.admin ? ' · admin (เห็นข้อมูลทุกคน · แก้ได้เฉพาะที่กรอกแล้ว)' : ' · เห็นข้อมูลที่ตัวเองกรอก'}` : '';
 }
-/* ---------- admin: who filled what (view only) ---------- */
+
+/* Admin view */
 const isAdmin = () => !!((dailySession() || nightSession() || {}).admin);
 const DAILY_N = { ACP: 'Air Compressor', AD: 'Air Dryer', CT: 'Cooling Tower' };
+const FORM_N = { sub1: 'Sub 1', sub2: 'Sub 2', adrain: 'Auto drain', light: 'Light' };
+
 async function hmLoadUsers() {
   const s = dailySession() || nightSession();
-  try { const j = await post(DAILY_API, { action: 'users', token: s.token }); if (j && j.ok) HM.users = j.users || []; } catch {}
+  try {
+    const j = await post(DAILY_API, { action: 'users', token: s.token });
+    if (j && j.ok) HM.users = j.users || [];
+  } catch {}
   if (!$('home').hidden) hmRender();
 }
-// everything one person did on the chosen day / night
+
 function admWork(p) {
   const sel = HM.sel, ns = nightOf(sel), st = HM.night[ns] || {};
   const mine = r => r.user ? r.user === p.user : r.inspector === p.name;
@@ -523,24 +720,34 @@ function admWork(p) {
     else forms[form] = (forms[form] || 0) + 1;
     if (x.at && x.at > last) last = x.at;
   }));
-  daily.forEach(r => { const m = /(\d{2})\/(\d{2})\/(\d{4}) (\d{2}:\d{2})/.exec(r.saved); if (m) { const t = `${m[3]}-${m[2]}-${m[1]} ${m[4]}`; if (t > last) last = t; } });
+  daily.forEach(r => {
+    const m = /(\d{2})\/(\d{2})\/(\d{4}) (\d{2}:\d{2})/.exec(r.saved);
+    if (m) { const t = `${m[3]}-${m[2]}-${m[1]} ${m[4]}`; if (t > last) last = t; }
+  });
   return { daily, tasks, forms, last, any: daily.length || tasks || Object.keys(forms).length };
 }
+
 const admChip = r => `<span class="hm-chip ${r.result === 'ผิดปกติ' ? 'ng' : r.result === 'Stop' ? 'st' : 'ok'}">${esc(r.type)} ${esc(r.no)} ${r.result === 'ผิดปกติ' ? '!' : r.result === 'Stop' ? 'Stop' : '✓'}</span>`;
+
 function admRender() {
-  const sel = HM.sel, ns = nightOf(sel), st = HM.night[ns], total = (typeof TASKS !== 'undefined' && TASKS[pd(ns).getDay()] || []).length;
-  // people = active non-admin users, plus anyone who filled but isn't in the list
+  const sel = HM.sel, ns = nightOf(sel), st = HM.night[ns];
+  const total = (typeof TASKS !== 'undefined' && TASKS[pd(ns).getDay()] || []).length;
   const people = (HM.users || []).filter(u => u.active && !u.admin).map(u => ({ user: u.user, name: u.name }));
   const known = new Set(people.map(p => p.user));
-  (HM.daily || []).filter(r => r.date === sel && r.user && !known.has(r.user)).forEach(r => { known.add(r.user); people.push({ user: r.user, name: r.inspector || r.user }); });
+  (HM.daily || []).filter(r => r.date === sel && r.user && !known.has(r.user)).forEach(r => {
+    known.add(r.user);
+    people.push({ user: r.user, name: r.inspector || r.user });
+  });
   const rows = people.map(p => ({ p, w: admWork(p) })).sort((a, b) => (b.w.any ? 1 : 0) - (a.w.any ? 1 : 0) || (b.w.last > a.w.last ? 1 : -1));
   const dayRecs = (HM.daily || []).filter(r => r.date === sel);
   const done = st ? Object.keys(st.tasks || {}).filter(k => /^t\d+$/.test(k) && st.tasks[k].v === '✓').length : 0;
   const bad = dayRecs.filter(r => r.result === 'ผิดปกติ').length;
+
   $('admKpi').innerHTML = `<div><small>ผู้ตรวจที่กรอก</small><b>${rows.filter(x => x.w.any).length}<i> / ${people.length} คน</i></b></div>
     <div><small>Daily ตรวจแล้ว</small><b>${dayRecs.length}<i> เครื่อง</i></b></div>
     <div><small>ผิดปกติ</small><b style="color:${bad ? 'var(--red-ink)' : '#000'}">${bad}</b></div>
     <div><small>กะดึก</small><b>${st ? done : '–'}<i> / ${total || '–'} งาน</i></b></div>`;
+
   $('admRows').innerHTML = !HM.users ? '<div class="adm-row"><span class="hm-empty">กำลังโหลด…</span></div>'
     : !rows.length ? '<div class="adm-row"><span class="hm-empty">ยังไม่มีผู้ตรวจในแท็บผู้ใช้</span></div>'
     : rows.map(({ p, w }) => {
@@ -553,11 +760,11 @@ function admRender() {
         <span class="adm-t">${w.last ? w.last.slice(11) : '–'}</span><span class="adm-go">${w.any ? 'ดู ›' : ''}</span></button>`;
     }).join('');
 }
-// detail sheet for one person
-const FORM_N = { sub1: 'Sub 1', sub2: 'Sub 2', adrain: 'Auto drain', light: 'Light' };
+
 function admOpen(user) {
   const p = (HM.users || []).find(u => u.user === user) || { user, name: ((HM.daily || []).find(r => r.user === user) || {}).inspector || user };
-  const w = admWork(p), sel = HM.sel, ns = nightOf(sel), nd = pd(ns), total = (typeof TASKS !== 'undefined' && TASKS[nd.getDay()] || []).length;
+  const w = admWork(p), sel = HM.sel, ns = nightOf(sel), nd = pd(ns);
+  const total = (typeof TASKS !== 'undefined' && TASKS[nd.getDay()] || []).length;
   $('adT').textContent = `${p.name} · ${thShort(sel)}`;
   let h = `<div class="ad-sec">Daily Inspection · ${w.daily.length} เครื่อง</div>`;
   h += w.daily.length ? w.daily.map(r => `<div class="ad-it"><b>${esc(DAILY_N[r.type] || r.type)} NO. ${esc(r.no)}</b> ${admChip(r)}
@@ -572,16 +779,35 @@ function admOpen(user) {
       <small>ล่าสุด ${esc(w.last ? w.last.slice(11) : '–')}</small></div>
       <button type="button" class="ad-open" data-adopen="night">เปิดดู / แก้กะดึกคืนนี้</button>`
     : '<div class="ad-it"><small>ไม่ได้กรอกกะดึกคืนนี้</small></div>';
-  $('adBody').innerHTML = h; $('admDet').hidden = false;
+  $('adBody').innerHTML = h;
+  $('admDet').hidden = false;
 }
+
+$('admActs').addEventListener('click', e => {
+  const b = e.target.closest('[data-adm-go]');
+  if (!b) return;
+  const target = b.dataset.admGo;
+  leaveHome();
+  if (target === 'team') {
+    show('daily');
+    callApp('daily', w => w.shellOpenTeam ? w.shellOpenTeam() : w.document.getElementById('teamBtn')?.click());
+    return;
+  }
+  const d = target === 'night' ? nightOf(HM.sel) : HM.sel;
+  show(target);
+  callApp(target, w => w.shellOpenDate && w.shellOpenDate(d, true));
+});
 $('admRows').addEventListener('click', e => { const b = e.target.closest('[data-adm]'); if (b) admOpen(b.dataset.adm); });
 $('adX').addEventListener('click', () => { $('admDet').hidden = true; });
 $('admDet').addEventListener('click', e => {
   if (e.target === $('admDet')) { $('admDet').hidden = true; return; }
-  const o = e.target.closest('[data-adopen]'); if (!o) return;
+  const o = e.target.closest('[data-adopen]');
+  if (!o) return;
   const app = o.dataset.adopen, d = app === 'night' ? nightOf(HM.sel) : HM.sel;
-  $('admDet').hidden = true; leaveHome(); show(app);
-  callApp(app, w => w.shellOpenDate && w.shellOpenDate(d, app === 'daily'));
+  $('admDet').hidden = true;
+  leaveHome();
+  show(app);
+  callApp(app, w => w.shellOpenDate && w.shellOpenDate(d, true));
 });
 addEventListener('keydown', e => { if (e.key === 'Escape' && !$('admDet').hidden) $('admDet').hidden = true; });
 
@@ -589,14 +815,19 @@ async function hmLoadDaily() {
   const s = dailySession();
   try {
     const j = s ? await post(DAILY_API, { action: 'list', token: s.token }) : null;
-    if (j && j.ok) HM.daily = (j.records || []).map(r => ({ date: String(r.date), type: r.type, no: String(r.no), result: r.result || '',
-      inspector: String(r.inspector || ''), user: String(r.user || '').toLowerCase(), saved: String(r.saved || ''), status: String(r.status || ''),
-      issues: (r.issueList || []).map(i => i.label) }));
-    else if (j && j.auth === false) return signOutAll();
+    if (j && j.ok) {
+      HM.daily = (j.records || []).map(r => ({
+        date: String(r.date), type: r.type, no: String(r.no), result: r.result || '',
+        inspector: String(r.inspector || ''), user: String(r.user || '').toLowerCase(),
+        saved: String(r.saved || ''), status: String(r.status || ''),
+        issues: (r.issueList || []).map(i => i.label),
+      }));
+    } else if (j && j.auth === false) return signOutAll();
   } catch {}
   if (!HM.daily) HM.daily = (ls.json('daily_inspection_records_v1') || []).map(r => ({ date: r.date, type: r.type, no: String(r.machineNo || ''), result: '' }));
   if (!$('home').hidden) hmRender();
 }
+
 async function hmLoadNight(date) {
   const s = dailySession() || nightSession();
   HM.loadingNight = date;
@@ -605,48 +836,67 @@ async function hmLoadNight(date) {
     if (j && j.ok) HM.night[date] = j.state || {};
     else if (j && j.auth === false) return signOutAll();
   } catch {}
-  if (HM.night[date] === undefined) {   // offline: use this device's copy
+  if (HM.night[date] === undefined) {
     const rec = ((ls.json('nsp') || {}).rec) || {}, st = {};
-    Object.entries(rec).forEach(([k, v]) => { const [f, d] = k.split('|'); if (d === date) st[f] = Object.fromEntries(Object.entries(v).filter(([id]) => !id.startsWith('_')).map(([id, x]) => [id, { v: x === true ? '✓' : String(x ?? '') }])); });
+    Object.entries(rec).forEach(([k, v]) => {
+      const [f, d] = k.split('|');
+      if (d === date) st[f] = Object.fromEntries(Object.entries(v).filter(([id]) => !id.startsWith('_')).map(([id, x]) => [id, { v: x === true ? '✓' : String(x ?? '') }]));
+    });
     HM.night[date] = st;
   }
   if (!$('home').hidden && nightOf(HM.sel) === date) hmRender();
 }
+
 function hmSelect(d) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(d || '')) return;
-  HM.sel = d; hmRender();
+  HM.sel = d;
+  hmRender();
   if (HM.night[nightOf(d)] === undefined) hmLoadNight(nightOf(d));
 }
+
 function showHome() {
-  document.body.classList.add('at-home'); $('home').hidden = false; closeMenu();
+  document.body.classList.add('at-home');
+  $('home').hidden = false;
+  closeMenu();
   document.title = 'Inspection';
   if (!HM.sel) HM.sel = todayStr();
-  // show the last numbers straight away, then refresh them in the background (no "กำลังโหลด…" on every visit)
-  refreshMe(); hmRender(); hmLoadDaily(); hmLoadNight(nightOf(HM.sel));
+  refreshMe();
+  hmRender();
+  hmLoadDaily();
+  hmLoadNight(nightOf(HM.sel));
   if (isAdmin()) hmLoadUsers();
   preloadApps();
 }
-// load both apps hidden in the background once the home page has its data, so opening Daily / Night Shift is instant
+
 let preloaded = false;
 function preloadApps() {
-  if (preloaded || LOCAL) return; preloaded = true;
+  if (preloaded || LOCAL) return;
+  preloaded = true;
   const go = () => { frame('daily'); frame('night'); };
   setTimeout(() => (window.requestIdleCallback ? requestIdleCallback(go, { timeout: 3000 }) : go()), 2500);
 }
-function leaveHome() { document.body.classList.remove('at-home'); $('home').hidden = true; }
-// run something inside an app once it has loaded (same-origin iframe)
+
+function leaveHome() {
+  document.body.classList.remove('at-home');
+  $('home').hidden = true;
+}
+
 function callApp(app, fn) {
   const f = frame(app), run = () => { try { fn(f.contentWindow); } catch (e) {} };
-  if (f.dataset.ready) run(); else f.addEventListener('load', () => setTimeout(run, 400), { once: true });
+  if (f.dataset.ready) run();
+  else f.addEventListener('load', () => setTimeout(run, 400), { once: true });
 }
+
 $('hmDays').addEventListener('click', e => { const b = e.target.closest('[data-day]'); if (b) hmSelect(b.dataset.day); });
 $('hmPrev').addEventListener('click', () => hmSelect(addDays(HM.sel, -7)));
 $('hmNext').addEventListener('click', () => hmSelect(addDays(HM.sel, 7)));
-/* month calendar */
-const CAL = { m: '' };   // 'yyyy-mm' shown
+
+/* Month calendar dialog */
+const CAL = { m: '' };
 function calRender() {
   const [y, m] = CAL.m.split('-').map(Number), first = new Date(y, m - 1, 1), days = new Date(y, m, 0).getDate(), t = todayStr();
-  const has = new Set((HM.daily || []).map(r => r.date)); localNights().forEach(d => has.add(d));
+  const has = new Set((HM.daily || []).map(r => r.date));
+  localNights().forEach(d => has.add(d));
   Object.entries(HM.night).forEach(([d, st]) => { if (st && Object.keys(st).length) has.add(d); });
   $('calT').textContent = `${TH_M[m - 1]} ${y + 543}`;
   let h = '<span></span>'.repeat(first.getDay());
@@ -657,7 +907,12 @@ function calRender() {
   $('calG').innerHTML = h;
 }
 const calShift = n => { const [y, m] = CAL.m.split('-').map(Number), d = new Date(y, m - 1 + n, 1); CAL.m = ymd(d).slice(0, 7); calRender(); };
-function calOpen() { CAL.m = HM.sel.slice(0, 7); calRender(); $('cal').hidden = false; setTimeout(() => $('calG').querySelector('[aria-pressed="true"]')?.focus(), 30); }
+function calOpen() {
+  CAL.m = HM.sel.slice(0, 7);
+  calRender();
+  $('cal').hidden = false;
+  setTimeout(() => $('calG').querySelector('[aria-pressed="true"]')?.focus(), 30);
+}
 const calClose = () => { $('cal').hidden = true; $('hmCalBtn').focus(); };
 $('hmCalBtn').addEventListener('click', calOpen);
 $('calPrev').addEventListener('click', () => calShift(-1));
@@ -667,97 +922,240 @@ $('calToday').addEventListener('click', () => { hmSelect(todayStr()); calClose()
 $('calG').addEventListener('click', e => { const b = e.target.closest('[data-cd]'); if (b) { hmSelect(b.dataset.cd); calClose(); } });
 $('cal').addEventListener('click', e => { if (e.target === $('cal')) calClose(); });
 addEventListener('keydown', e => { if (e.key === 'Escape' && !$('cal').hidden) calClose(); });
+
 $('hmGoToday').addEventListener('click', () => hmSelect(todayStr()));
 document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => {
   const app = b.dataset.open, view = !!b.dataset.view, d = app === 'night' ? nightOf(HM.sel) : HM.sel;
-  leaveHome(); show(app);
-  callApp(app, w => w.shellOpenDate && w.shellOpenDate(d, view));   // the app opens at the chosen day
+  leaveHome();
+  show(app);
+  callApp(app, w => w.shellOpenDate && w.shellOpenDate(d, view));
 }));
 $('goHome').addEventListener('click', showHome);
-// logout asks with an iOS-style alert instead of the browser's confirm box (which shows the web address and OK/Cancel)
+
+function queueCounts() {
+  return { dq: (ls.json('di_sync_queue') || []).length, nq: ((ls.json('nsp') || {}).q || []).length };
+}
+function openPendingApp() {
+  const { dq } = queueCounts(), app = dq ? 'daily' : 'night';
+  const d = app === 'night' ? nightOf(HM.sel || todayStr()) : (HM.sel || todayStr());
+  $('acctDlg').hidden = true;
+  leaveHome();
+  show(app);
+  callApp(app, w => w.shellOpenDate && w.shellOpenDate(d, false));
+}
+function renderAcctSync() {
+  const { dq, nq } = queueCounts(), tot = dq + nq, el = $('acSync');
+  if (!tot) {
+    el.className = 'ac-sync ok';
+    el.textContent = '✓ ซิงก์ข้อมูลขึ้น Google Sheet ครบแล้ว';
+  } else {
+    const parts = [];
+    if (dq) parts.push(`Daily ${dq} รายการ`);
+    if (nq) parts.push(`Night Shift ${nq} ช่อง`);
+    el.className = 'ac-sync wait';
+    el.innerHTML = `รอส่งข้อมูลขึ้นระบบ: ${parts.join(' · ')}<button type="button" id="acSyncGo">เปิดหน้าเพื่อส่งข้อมูลตอนนี้</button>`;
+  }
+}
+function openAcct() {
+  const s = dailySession() || nightSession() || {};
+  $('acAv').textContent = $('meAv').textContent;
+  $('acName').textContent = s.name || '-';
+  $('acUser').textContent = s.user ? '@' + s.user : '';
+  $('acRole').textContent = s.admin ? 'admin' : 'ผู้ตรวจ';
+  renderAcctSync();
+  $('acctDlg').hidden = false;
+  setTimeout(() => $('acClose').focus(), 30);
+}
+const closeAcct = () => { $('acctDlg').hidden = true; };
+$('hmMe').addEventListener('click', openAcct);
+$('hmSyncWarn').addEventListener('click', openPendingApp);
+$('acClose').addEventListener('click', closeAcct);
+$('acctDlg').addEventListener('click', e => {
+  if (e.target === $('acctDlg')) closeAcct();
+  if (e.target.id === 'acSyncGo') openPendingApp();
+});
+$('acLogout').addEventListener('click', () => { closeAcct(); askLogout(); });
+
 function askLogout() {
-  $('alOut').hidden = false; setTimeout(() => $('alNo').focus(), 30);
+  const s = dailySession() || nightSession() || {};
+  const { dq, nq } = queueCounts(), tot = dq + nq, msg = $('alMsg');
+  if (tot) {
+    msg.className = 'warn';
+    msg.textContent = `บัญชี ${s.name || '-'} ยังมีข้อมูลค้างส่ง ${tot} รายการ หากออกตอนนี้ข้อมูลที่ยังไม่ส่งอาจสูญหาย`;
+    msg.hidden = false;
+  } else if (s.name) {
+    msg.className = '';
+    msg.textContent = `บัญชีผู้ใช้: ${s.name}`;
+    msg.hidden = false;
+  } else msg.hidden = true;
+  $('alOut').hidden = false;
+  setTimeout(() => $('alNo').focus(), 30);
 }
 const closeAl = () => { $('alOut').hidden = true; };
 $('alNo').addEventListener('click', closeAl);
 $('alYes').addEventListener('click', () => { closeAl(); signOutAll(); });
 $('alOut').addEventListener('click', e => { if (e.target === $('alOut')) closeAl(); });
-addEventListener('keydown', e => { if (e.key === 'Escape' && !$('alOut').hidden) closeAl(); });
-$('hmMe').addEventListener('click', askLogout);
+addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (!$('alOut').hidden) closeAl();
+    else if (!$('acctDlg').hidden) closeAcct();
+  }
+});
+
 function show(app) {
-  current = app; ls.set('shell_tab', app);
-  if (LOCAL) { document.querySelectorAll('.side [data-app]').forEach(b => b.dataset.app === app ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current')); $('appTitle').textContent = TITLES[app]; closeMenu(); return localNotice(); }
+  current = app;
+  ls.set('shell_tab', app);
+  if (LOCAL) {
+    document.querySelectorAll('.side [data-app]').forEach(b => b.dataset.app === app ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
+    $('appTitle').textContent = TITLES[app];
+    closeMenu();
+    return localNotice();
+  }
   frame(app).hidden = false;
   Object.entries(frames).forEach(([k, f]) => { if (k !== app) f.hidden = true; });
   document.querySelectorAll('.side [data-app]').forEach(b => b.dataset.app === app ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
-  $('appTitle').textContent = TITLES[app]; document.title = TITLES[app];
+  $('appTitle').textContent = TITLES[app];
+  document.title = TITLES[app];
   closeMenu();
 }
 document.querySelectorAll('.side [data-app]').forEach(b => b.addEventListener('click', () => show(b.dataset.app)));
 
-/* side menu (phone: slides in; computer: always shown) */
-function openMenu() { document.body.classList.add('menu-open'); $('menuOpen').setAttribute('aria-expanded', 'true'); setTimeout(() => document.querySelector('.side [aria-current]')?.focus(), 50); }
-function closeMenu() { document.body.classList.remove('menu-open'); $('menuOpen').setAttribute('aria-expanded', 'false'); }
+/* Drawer toggle */
+function openMenu() {
+  document.body.classList.add('menu-open');
+  $('menuOpen').setAttribute('aria-expanded', 'true');
+  setTimeout(() => document.querySelector('.side [aria-current]')?.focus(), 50);
+}
+function closeMenu() {
+  document.body.classList.remove('menu-open');
+  $('menuOpen').setAttribute('aria-expanded', 'false');
+}
 $('menuOpen').addEventListener('click', openMenu);
 $('menuFab').addEventListener('click', openMenu);
 $('menuClose').addEventListener('click', closeMenu);
 $('scrim').addEventListener('click', closeMenu);
 addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 
-/* who is signed in + items still waiting to be sent, per app */
+/* Session & sync badge status */
 function refreshMe() {
   const d = dailySession(), n = nightSession(), name = (d && d.name) || (n && n.name) || '-';
   $('meName').textContent = name;
   $('meAv').textContent = Array.from(name).filter(ch => /[ก-ฮA-Za-z0-9]/.test(ch)).slice(0, 2).join('') || '?';
   $('meRole').textContent = d && d.admin ? 'admin' : 'ผู้ตรวจ';
-  const dq = (ls.json('di_sync_queue') || []).length, nq = ((ls.json('nsp') || {}).q || []).length;
-  $('cntDaily').hidden = !dq; $('cntDaily').textContent = dq;
-  $('cntNight').hidden = !nq; $('cntNight').textContent = nq;
+  const { dq, nq } = queueCounts(), tot = dq + nq;
+  $('cntDaily').hidden = !dq;
+  $('cntDaily').textContent = dq;
+  $('cntNight').hidden = !nq;
+  $('cntNight').textContent = nq;
   $('hmAv').textContent = $('meAv').textContent;
+  $('hmPend').hidden = !tot;
+  $('hmPend').textContent = tot;
+  $('hmSyncWarn').hidden = !tot;
+  if (tot) {
+    const parts = [];
+    if (dq) parts.push(`Daily ${dq}`);
+    if (nq) parts.push(`Night Shift ${nq}`);
+    $('hmSyncWarn').innerHTML = `<span>มีงานรอส่งขึ้นระบบ (${parts.join(' · ')})</span><small>เปิดส่ง ›</small>`;
+  }
+  if (!$('acctDlg').hidden) renderAcctSync();
 }
 setInterval(refreshMe, 3000);
 $('logout').addEventListener('click', askLogout);
 
 function openApps() {
-  $('login').hidden = true; document.body.classList.remove('locked');
-  Object.values(frames).forEach(f => f.remove()); for (const k in frames) delete frames[k];   // fresh load with the new sessions
-  preloaded = false; HM.daily = null; HM.night = {}; HM.users = null;   // another account may have signed in: don't show the previous one's numbers
-  refreshMe(); showHome();   // after sign-in: choose Daily or Night Shift
+  $('login').hidden = true;
+  document.body.classList.remove('locked');
+  Object.values(frames).forEach(f => f.remove());
+  for (const k in frames) delete frames[k];
+  preloaded = false;
+  HM.daily = null;
+  HM.night = {};
+  HM.users = null;
+  refreshMe();
+  showHome();
 }
+
+const PW_EYE_OPEN = '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>';
+const PW_EYE_OFF = '<path d="M3 3l18 18M10.6 10.6a3 3 0 0 0 4.2 4.2"/><path d="M9.9 5.2A10.6 10.6 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-4.1 4.9M6.3 6.3C3.7 8.2 2 12 2 12s3.6 7 10 7c1.9 0 3.6-.5 5-1.3"/>';
+function setPwVis(show) {
+  $('pass').type = show ? 'text' : 'password';
+  $('pwToggle').setAttribute('aria-pressed', String(show));
+  $('pwToggle').setAttribute('aria-label', show ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน');
+  $('pwIcon').innerHTML = show ? PW_EYE_OFF : PW_EYE_OPEN;
+}
+$('pwToggle').addEventListener('click', () => {
+  setPwVis($('pass').type === 'password');
+  $('pass').focus();
+});
+
 function signOutAll() {
-  document.body.classList.add('locked'); closeMenu(); leaveHome();
-  const d = dailySession(); if (d) post(DAILY_API, { action: 'logout', token: d.token }).catch(() => {});
+  document.body.classList.add('locked');
+  closeMenu();
+  closeAcct();
+  leaveHome();
+  const d = dailySession();
+  if (d) post(DAILY_API, { action: 'logout', token: d.token }).catch(() => {});
   ls.set('di_user', null);
-  const ns = ls.json('nsp'); if (ns && ns.user) { delete ns.user; ls.set('nsp', JSON.stringify(ns)); }
-  Object.values(frames).forEach(f => f.remove()); for (const k in frames) delete frames[k];
-  $('pass').value = ''; $('err').textContent = ''; $('login').hidden = false; setTimeout(() => $('user').focus(), 60);
+  const ns = ls.json('nsp');
+  if (ns && ns.user) { delete ns.user; ls.set('nsp', JSON.stringify(ns)); }
+  Object.values(frames).forEach(f => f.remove());
+  for (const k in frames) delete frames[k];
+  setPwVis(false);
+  $('pass').value = '';
+  $('err').textContent = '';
+  $('login').hidden = false;
+  setTimeout(() => $('user').focus(), 60);
 }
-// either app asks to log out → log out of both
-addEventListener('message', e => { if (e.origin === location.origin && e.data && e.data.type === 'shell-logout') signOutAll(); });
+
+addEventListener('message', e => {
+  if (e.origin === location.origin && e.data && e.data.type === 'shell-logout') signOutAll();
+});
 
 $('user').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('pass').focus(); } });
 ['user', 'pass'].forEach(id => $(id).addEventListener('input', () => { $('err').textContent = ''; }));
 $('form').addEventListener('submit', async e => {
   e.preventDefault();
   const user = $('user').value.trim(), pass = $('pass').value;
-  if (!user || !pass) { $('err').textContent = 'กรอกชื่อผู้ใช้และรหัสผ่าน'; (!user ? $('user') : $('pass')).focus(); return; }
-  $('go').disabled = true; $('go').textContent = 'กำลังเข้าสู่ระบบ…';
-  // one sign-in, one token: shared by Daily ("di_user") and Night Shift ("nsp".user)
+  if (!user || !pass) {
+    $('err').textContent = 'กรอกชื่อผู้ใช้และรหัสผ่าน';
+    (!user ? $('user') : $('pass')).focus();
+    return;
+  }
+  $('go').disabled = true;
+  $('go').textContent = 'กำลังเข้าสู่ระบบ…';
   let j;
-  try { j = await post(DAILY_API, { action: 'login', user: user.toLowerCase(), pass }); }
-  catch { j = { ok: false, error: 'เชื่อมต่อไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่' }; }
-  $('go').disabled = false; $('go').textContent = 'เข้าสู่ระบบ';
-  if (!j.ok) { $('err').textContent = j.error || 'เข้าสู่ระบบไม่ได้'; $('pass').value = ''; $('pass').focus(); return; }
-  if (ls.get('di_last_user') !== j.user) { ls.set('daily_inspection_records_v1', null); ls.set('di_sync_queue', null); }
+  try {
+    j = await post(DAILY_API, { action: 'login', user: user.toLowerCase(), pass });
+  } catch {
+    j = { ok: false, error: 'เชื่อมต่อไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่' };
+  }
+  $('go').disabled = false;
+  $('go').textContent = 'เข้าสู่ระบบ';
+  if (!j.ok) {
+    $('err').textContent = j.error || 'เข้าสู่ระบบไม่ได้';
+    $('pass').focus();
+    $('pass').select();
+    return;
+  }
+  setPwVis(false);
+  if (ls.get('di_last_user') !== j.user) {
+    ls.set('daily_inspection_records_v1', null);
+    ls.set('di_sync_queue', null);
+  }
   ls.set('di_last_user', j.user);
   const s = { user: j.user, name: j.name, token: j.token, admin: !!j.admin };
   ls.set('di_user', JSON.stringify(s));
-  const ns = ls.json('nsp') || {}; ns.user = s; ls.set('nsp', JSON.stringify(ns));
+  const ns = ls.json('nsp') || {};
+  ns.user = s;
+  ls.set('nsp', JSON.stringify(ns));
   openApps();
 });
 
 if (dailySession() || nightSession()) openApps();
-else { document.body.classList.add('locked'); setTimeout(() => $('user').focus(), 60); }
+else {
+  document.body.classList.add('locked');
+  setTimeout(() => $('user').focus(), 60);
+}
 </script>
 </body>
 </html>

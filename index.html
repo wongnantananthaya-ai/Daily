@@ -641,6 +641,33 @@ button.primary{border-radius:var(--r-lg)}
  .bar .acts{justify-content:flex-end}
  .bar .acts .sec,.bar .acts .primary{flex:none;min-width:200px;padding:0 var(--s5)}
 }
+/* Night summary view (opened by "ดูข้อมูล") */
+.ns-top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:4px 0 12px}
+.ns-top h2{margin:2px 0 0;font-size:26px;font-weight:700;letter-spacing:-.02em}
+.ns-top .k{font-size:13px;color:var(--mute)}
+.ns-sw{border:0;border-radius:999px;background:var(--acc);color:var(--on-acc);font:inherit;font-size:14px;font-weight:600;padding:9px 16px;min-height:40px;cursor:pointer}
+.ns-kpi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.ns-kpi div{background:var(--card);border-radius:var(--r-lg);padding:12px 14px}
+.ns-kpi small{display:block;font-size:12px;color:var(--mute);font-weight:600}
+.ns-kpi b{display:block;margin-top:2px;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.ns-kpi b i{font-style:normal;font-size:13px;font-weight:500;color:var(--mute)}
+.ns-kpi .bad b{color:var(--ng)}
+.ns-sec{font-size:13px;font-weight:600;color:var(--mute);margin:16px 4px 8px}
+.ns-list{background:var(--card);border-radius:var(--r-lg);overflow:hidden}
+.ns-sh{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;border:0;background:none;padding:12px 14px;text-align:left;font:inherit;color:var(--fg);cursor:pointer}
+.ns-sh+.ns-sh,.ns-tk+.ns-tk{border-top:.5px solid var(--line)}
+.ns-sh:hover{background:var(--raise)}
+.ns-sh small{display:block;font-size:12px;color:var(--mute);margin-top:2px}
+.ns-sh .bad-txt{color:var(--ng);font-weight:600}
+.ns-pill{flex:none;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--raise);color:var(--mute)}
+.ns-pill.ok{background:var(--okbg);color:var(--ok)}
+.ns-pill.ng{background:var(--ngbg);color:var(--ng)}
+.ns-tk{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;font-size:14px}
+.ns-dot{width:22px;height:22px;border-radius:50%;flex:none;margin-top:1px;display:grid;place-items:center;font-size:12px;font-weight:700;border:1.5px solid var(--line);color:transparent}
+.ns-dot.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.ns-tk .m{flex:1;min-width:0}
+.ns-tk .m small{display:block;font-size:12px;color:var(--mute);margin-top:2px}
+.ns-tk .rm{margin-top:4px;padding:5px 8px;border-radius:8px;background:var(--raise);font-size:12.5px;color:var(--fg)}
 </style>
 </head>
 <body>
@@ -736,8 +763,8 @@ $('date').value=shiftDate();
 // autoDate: follow the current shift unless the user picked another date to review
 let autoDate=true;
 // app.html (home page) opens Night Shift at a chosen night: show / fill that night's sheet
-window.shellOpenDate=d=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(d||''))return;$('date').value=d;autoDate=d===shiftDate();slotSel=null;if(db.user){tab='tasks';returnTo=null;render();scrollTo(0,0)}};
-$('date').onchange=()=>{autoDate=$('date').value===shiftDate();slotSel=null;render()};
+window.shellOpenDate=(d,view)=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(d||''))return;$('date').value=d;autoDate=d===shiftDate();slotSel=null;if(db.user){tab=view?'summary':'tasks';returnTo=null;lastSync=0;render();scrollTo(0,0)}};
+$('date').onchange=()=>{autoDate=$('date').value===shiftDate();slotSel=null;lastSync=0;render()};
 function rollDate(){const now=shiftDate();if(!autoDate||$('date').value===now)return false;
   if(document.activeElement?.matches?.('textarea,input:not(#date)'))return false; // don't yank the page mid-typing
   $('date').value=now;slotSel=null;render();return true}
@@ -817,7 +844,7 @@ function syncLabel(ok){if(ok!=null){netOk=ok;if(ok)lastOk=new Date().toLocaleTim
   el.title=n&&!netOk?'ข้อมูลเก็บอยู่ในเครื่องนี้แล้ว จะส่งเข้า Google Sheet เองเมื่อมีเน็ต':n?'กำลังส่งเข้า Google Sheet':'ส่งเข้า Google Sheet แล้ว'+(lastOk?' · '+lastOk:'')}
 function refreshView(){if(!db.user)return;badge();const typing=document.activeElement?.matches?.('textarea,input');
   if(typing)return curRefresh&&curRefresh(true);
-  if(tab==='tasks')renderTasks();else if(FORMS[tab]&&curRefresh)curRefresh(true)}
+  if(tab==='tasks')renderTasks();else if(tab==='summary')renderSummary();else if(FORMS[tab]&&curRefresh)curRefresh(true)}
 const whoText=names=>{const n=[...new Set(names.filter(Boolean))];return n.length?'โดย '+n.join(', '):''};
 const pendLabel=form=>{const n=pendingOf(form,$('date').value).length;return n?`ค้างส่ง ${n} ช่อง`:'บันทึกเข้า Sheet แล้ว'};
 
@@ -909,7 +936,7 @@ function renderForm(key){
     if(f.t==='num')return `<td class="cell today${bad}" data-cell="${esc(f.id)}"><input type="number" inputmode="decimal" step="any" enterkeyhint="next" data-id="${esc(f.id)}" value="${esc(v)}" aria-label="${esc(f.label)}"></td>`;
     return `<td class="cell today tap${bad}" data-cell="${esc(f.id)}" data-tap="${esc(f.id)}" role="button" tabindex="0" aria-label="${esc(f.label)}">${esc(showV(f,v))}</td>`};
   const meanOf=(f,v)=>f.t==='gng'?(v==='G'?'ปกติ':v==='NG'?(key==='light'?'ไม่สว่าง':'ผิดปกติ'):''):'';
-  const backTo={tasks:'กลับรายการงาน'}[returnTo];
+  const backTo={tasks:'กลับรายการงาน',summary:'กลับหน้าสรุปกะ'}[returnTo];
   let h=backTo?`<button id="back" class="link" style="margin:0 0 var(--s2);min-height:44px"><i class="ti ti-arrow-left" aria-hidden="true"></i> ${backTo}</button>`:'';
   // Tap hint (T2): a short "how to fill" list — yellow dots = number of taps, chip on the right = the result.
   const tapRows=all.some(f=>f.t==='gng')?[[1,'✓ G','g'],[2,'! NG','n']]:[[1,'✓ ปกติ','g'],[2,'! ผิดปกติ','n'],[3,'– ไม่เปิดใช้','o']];
@@ -1061,7 +1088,7 @@ function renderTasks(){
     <div class="n">${done}/${list.length}<small>งานคืนนี้</small></div></div>
     <div class="prog" role="progressbar" aria-label="งานคืนนี้" aria-valuemin="0" aria-valuemax="${list.length}" aria-valuenow="${done}"><i style="width:${list.length?done/list.length*100:0}%"></i></div>
     ${ng?`<div class="tl-ng"><i class="ti ti-alert-triangle" aria-hidden="true"></i> ผิดปกติ ${ng} จุดในเช็คชีต</div>`:''}
-  ${tabsHtml}<div class="tl-cap">ช่วงนี้ ${sDone}/${sIx.length} ข้อ</div><ul class="tl" id="xlw">`;
+  ${tabsHtml}<div class="tl-cap" style="display:flex;justify-content:space-between;align-items:center"><span>ช่วงนี้ ${sDone}/${sIx.length} ข้อ</span><button type="button" class="link" id="goSum" style="font-size:13px">ดูสรุปทั้งคืน ›</button></div><ul class="tl" id="xlw">`;
   for(const i of sIx){const t=list[i],ks=linksOf(t.name,t.time),by=doneBy(t,i),ok=!!r['t'+i];
     const ids=t.checks.length?t.checks.map((c,j)=>['t'+i+'c'+j,c]):[['t'+i,'ทำแล้ว']];
     const nOn=ids.filter(([id])=>r[id]).length, multi=!ks.length&&ids.length>1;
@@ -1087,11 +1114,82 @@ function renderTasks(){
     const c=e.target.closest('[data-ck]');if(c)return tick(c.dataset.ck);
     const dp=e.target.closest('[data-delph]');if(dp){if(confirm('ลบรูปนี้ออกจากกะ?')){put('tasks',dp.dataset.delph,'');renderTasks()}return}
     const sb=e.target.closest('[data-slot]');if(sb){slotSel=+sb.dataset.slot;$('xlw').scrollTop=0;$('xlw').scrollLeft=0;renderTasks();scrollTo(0,0);return}
+    if(e.target.id==='goSum'){tab='summary';render();scrollTo(0,0);return}
     if(e.target.id==='nextslot'){slotSel=nextSlot;$('xlw').scrollTop=0;renderTasks();scrollTo({top:0,behavior:motion()});return}
     if(e.target.id==='confirm')confirmSend('tasks',renderTasks,done<list.length?['งานยังไม่ติ๊ก '+(list.length-done)+' ข้อ']:[])};
   $('phin').onchange=e=>addPhotos([...e.target.files]);
   $('view').onkeydown=e=>{const c=e.target.closest?.('[data-ck]');if(c&&(e.key==='Enter'||e.key===' ')){e.preventDefault();tick(c.dataset.ck)}};
   $('view').onchange=e=>{const t=e.target;if(t.dataset.id)put('tasks',t.dataset.id,t.value)};
+}
+
+function renderSummary(){
+  curRefresh=null;
+  const {day,list,r}=deriveTasks(), who=r._who||{}, date=$('date').value;
+  const [y,m,dd]=date.split('-').map(Number), nd=new Date(y,m-1,dd+1);
+  const done=list.filter((_,i)=>r['t'+i]).length, slots=taskSlots(list);
+  const per=SLOTS.map((_,s)=>list.map((_,i)=>i).filter(i=>slots[i]===s));
+  const doneBy=(t,i)=>[...new Set((t.checks.length?t.checks.map((_,j)=>r['t'+i+'c'+j]&&who['t'+i+'c'+j]):[r['t'+i]&&who['t'+i]]).filter(Boolean))].join(', ');
+  const tonight=[...new Set(list.flatMap(t=>linksOf(t.name,t.time)))];
+  let shDone=0, ngTotal=0;
+  const sheetRows=tonight.map(k=>{
+    const [title,groups]=FORMS[k], fr=db.rec[k+'|'+date]||{}, fs=groups.flatMap(g=>g.f);
+    const filled=fs.filter(f=>value(f,fr)!==''), bads=fs.filter(f=>isBad(f,value(f,fr)));
+    if(filled.length===fs.length)shDone++;
+    ngTotal+=bads.length;
+    const by=[...new Set(filled.map(f=>fr._who?.[f.id]).filter(Boolean))].join(', ');
+    const pill=bads.length?`<span class="ns-pill ng">NG ${bads.length} จุด</span>`
+      :filled.length===fs.length?`<span class="ns-pill ok">ครบ · ปกติ</span>`
+      :filled.length?`<span class="ns-pill">กรอกแล้ว ${filled.length}/${fs.length}</span>`
+      :`<span class="ns-pill">ยังไม่กรอก</span>`;
+    const badTxt=bads.length?`<small class="bad-txt">ผิดปกติ: ${bads.slice(0,4).map(f=>`${esc(f.label)} (${esc(value(f,fr))})`).join(' · ')}${bads.length>4?` และอีก ${bads.length-4} จุด`:''}</small>`:'';
+    const noteTxt=fr._note?`<small>หมายเหตุ: ${esc(fr._note)}</small>`:'';
+    return `<button type="button" class="ns-sh" data-sum-form="${k}">
+      <span><b>${esc(title)}</b><small>${filled.length}/${fs.length} ช่อง${by?' · โดย '+esc(by):''}</small>${badTxt}${noteTxt}</span>
+      ${pill}</button>`;
+  });
+  const phs=photosOf(r), hasNote=!!(r._note||'').trim();
+  let h=`<div class="ns-top">
+    <div><div class="k">คืนวัน${DAYS_TH[day]} ${dd} ${TH_MS[m-1]} 20:00 – ${nd.getDate()} ${TH_MS[nd.getMonth()]} 08:00</div><h2>สรุปผลการตรวจกะดึก</h2></div>
+    <button type="button" class="ns-sw" id="goFill">${db.user?.admin?'เปิดหน้าเช็คลิสต์ ›':'ไปหน้ากรอกงาน ›'}</button>
+  </div>
+  <div class="ns-kpi">
+    <div><small>งานคืนนี้</small><b>${done}<i> / ${list.length} ข้อ</i></b></div>
+    <div><small>เช็คชีตครบ</small><b>${shDone}<i> / ${tonight.length} ใบ</i></b></div>
+    <div class="${ngTotal?'bad':''}"><small>ผิดปกติ (NG)</small><b>${ngTotal}</b></div>
+  </div>`;
+  if(tonight.length){
+    h+=`<div class="ns-sec">เช็คชีตประจำคืน (แตะเพื่อเปิดดูรายละเอียด)</div><div class="ns-list">${sheetRows.join('')}</div>`;
+  }
+  if(hasNote||phs.length){
+    h+=`<div class="ns-sec">หมายเหตุและรูปถ่ายกะ</div><div class="card">
+      ${hasNote?`<p style="margin:0 0 ${phs.length?'10px':'0'};white-space:pre-wrap">${esc(r._note)}</p>`:''}
+      ${phs.length?`<div class="photos">${phs.map(([,p])=>`<div class="ph"><a href="https://drive.google.com/file/d/${encodeURIComponent(p.id)}/view" target="_blank" rel="noopener"><img src="https://drive.google.com/thumbnail?id=${encodeURIComponent(p.id)}&sz=w320" alt="รูปโดย ${esc(p.by||'')}" loading="lazy"></a></div>`).join('')}</div>`:''}
+    </div>`;
+  }
+  per.forEach((ix,s)=>{
+    if(!ix.length)return;
+    const sDone=ix.filter(i=>r['t'+i]).length;
+    h+=`<div class="ns-sec">${esc(SLOTS[s])} · ${sDone}/${ix.length} ข้อ</div><div class="ns-list">`+ix.map(i=>{
+      const t=list[i], ok=!!r['t'+i], by=doneBy(t,i), rmk=(r['n'+i]||'').trim();
+      const sub=t.checks.length?t.checks.map((c,j)=>`${r['t'+i+'c'+j]?'✓':'○'} ${esc(c)}`).join(' · '):'';
+      return `<div class="ns-tk">
+        <span class="ns-dot ${ok?'ok':''}" aria-hidden="true">✓</span>
+        <div class="m">
+          <div><b>${esc(cleanName(t.name))}</b></div>
+          <small>${[t.time,by?'โดย '+by:'',!ok?'ยังไม่ติ๊ก':''].filter(Boolean).map(esc).join(' · ')}</small>
+          ${sub?`<small>${sub}</small>`:''}
+          ${rmk?`<div class="rm">หมายเหตุ: ${esc(rmk)}</div>`:''}
+        </div>
+      </div>`;
+    }).join('')+`</div>`;
+  });
+  $('view').innerHTML=h;
+  $('view').onchange=$('view').onkeydown=$('view').onpointerdown=null;
+  $('view').onclick=e=>{
+    if(e.target.id==='goFill'){tab='tasks';render();scrollTo(0,0);return}
+    const sf=e.target.closest('[data-sum-form]');
+    if(sf){returnTo='summary';tab=sf.dataset.sumForm;render();scrollTo(0,0)}
+  };
 }
 
 function csv(key){
@@ -1176,7 +1274,7 @@ function render(){
   // a check sheet that isn't scheduled on this night can't be open (e.g. after changing the date) → back to the task list
   if(FORMS[tab]){const l=TASKS[new Date($('date').value+'T12:00').getDay()]||[];if(!l.some(t=>linksOf(t.name,t.time).includes(tab))){tab='tasks';returnTo=null}}
   document.body.classList.toggle('is-form',!!FORMS[tab]);
-  const view={tasks:renderTasks,data:renderData}[tab];view?view():renderForm(tab);
+  const view={tasks:renderTasks,summary:renderSummary,data:renderData}[tab];view?view():renderForm(tab);
   badge();
   if(Date.now()-lastSync>5000)sync();
 }
@@ -1203,6 +1301,7 @@ function renderSide(){syncLabel();dateLabel();const el=$('side');if(!el)return;i
   // the date is already in the date box at the top — this header shows tonight's progress only
   let h=`<div class="sd-day"><span>งานคืนนี้</span><b>${done}<small> / ${list.length} ข้อ</small></b>
     <div class="prog"><i style="width:${list.length?done/list.length*100:0}%"></i></div></div>`;
+  h+=`<div class="sd-list"><button class="sd-it ${tab==='summary'?'on':''}" data-ssum><span class="ic"><i class="ti ti-clipboard-text" aria-hidden="true"></i></span><span class="nm">สรุปทั้งคืน<small>ดูข้อมูลรวมทุกช่วง</small></span><span></span></button></div>`;
   h+=`<div><div class="sd-h">ช่วงเวลา</div><div class="sd-list">`+per.map((ix,s)=>{if(!ix.length)return '';const n=ix.filter(i=>r['t'+i]).length,all=n===ix.length;
     return `<button class="sd-it ${tab==='tasks'&&slotSel===s?'on':''}" data-sslot="${s}"><span class="ic"><i class="ti ${all?'ti-check':'ti-clock'}" aria-hidden="true"></i></span>
       <span class="nm">${SLOT_N[s]}${s===nowSlot?' •':''}<small>${SLOT_T[s]}</small></span><span class="st ${all?'ok':''}">${n}/${ix.length}</span></button>`}).join('')+`</div></div>`;
@@ -1217,7 +1316,8 @@ function renderSide(){syncLabel();dateLabel();const el=$('side');if(!el)return;i
   el.innerHTML=h}
 $('side').onclick=e=>{const b=e.target.closest('.sd-it');if(!b||b.disabled)return;
   if(b.dataset.sslot!=null){tab='tasks';slotSel=+b.dataset.sslot}
-  else if(b.dataset.sform){tab=b.dataset.sform;returnTo='tasks'}
+  else if(b.dataset.ssum!=null){tab='summary';returnTo=null}
+  else if(b.dataset.sform){returnTo=tab==='summary'?'summary':'tasks';tab=b.dataset.sform}
   else if(b.dataset.sdata!=null){tab='data';returnTo=null}
   render();scrollTo(0,0)};
 let sideT=0;const sideSoon=()=>{clearTimeout(sideT);sideT=setTimeout(renderSide,0)};

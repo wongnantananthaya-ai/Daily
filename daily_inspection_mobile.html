@@ -1085,6 +1085,11 @@ window.shellOpenDate = function (d, view) {
   if (view) { H.month = d.slice(0, 7); H.day = d; H.filter = 'all'; renderHistory(); openDim('historyModal'); }
   else window.scrollTo({ top: 0 });
 };
+window.shellOpenTeam = function () {
+  if (!$('wz').hidden) closeWizard();
+  document.querySelectorAll('.dim.open').forEach(x => closeDim(x.id));
+  if (session?.admin) $('teamBtn').click();
+};
 function setToday() { $('inspectDate').value = localToday(); dateAuto = true; updateDateHint(); }
 function updateDateHint() {
   const v = $('inspectDate').value, t = localToday(), h = $('dateHint'); if (!h) return;
