@@ -225,6 +225,7 @@ body.at-home .topbar,body.at-home .side,body.at-home .scrim,body.at-home .frames
 .hm-foot{text-align:center;color:var(--l3);font-size:.75rem;margin:14px 0 0}
 @media (prefers-reduced-motion:reduce){.hm-prog i{transition:none}}
 
+
 /* Login */
 .login{
   position:fixed;inset:0;z-index:20;background:var(--bg);
@@ -566,7 +567,7 @@ button.adm-row:hover{background:#F7F7FA}
 
 <script src="tasks.js"></script>
 <script>
-const V = '20261125c';
+const V = '20261125e';
 const APPS = { daily: 'daily_inspection_mobile.html?v=' + V, night: 'index.html?v=' + V };
 const DAILY_API = 'https://script.google.com/macros/s/AKfycbxuM2GmQGbDG7tLM0uQiqsEvHcqeEQ8M93e6qsIn06fAmSB8MUMGz7mh-nRX8ZOUc6H9Q/exec';
 
@@ -693,6 +694,7 @@ function hmRender() {
   const d = dailySession() || nightSession();
   $('hmFoot').textContent = d ? `${d.name}${d.admin ? ' · admin (เห็นข้อมูลทุกคน · แก้ได้เฉพาะที่กรอกแล้ว)' : ' · เห็นข้อมูลที่ตัวเองกรอก'}` : '';
 }
+
 
 /* Admin view */
 const isAdmin = () => !!((dailySession() || nightSession() || {}).admin);
